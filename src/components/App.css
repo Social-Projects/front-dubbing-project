@@ -30,3 +30,12 @@
     transform: rotate(360deg);
   }
 }
+
+::root {
+  --side-menu: #0f1c27;
+  --highlight: #172431;
+  --main-darck-blue: #060f1c;
+  --red: #db4252;
+  --red-text: #a08484;
+  --white: #fff;
+}
