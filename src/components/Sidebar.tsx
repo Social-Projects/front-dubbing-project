@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Nav, NavItem, NavLink } from "reactstrap";
+import React from "react";
+//import { Nav, NavItem, NavLink } from "reactstrap";
 
 import "./Sidebar.css";
 // import Navbar from "./Navbar";
@@ -10,7 +10,7 @@ function Sidebar() {
   return (
     <div className="Sidebar">
       <p>List Based</p>
-      <Nav>
+      {/* <Nav>
         <NavItem>
           <NavLink href="#">Link</NavLink>
         </NavItem>
@@ -34,7 +34,7 @@ function Sidebar() {
         <NavLink disabled href="#">
           Disabled Link
         </NavLink>
-      </Nav>
+      </Nav> */}
     </div>
   );
 }
