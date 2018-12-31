@@ -1,0 +1,31 @@
+.nav-item {
+    display: flex;
+    align-items: center;
+    height: 45px;
+    font-size: 25px;
+    padding: 0 0 0 22.5%;
+
+    transition: background-color 0.3s;
+}
+
+.nav-item-active {
+    background-color: #242f3d;
+}
+
+.nav-item:hover {
+    background-color: #242f3d;
+}
+
+.nav-item img {
+    margin-right: 20px;
+}
+
+@media screen and (max-width: 1200px) {
+    .sidebar {
+        width: 33.3333%;
+    }
+
+    .nav-item {
+        padding: 0 0 0 18%;
+    }
+}

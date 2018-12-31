@@ -1,0 +1,14 @@
+.sidebar {
+    position: fixed;
+    width: 400px;
+    height: 100%;
+    background-color: #17212b;
+
+    box-shadow: 0 3px 2px 0 #151e27 inset;
+}
+
+.sidebar .nav {
+    display: flex;
+    flex-flow: column nowrap;
+    margin-top: 45px;
+}

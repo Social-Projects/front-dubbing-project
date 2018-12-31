@@ -1,0 +1,22 @@
+.logout .user-name {
+    color: #9f8383;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.logout .user-action {
+    width: 70px;
+    height: 35px;
+    border: 0;
+    border-radius: 3px;
+    outline: none;
+    color: #ffffff;
+    background-color: #da4453;
+    margin-left: 23px;
+
+    transition: background-color 0.3s;
+}
+
+.logout .user-action:hover {
+    background-color: #d81226;
+}
