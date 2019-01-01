@@ -1,0 +1,37 @@
+.perfomanceItem {
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 15px 11px 11px 26px;
+    background-color: #17212b;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.perfomanceItem .perfomanceItem-head {
+    text-align: left;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.perfomanceItem .perfomanceItem-body {
+    text-align: left;
+    margin: 12px 0 7px 0;
+    font-weight: 300;
+    line-height: 20px;
+}
+
+.perfomanceItem .perfomanceItem-footer {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+}
+
+.perfomanceItem-footer img {
+    margin-left: 12px;
+}
+
+.perfomanceItem .perfomanceItem-footer:hover {
+    background-color: #6db51f; 
+}

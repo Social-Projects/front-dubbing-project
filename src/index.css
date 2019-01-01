@@ -32,6 +32,7 @@ button {
   outline: none;
   cursor: pointer;
   color: #ffffff;
+  font-size: 14px;
 }
 
 p {

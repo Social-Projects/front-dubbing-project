@@ -1,0 +1,12 @@
+.perfomance {
+    height: 100% !important;
+    margin-left: 400px;
+    padding: 40px 2.4% 0;
+    background-color: #0e1621;
+}
+
+@media screen and (max-width: 1200px) {
+    .perfomance {
+        margin-left: 33.33333%;
+    }
+}

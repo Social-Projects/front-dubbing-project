@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Header from './components/Header/Header';
-import './App.css';
 import Sidebar from './components/Sidebar/Sidebar';
+import Perfomance from './components/Perfomance/Perfomance';
+import './App.css';
 
 class App extends Component {
   render() {
@@ -10,6 +11,7 @@ class App extends Component {
         <Header />
         <main>
           <Sidebar />
+          <Perfomance />
         </main>
       </div>
     );

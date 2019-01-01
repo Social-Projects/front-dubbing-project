@@ -12,7 +12,7 @@ class SidebarItem extends React.Component {
     render() {
         return (
             <a href={this.props.href}
-               className={"nav-item" + (this.state.isActive === "true" ? " nav-item-active" : "")}>
+               className={"nav-item" + (this.state.isActive === true ? " nav-item-active" : "")}>
                 <img src={this.props.imgSrc} alt=""/>
                 <span>{this.props.name}</span>
             </a>

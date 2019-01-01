@@ -12,3 +12,13 @@
     flex-flow: column nowrap;
     margin-top: 45px;
 }
+
+@media screen and (max-width: 1200px) {
+    .sidebar {
+        width: 33.3333%;
+    }
+
+    .nav .nav-item {
+        padding: 0 0 0 18%;
+    }
+}
