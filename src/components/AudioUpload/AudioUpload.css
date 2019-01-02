@@ -1,0 +1,30 @@
+.audio-header {
+    margin-top: 10px;
+    color: #fff;
+    font-size: 18px;
+}
+
+#btn-audio-add{
+    font-size: 18px;
+    border: none;
+    background: none;
+    color: #8cc152;
+}
+  
+#btn-audio-upload {
+    float: right;
+    width: 140px;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    padding: 3px;
+    background-color: #8cc152;
+    border-radius: 20px;
+}
+  
+#audio-container {
+    background-color: #17212b;
+    border-radius: 3px;
+    padding-left: 4%;
+    color: #fff;
+}
