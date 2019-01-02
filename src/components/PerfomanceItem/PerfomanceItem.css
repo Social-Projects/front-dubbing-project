@@ -1,4 +1,5 @@
 .perfomanceItem {
+    max-width: 1500px;
     display: flex;
     flex-flow: column nowrap;
     padding: 15px 11px 11px 26px;
