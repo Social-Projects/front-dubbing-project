@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import "./App.css";
-class App extends Component {
+import PerformanceList from "./components/Performances/PerformanceList"
+class PerformancesPage extends Component {
   render() {
     return (
       <div className="App">
-   App
+        <PerformanceList />
       </div>
     );
   }
 }
 
-export default App;
+export default PerformancesPage;
