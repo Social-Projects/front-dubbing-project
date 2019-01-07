@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 class Performance extends Component
 {
     remove(){
@@ -11,7 +12,11 @@ class Performance extends Component
             
             <div id="title">
                 <h3>{this.props.title}</h3>
-                <button className="editButton">Edit</button>
+
+                <span className="input-group-btn">
+                   <Link to={"/performance/"+this.props.index} >Edit</Link>
+                </span>
+             
                 <button  onClick={this.remove.bind(this)} className="removeButton">Remove</button>
             </div>
             <p>

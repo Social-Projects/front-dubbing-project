@@ -1,17 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import PerformancesPage from './App';
+import PerformancesPage from './PerformancesPage';
+import editPerformance from './components/Performances/editPerformance';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 ReactDOM.render(
 <Router>
-<div>
-   
-        <Route exact path="/" component={PerformancesPage} />
-        <Route path="/performance" component={PerformancesPage} />
-        </div>
+        <Switch>
+                <Route exact path="/" component={PerformancesPage} />
+                <Route path="/performance" component={PerformancesPage} />
+        </Switch>
 
 </Router>, 
 document.getElementById('root'));

@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import Performance from "./Performance"
+import apiManager from "../../apiManager";
+import { Link } from "react-router-dom";
 class PerformanceList extends Component
 {
+    apimanager = new apiManager("http://localhost:5000");
+    
     constructor(props){
         super(props);
         this.state={
@@ -11,9 +15,8 @@ class PerformanceList extends Component
     }
     
     getPerformances = async() =>{
-       
-        const fet = await fetch(`http://localhost:5000/api/Performance`);
-        const data = await fet.json();
+        const resp = await this.apimanager.getPerformances();
+        const data = await resp.json();
         this.setState(
             {
                 performances:data
@@ -22,20 +25,18 @@ class PerformanceList extends Component
     }
     async removePerformance(index:number) {
 
-        const fet = await fetch(`http://localhost:5000/api/Performance/${index}`,{
-            
-        method: 'DELETE',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin':'*'
-        }});
-        const arr = this.state.performances.slice(index + 1, 1);
+        const resp = await this.apimanager.removePerformance(index);
+        if(resp.status == 200){
+        const arr = this.state.performances.splice(index + 1, 1);
+        
         this.setState(
             {
                 performances:arr
             });
-        
+         }
+         else{
+             console.log(resp.status);
+         }
 
        
     }
@@ -46,8 +47,9 @@ class PerformanceList extends Component
         
         return(
         <div>
-            <button className="addPerfBtn">Додати виставу</button>
-            {
+                <span className="input-group-btn">
+                   <Link to="/performance/new" >Додати виставу</Link>
+                </span>            {
                 this.state.performances.map((item)=>{
                     return <Performance deleteMethod={this.removePerformance} index={item.id} key={item.id} title={item.title} description={item.description} />;
                 }
