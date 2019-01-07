@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import apiManager from "../../apiManager";
 import { Link } from 'react-router-dom';
-
+import "./EditPerformance.css"; 
 class editPerformance extends Component
 {
     apimanager = new apiManager("http://localhost:5000");
@@ -74,20 +74,26 @@ class editPerformance extends Component
  
     render(){
         return(
-            <div>
-                <div>
-                    <h3>Додавання вистави</h3>
-                    <button onClick={this.handleSave} >Зберегти</button>
-                    <span className="input-group-btn">
-                        <Link to="/performance/">Вiдмiна</Link>  
-                    </span>
+            <div className="editForm">
+                <div className="formHeader">
+                    <h3>{this.props.match.params.number=="new"?"Створення вистави":"Редагування вистави"}</h3>
+                    <div className="text-right">
+                        <button  className="saveButton" onClick={this.handleSave} >Зберегти</button>
+                        <Link to="/performance/">
+                            <button className="cancelButton">
+                                Вiдмiна
+                            </button>
+                        </Link>  
+                    </div>
                 </div>  
-                <form>
-                    <input type="hidden" readOnly={true} value={this.state.id} />
-                    <input type="text" name="title" onChange={this.handleChange}  value={this.state.title} />
-                    <input type="text" name="description" onChange={this.handleChange}  value={this.state.description} />
 
-                </form>
+                    <input type="hidden" readOnly={true} value={this.state.id} />
+                    <p>Назва вистави</p>
+                    <input type="text" name="title" onChange={this.handleChange}  value={this.state.title} />
+                    <p>Опис вистави</p>
+                    <textarea className="descrField" name="description" onChange={this.handleChange}  value={this.state.description} />
+
+                
             </div>
         )
     }

@@ -1,0 +1,34 @@
+.addButton{
+    background-color: #563a9d;
+    border: none;
+    color:white;
+    border-radius: 20px;
+    height: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    transition: background-color 0.25s;
+    margin-left: 20px;  
+    -webkit-appearance: none;
+  
+}
+.addButton:hover{
+    background-color: #704bcc;
+   
+}
+.header{
+    margin-top:10px;
+    margin-left: 2.5%;
+    display: flex;
+    color:white;
+    
+}
+.addImage{
+    background: url('img/add-logo.png');
+    background-repeat: no-repeat;
+    width: 29px;
+    height: 18px;
+    float: left;
+    margin-left: 0px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}

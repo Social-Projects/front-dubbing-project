@@ -5,6 +5,7 @@ import PerformancesPage from './PerformancesPage';
 import editPerformance from './components/Performances/editPerformance';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.css';
 
 ReactDOM.render(
 <Router>

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import "./Performance.css"
+
 class Performance extends Component
 {
     remove(){
@@ -8,21 +10,24 @@ class Performance extends Component
     render(){
         
         return(
-        <div>
+        <div className="performance">
             
-            <div id="title">
-                <h3>{this.props.title}</h3>
-
-                <span className="input-group-btn">
-                   <Link to={"/performance/"+this.props.index} >Edit</Link>
-                </span>
-             
-                <button  onClick={this.remove.bind(this)} className="removeButton">Remove</button>
+            <div className="row">
+            
+                <p className="col-md-6 pull-left perfTitle" >{this.props.title}</p>
+                <div className="col-md-6 text-right PerformanceButtons ">
+                        <Link to={"/performance/"+this.props.index} >
+                            <button className="editBtn" />
+                        </Link>
+                  
+                    <button className="close" onClick={this.remove.bind(this)} >x</button>
+                </div>
             </div>
+
             <p>
                 {this.props.description}
             </p>
-            <button>Перейти до вистави</button>
+            <button className="gotoPerfBtn ">Перейти до вистави <div className="gotoImage" /></button>
             </div>
         );
     }
