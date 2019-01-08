@@ -1,24 +1,30 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import AudioItem from "../AudioItem/AudioItem";
+import AudioItem from "./AudioItem";
 import './AudioUpload.css';
 
-class AudioUpload extends Component {
-  state = {
+export interface Props {}
+
+export default class AudioUpload extends React.Component<any, any> {
+  constructor(props) {
+    super(props);
+    this.state = {
       filesToBeUpload: [] // Variable for storing audio files
+    }
   }
 
-  fileChangedHandler = event => {
+  fileChangedHandler = (event) => {
       // Displaing all selected files
       let audioContainer = document.getElementById("audio-container")
 
       for (let i = 0; i < event.target.files.length; i++) {
         // Creating unique div elements to avoid replacing them by ReactDOM.render
-        const id = i + 1
-        const d = document.createElement("div")
-        d.id = id
-        audioContainer.appendChild(d)
+        let id: string;
+        id = (i + 1).toString();
+        const audioItemContainer = document.createElement("div")
+        audioItemContainer.id = id;
+        audioContainer.appendChild(audioItemContainer)
 
         // Rendering each selected audio item
         ReactDOM.render(<AudioItem name={event.target.files[i].name} id={id} />, document.getElementById(id))
@@ -93,5 +99,3 @@ class AudioUpload extends Component {
     );
   }
 }
-
-export default AudioUpload;
