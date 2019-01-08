@@ -4,36 +4,66 @@ import axios from 'axios';
 import AudioItem from "./AudioItem";
 import './AudioUpload.css';
 
-export interface Props {}
+export interface Props { }
 
 export default class AudioUpload extends React.Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
-      filesToBeUpload: [] // Variable for storing audio files
+      filesToBeUpload: [] 
     }
   }
 
-  fileChangedHandler = (event) => {
-      // Displaing all selected files
-      let audioContainer = document.getElementById("audio-container")
+  fileChangedHandler = event => {
+    let files = event.target.files;
 
-      for (let i = 0; i < event.target.files.length; i++) {
-        // Creating unique div elements to avoid replacing them by ReactDOM.render
-        let id: string;
-        id = (i + 1).toString();
-        const audioItemContainer = document.createElement("div")
-        audioItemContainer.id = id;
-        audioContainer.appendChild(audioItemContainer)
+    this.clearAudioList();
+    this.showAudioFiles(files);
 
-        // Rendering each selected audio item
-        ReactDOM.render(<AudioItem name={event.target.files[i].name} id={id} />, document.getElementById(id))
-      }
+    // Saving files to 'filesToBeUpload' state
+    this.setState({
+      filesToBeUpload: event.target.files
+    });
+  }
 
-      // Saving files to 'filesToBeUpload' state
-      this.setState({
-        filesToBeUpload: event.target.files
-      });
+  showAudioFiles = (files) => {
+    // Displaing all selected files
+    let audioContainer = document.getElementById("audio-container")
+
+    for (let i = 0; i < files.length; i++) {
+      // Creating unique div elements to avoid replacing them by ReactDOM.render
+      let id: string;
+      id = (i + 1).toString();
+      const audioItemContainer = document.createElement("div")
+      audioItemContainer.id = id;
+      audioContainer.appendChild(audioItemContainer)
+
+      // Rendering each selected audio item
+      ReactDOM.render(<AudioItem name={ files[i].name } id={id} onDelete={ this.fileDeleteHandler }/>, document.getElementById(id))
+    }
+  }
+
+  clearAudioList = () => {
+    // Removing all child elements in 'audio-container'
+    let myNode = document.getElementById("audio-container");
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
+    }
+  }
+
+  fileDeleteHandler = (event) => {
+    // Getting file index
+    const fileToDelteId = event.target.id - 1; 
+
+    let files = [...this.state.filesToBeUpload]
+    files.splice(fileToDelteId, 1);
+
+    this.setState({
+      filesToBeUpload: files
+    });
+
+    this.clearAudioList();
+    this.showAudioFiles(files);
   }
 
   fileUploadHandler = (event) => {
@@ -44,7 +74,7 @@ export default class AudioUpload extends React.Component<any, any> {
     if (this.state.filesToBeUpload.length > 0) {
 
       //Geting text from textarea
-      const textToAudioArray = document.getElementsByClassName('audio-text'); 
+      const textToAudioArray = document.getElementsByClassName('audio-text');
 
       let filesArray = this.state.filesToBeUpload;
 
@@ -88,7 +118,7 @@ export default class AudioUpload extends React.Component<any, any> {
             </div>
           </div>
         </div>
-        
+
         {/* Files to be upload list */}
         <div className="container">
           <div id="audio-container" className="row">
