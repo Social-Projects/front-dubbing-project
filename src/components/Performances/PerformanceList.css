@@ -9,11 +9,11 @@
     transition: background-color 0.25s;
     margin-left: 20px;  
     -webkit-appearance: none;
-  
+  cursor: default;
 }
 .addButton:hover{
     background-color: #704bcc;
-   
+   cursor: pointer;
 }
 .header{
     margin-top:10px;

@@ -3,12 +3,13 @@ class apiManager
     
    
     backendUrl = "";
-    constructor(backendUrl:string)
+    
+    constructor()
     {
-        this.backendUrl = backendUrl;
+        this.backendUrl = "http://localhost:5000/";
     }
     async createPerformance(json: string): Promise<Response> {
-        const response = await fetch(`http://localhost:5000/api/Performance`,{
+        const response = await fetch(`${this.backendUrl}api/Performance`,{
             
             method: 'POST',
             headers: {
@@ -21,7 +22,7 @@ class apiManager
             return response;
     }
     async updatePerformance(json:string): Promise<Response> {
-        const response = await fetch(`http://localhost:5000/api/Performance`,{
+        const response = await fetch(`${this.backendUrl}api/Performance`,{
             
             method: 'PUT',
             headers: {
@@ -35,17 +36,17 @@ class apiManager
     }
     async getPerformances(): Promise<Response>
     {
-        const response = await fetch(`${this.backendUrl}/api/Performance`);
+        const response = await fetch(`${this.backendUrl}api/Performance`);
         return response;
     }
     async getPerformanceById(index:number): Promise<Response>
     {
-        const response = await fetch(`${this.backendUrl}/api/Performance/${index}`);
+        const response = await fetch(`${this.backendUrl}api/Performance/${index}`);
         return response;
     }
     async removePerformance(index:number): Promise<Response>
     {
-        const response = await fetch(`http://localhost:5000/api/Performance/${index}`,{
+        const response = await fetch(`${this.backendUrl}api/Performance/${index}`,{
             
             method: 'DELETE',
             headers: {

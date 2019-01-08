@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import "./EditPerformance.css"; 
 class editPerformance extends Component
 {
-    apimanager = new apiManager("http://localhost:5000");
+    apimanager = new apiManager();
     constructor(props)
     {
         super(props);

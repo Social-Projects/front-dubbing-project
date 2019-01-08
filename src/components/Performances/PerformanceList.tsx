@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import "./PerformanceList.css"
 class PerformanceList extends Component
 {
-    apimanager = new apiManager("http://localhost:5000");
+    apimanager = new apiManager();
     
     constructor(props){
         super(props);
@@ -38,6 +38,7 @@ class PerformanceList extends Component
             });
          }
          else{
+             this.getPerformances();
              console.log(resp.status);
          }
 
