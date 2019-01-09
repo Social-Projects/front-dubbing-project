@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 /.pnp
+.vscode/*
+.vscode/launch.json
 .pnp.js
 
 # testing
