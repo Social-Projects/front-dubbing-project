@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./PerformancesPage.css";
-import PerformanceList from "./components/Performances/PerformanceList"
+import PerformanceList from "./PerformanceList"
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
-import editPerformance from "./components/Performances/editPerformance";
+import editPerformance from "./editPerformance";
 
 class PerformancesPage extends Component {
   
