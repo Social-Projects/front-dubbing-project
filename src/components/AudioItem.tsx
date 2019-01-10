@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './AudioItem.css';
 
-export interface Porps {
+export interface IAudioItemPorps {
     id: number;
     name: string;
     onDelete?: () => void;

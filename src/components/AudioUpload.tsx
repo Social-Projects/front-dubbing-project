@@ -1,75 +1,44 @@
 import * as React from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
 import AudioItem from "./AudioItem";
 import './AudioUpload.css';
+import API from '../util/api';
 
-export interface Props { }
+export interface IAudioUploadProps { }
 
-export default class AudioUpload extends React.Component<any, any> {
-  constructor(props) {
+export interface IAudioUploadState {
+  filesToBeUpload: []
+}
+
+export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
+  constructor(props : IAudioUploadProps) {
+  
     super(props);
+
     this.state = {
       filesToBeUpload: [] 
     }
   }
 
-  fileChangedHandler = event => {
-    let files = event.target.files;
-
-    this.clearAudioList();
-    this.showAudioFiles(files);
-
+  private fileChangedHandler = (event) => {
     // Saving files to 'filesToBeUpload' state
     this.setState({
       filesToBeUpload: event.target.files
     });
   }
 
-  showAudioFiles = (files) => {
-    // Displaing all selected files
-    let audioContainer = document.getElementById("audio-container")
-
-    for (let i = 0; i < files.length; i++) {
-      // Creating unique div elements to avoid replacing them by ReactDOM.render
-      let id: string;
-      id = (i + 1).toString();
-      const audioItemContainer = document.createElement("div")
-      audioItemContainer.id = id;
-      audioContainer.appendChild(audioItemContainer)
-
-      // Rendering each selected audio item
-      ReactDOM.render(<AudioItem name={ files[i].name } id={id} onDelete={ this.fileDeleteHandler }/>, document.getElementById(id))
-    }
-  }
-
-  clearAudioList = () => {
-    // Removing all child elements in 'audio-container'
-    let myNode = document.getElementById("audio-container");
-    while (myNode.firstChild) {
-      myNode.removeChild(myNode.firstChild);
-    }
-  }
-
   fileDeleteHandler = (event) => {
-    // Getting file index
-    const fileToDelteId = event.target.id - 1; 
+    const fileToDeleteId = event.target.id;
 
     let files = [...this.state.filesToBeUpload]
-    files.splice(fileToDelteId, 1);
+    files.splice(fileToDeleteId, 1);
 
     this.setState({
       filesToBeUpload: files
     });
-
-    this.clearAudioList();
-    this.showAudioFiles(files);
   }
 
-  fileUploadHandler = (event) => {
-    // Do we need hard code URL? 
-    const apiBaseUrl = "https://localhost:44323/api/upload";
-
+  fileUploadHandler = () => {
     // Checking if file array is empty
     if (this.state.filesToBeUpload.length > 0) {
 
@@ -87,7 +56,7 @@ export default class AudioUpload extends React.Component<any, any> {
         formData.append("Text", textToAudioArray[i].value);
 
         // Sending post requset to server
-        axios.post(apiBaseUrl, formData, {
+        API.post('upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       }
@@ -98,6 +67,15 @@ export default class AudioUpload extends React.Component<any, any> {
   }
 
   render() {
+
+    // Mapping selected files
+    const filesToBeUpload = [...this.state.filesToBeUpload];
+    const filesList = filesToBeUpload.map((item, index) => <AudioItem 
+                                                              key={item.name} 
+                                                              name={item.name} 
+                                                              id={index} 
+                                                              onDelete={this.fileDeleteHandler}/>);
+
     return (
       <div className="audio-upload-section">
         <div className="container">
@@ -122,6 +100,8 @@ export default class AudioUpload extends React.Component<any, any> {
         {/* Files to be upload list */}
         <div className="container">
           <div id="audio-container" className="row">
+
+            {filesList}
 
           </div>
         </div>
