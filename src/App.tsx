@@ -4,8 +4,8 @@ import Sidebar from './Sidebar/Sidebar';
 import Perfomance from './Perfomance/Perfomance';
 import './App.css';
 import PerformancesPage from './components/Performances/PerformancesPage';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-
+import { Router, Route, Switch } from 'react-router-dom'
+import history from './history'
 
 class App extends Component {
   render() {
@@ -14,7 +14,7 @@ class App extends Component {
         <Header />
         <main>
           <Sidebar />
-          <Router>
+          <Router history={history} >
         <Switch>
                 <Route exact path="/" component={PerformancesPage} />
                 <Route path="/performance" component={PerformancesPage} />

@@ -41,7 +41,15 @@ class apiManager
     }
     async getPerformanceById(index:number): Promise<Response>
     {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`);
+        const response = await fetch(`${this.backendUrl}api/Performance/${index}`,{
+            
+            method: 'GET',
+            mode:'no-cors',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin':'*'
+            }});
         return response;
     }
     async removePerformance(index:number): Promise<Response>

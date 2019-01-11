@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import apiManager from "../../apiManager";
 import { Link } from 'react-router-dom';
 import "./EditPerformance.css"; 
+import history from '../../history'
+
 interface editPerformanceState {
     id: number,
     title:string,
     description:string
 }
+
 interface editPerformanceProps {
     match: {
         params: {
@@ -16,6 +19,7 @@ interface editPerformanceProps {
 }
 class editPerformance extends Component<editPerformanceProps,editPerformanceState>
 {
+    
     apimanager = new apiManager();
     constructor(props : any)
     {
@@ -24,7 +28,7 @@ class editPerformance extends Component<editPerformanceProps,editPerformanceStat
             id:-1,
             title:'',
             description:''
-        }
+                }
         this.handleChange = this.handleChange.bind(this);
         this.handleSave = this.handleSave.bind(this);
 
@@ -49,7 +53,7 @@ class editPerformance extends Component<editPerformanceProps,editPerformanceStat
     if(this.state.id != -1){
         const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
         if(resp.status == 200){
-            history.back(); 
+            history.push("/performance");
         }
         else {
             console.log(resp.status);
@@ -58,14 +62,14 @@ class editPerformance extends Component<editPerformanceProps,editPerformanceStat
     else {
         const resp = await this.apimanager.createPerformance(JSON.stringify(this.state));
         if(resp.status == 201){
-            history.back(); 
+            history.push("/performance");
         }
         else {
             console.log(resp.status);
         }
     }
    }
-    
+   
     async componentDidMount(){
         if(this.props.match.params.number != 'new'){
         const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
@@ -78,7 +82,9 @@ class editPerformance extends Component<editPerformanceProps,editPerformanceStat
             })
         }
         else {
-            console.log(resp.status)
+            console.log(resp.status);
+            history.push("/performance");
+
         }
     }
 
