@@ -9,7 +9,7 @@ interface PlaySectionProps {
     currentTime: number
 };
 
-const playSection = (props: any) => {
+const playSection = (props: PlaySectionProps) => {
 
     const getViewNumber = (number: number): string => {
         if (number < 10)

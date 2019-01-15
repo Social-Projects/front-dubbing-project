@@ -1,4 +1,5 @@
 import React from 'react';
+import Radium from 'radium';
 
 interface ButtonProps {
     width: string;
@@ -9,6 +10,7 @@ interface ButtonProps {
     transitionDuration: string;
     className: string;
     text: string;
+    hover?: Object
 }
 
 class Button extends React.Component<ButtonProps> {
@@ -20,7 +22,10 @@ class Button extends React.Component<ButtonProps> {
             backgroundColor: this.props.backgroundColor,
             borderRadius: this.props.borderRadius,
             fontSize: this.props.fontSize,
-            transition: 'all ' + this.props.transitionDuration
+            transition: 'all ' + this.props.transitionDuration,
+            ':hover': {
+                ...this.props.hover
+            }
         };
 
         return (
@@ -32,4 +37,4 @@ class Button extends React.Component<ButtonProps> {
     }
 }
 
-export default Button;
+export default Radium(Button);

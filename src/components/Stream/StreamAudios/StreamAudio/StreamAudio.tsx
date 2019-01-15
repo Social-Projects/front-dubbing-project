@@ -6,6 +6,7 @@ import classes from './StreamAudio.module.css';
 interface AudioProps {
     text: string;
     duration: number;
+    isPlaying: boolean;
 }
 
 const audio = (props: AudioProps) => {
@@ -27,6 +28,11 @@ const audio = (props: AudioProps) => {
     };
 
     const iconActionsClasses = ["fas", classes.icon, "fa-play-circle"];
+    if (props.isPlaying)
+    {
+        iconActionsClasses.pop();
+        iconActionsClasses.push('fa-pause-circle');
+    }
 
     return (
         <Aux>

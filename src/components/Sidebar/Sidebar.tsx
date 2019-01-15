@@ -11,11 +11,19 @@ class Sidebar extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
 
+        let isPerfomancesLinkActive = true;
+        let isStreamLinkActive = false;
+        if (location.pathname === '/stream')
+        {
+            isPerfomancesLinkActive = false;
+            isStreamLinkActive = true;
+        }
+
         this.state = {
             links: [
-                { isActive: true },
+                { isActive: isPerfomancesLinkActive },
                 { isActive: false },
-                { isActive: false }
+                { isActive: isStreamLinkActive }
             ] 
         };
     }
