@@ -18,23 +18,23 @@ class ActionSection extends Component<any, any> {
     }
 
     playHandler =() =>{
-        this.apiManager.playAudio();
+        this.apiManager.playSpeech();
     }
     
     playByIdHandler = (index:number) => {
-        this.apiManager.playAudioById(index);
+        this.apiManager.playSpeechById(index);
     }
 
     pauseHandler =() =>{
-        this.apiManager.pauseAudio();
+        this.apiManager.pauseSpeech();
     }
 
-    nextAudioHandler = () =>{
-        this.apiManager.nextAudio();
+    nextSpeechHandler = () =>{
+        this.apiManager.nextSpeech();
     }
 
-    prevAudioHandler = () =>{
-        this.apiManager.prevAudio();
+    prevSpeechHandler = () =>{
+        this.apiManager.prevSpeech();
     }
 
 

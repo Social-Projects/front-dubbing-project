@@ -8,6 +8,7 @@ import { async } from 'q';
 
 interface streamState{
     audioInfo: {
+        id:number,
         text: string,
         duration: number
     }[],
@@ -30,7 +31,7 @@ class Stream extends Component<streamProps, streamState> {
     }
 
     getAudioInfo = async(index:number) =>{
-        const resp = await this.apiManager.getAudioInfo(index);
+        const resp = await this.apiManager.getSpeechInfo(index);
             const data = await resp.json();
             this.setState(
                 {

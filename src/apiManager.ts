@@ -64,7 +64,7 @@ class apiManager {
 
 
     //Using for display list of audio on stream page
-    async getAudioInfo(indexPerfomance: number): Promise<Response> {
+    async getSpeechInfo(indexPerfomance: number): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Perfomance/AudiosInfo/${indexPerfomance}`,
             {
                 method: 'GET',
@@ -76,32 +76,38 @@ class apiManager {
             });
         return response;
     }
-    async playAudio(): Promise<Response> {
+    async playSpeech(): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Streaming/Play`, {
             method: 'GET'
         });
         return response;
     }
-    async playAudioById(index: number): Promise<Response> {
+    async playSpeechById(index: number): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
             method: 'GET'
         });
         return response;
     }
-    async pauseAudio(): Promise<Response> {
+    async pauseSpeech(): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
             method: 'GET'
         });
         return response;
     }
-    async nextAudio(): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Streaming/NextAudio`, {
+    async nextSpeech(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/NextSpeech`, {
             method: 'GET'
         });
         return response;
     }
-    async prevAudio(): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Streaming/PrevAudio`, {
+    async prevSpeech(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/PrevSpeech`, {
+            method: 'GET'
+        });
+        return response;
+    }
+    async getCurrentSpeechId(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/CurrentSpeechId`, {
             method: 'GET'
         });
         return response;
