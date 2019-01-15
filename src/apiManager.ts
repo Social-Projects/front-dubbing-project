@@ -1,74 +1,71 @@
-class apiManager
-{
-    
-   
+class apiManager {
+
+
     backendUrl = "";
-    
-    constructor()
-    {
+
+    constructor() {
         this.backendUrl = "http://localhost:5000/";
     }
     async createPerformance(json: string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`,{
-            
+        const response = await fetch(`${this.backendUrl}api/Performance`, {
+
             method: 'POST',
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }, 
-            body:json
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: json
         });
-            return response;
+        return response;
     }
-    async updatePerformance(json:string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`,{
-            
+    async updatePerformance(json: string): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Performance`, {
+
             method: 'PUT',
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }, 
-            body:json
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: json
         });
-            return response;
+        return response;
     }
-    async getPerformances(): Promise<Response>
-    {
+    async getPerformances(): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance`);
         return response;
     }
-    async getPerformanceById(index:number): Promise<Response>
-    {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`,{
-            
+    async getPerformanceById(index: number): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
+
             method: 'GET',
-            mode:'no-cors',
+            mode: 'no-cors',
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }});
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        });
         return response;
     }
-    async removePerformance(index:number): Promise<Response>
-    {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`,{
-            
+    async removePerformance(index: number): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
+
             method: 'DELETE',
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }});
-            return response;
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        });
+        return response;
     }
 
 
     //Using for display list of audio on stream page
-    async getAudioInfo(index:number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Perfomance/${index}/AudiosInfo`,
+    async getAudioInfo(indexPerfomance: number): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Perfomance/AudiosInfo/${indexPerfomance}`,
             {
                 method: 'GET',
                 headers: {
@@ -79,5 +76,37 @@ class apiManager
             });
         return response;
     }
+    async playAudio(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/Play`, {
+            method: 'GET'
+        });
+        return response;
+    }
+    async playAudioById(index: number): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
+            method: 'GET'
+        });
+        return response;
+    }
+    async pauseAudio(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
+            method: 'GET'
+        });
+        return response;
+    }
+    async nextAudio(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/NextAudio`, {
+            method: 'GET'
+        });
+        return response;
+    }
+    async prevAudio(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Streaming/PrevAudio`, {
+            method: 'GET'
+        });
+        return response;
+    }
+
+
 }
 export default apiManager;
