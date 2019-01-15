@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import Header from './Header/Header';
-import Sidebar from './Sidebar/Sidebar';
-import Perfomance from './Perfomance/Perfomance';
-import './App.css';
+import Header from './components/Header/Header';
+import Sidebar from './components/Sidebar/Sidebar';
 import PerformancesPage from './components/Performances/PerformancesPage';
-import { Router, Route, Switch } from 'react-router-dom'
+import Stream from './components/Stream/Stream';
+import { Router, Route, Switch } from 'react-router-dom';
+import Aux from './hoc/Auxiliary';
 import history from './history'
+import './App.css';
 
 class App extends Component {
   render() {
@@ -13,19 +14,18 @@ class App extends Component {
       <div className="App">
         <Header />
         <main>
-          <Sidebar />
           <Router history={history} >
-        <Switch>
+            <Aux>
+              <Sidebar />
+              <Switch>
                 <Route exact path="/" component={PerformancesPage} />
                 <Route path="/performance" component={PerformancesPage} />
-        </Switch>
-        </Router>
+                <Route path="/stream" component={Stream} />
+              </Switch>
+            </Aux>
+          </Router>
         </main>
-       
       </div>
-     
-    
-        
     );
   }
 }

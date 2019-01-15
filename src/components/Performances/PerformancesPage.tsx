@@ -7,13 +7,13 @@ class PerformancesPage extends Component {
   
   render() {
     return (
-    <Switch>
-      <Route exact path='/' render={() => (
-  <Redirect to="/performance"/>
-)}/>
-      <Route exact path='/performance' component={PerformanceList}/>
-      <Route path='/performance/:number' component={editPerformance}/>
-    </Switch>
+      <Switch>
+        <Route exact path='/' render={() => (
+          <Redirect to="/performance" />
+        )} />
+        <Route exact path='/performance' component={PerformanceList} />
+        <Route path='/performance/:number' component={editPerformance} />
+      </Switch>
     );
   }
 }
