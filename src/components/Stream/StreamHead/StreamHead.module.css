@@ -1,7 +1,6 @@
 .streamHead {
     display: flex;
     align-items: center;
-    margin-bottom: 26px;
 }
 
 .streamHead .title {

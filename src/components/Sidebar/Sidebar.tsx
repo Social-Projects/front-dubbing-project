@@ -49,7 +49,6 @@ class Sidebar extends React.Component<any, any> {
                 <nav className="nav">
                     <Link to="/">
                         <SidebarItem
-                            href=""
                             name="Вистави"
                             imgSrc={perfomanceLogo}
                             isActive={this.state.links[0].isActive}
@@ -57,7 +56,6 @@ class Sidebar extends React.Component<any, any> {
                     </Link>
                     <Link to="/">
                         <SidebarItem
-                            href=""
                             name="Події"
                             imgSrc={eventLogo}
                             isActive={this.state.links[1].isActive}
@@ -65,7 +63,6 @@ class Sidebar extends React.Component<any, any> {
                     </Link>
                     <Link to="/stream">
                         <SidebarItem
-                            href=""
                             name="Трансляції"
                             imgSrc={streamLogo}
                             isActive={this.state.links[2].isActive}

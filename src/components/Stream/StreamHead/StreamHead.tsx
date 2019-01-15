@@ -4,7 +4,11 @@ import WithClass from '../../../hoc/WithClass';
 import classes from './StreamHead.module.css';
 import Button from '../../Button/Button';
 
-const streamHead = (props: any) => {
+interface streamHeadProps {
+    name: string;
+}
+
+const streamHead = (props: streamHeadProps) => {
     return (
         <Aux>
             <span className={classes.title}>{props.name}</span>

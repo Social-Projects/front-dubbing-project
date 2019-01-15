@@ -5,13 +5,15 @@ import Aux from '../../../hoc/Auxiliary';
 import WithClass from '../../../hoc/WithClass';
 import classes from './ActionSection.module.css';
 
-class ActionSection extends Component<any, any> {
-    constructor(props: any) {
+interface ActionSectionProps {}
+
+class ActionSection extends Component<ActionSectionProps, any> {
+    constructor(props: ActionSectionProps) {
         super(props);
         this.state = {
             numAudio: 1,
             totalTime: 90,
-            currentTime: 0 
+            currentTime: 35
         };
     }
 
