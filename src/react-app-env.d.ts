@@ -1,7 +1,9 @@
+
 /// <reference types="node" />
 /// <reference types="react" />
 /// <reference types="react-dom" />
 /// <reference types="react-scripts" />
+declare module 'react-dom';
 
 declare namespace NodeJS {
   interface ProcessEnv {
@@ -63,3 +65,5 @@ declare module '*.module.sass' {
   const classes: { [key: string]: string };
   export default classes;
 }
+
+
