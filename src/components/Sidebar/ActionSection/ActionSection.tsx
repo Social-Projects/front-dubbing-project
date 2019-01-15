@@ -13,7 +13,8 @@ class ActionSection extends Component<any, any> {
         this.state = {
             numAudio: 1,
             totalTime: 90,
-            currentTime: 0 
+            currentTime: 0,
+            currentSpeechId: null
         };
     }
 
@@ -33,8 +34,18 @@ class ActionSection extends Component<any, any> {
         this.apiManager.nextSpeech();
     }
 
-    prevSpeechHandler = () =>{
+    prevSpeechHandler = async() =>{
         this.apiManager.prevSpeech();
+    }
+
+    getCurrentSpeechId=async() =>{
+        const resp = await this.apiManager.getCurrentSpeechId();
+        const data = await resp.json();
+        this.setState(
+            {
+                currentSpeechId: data
+            }
+        )
     }
 
 

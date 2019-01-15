@@ -108,7 +108,12 @@ class apiManager {
     }
     async getCurrentSpeechId(): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Streaming/CurrentSpeechId`, {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin':'*'
+              }
         });
         return response;
     }

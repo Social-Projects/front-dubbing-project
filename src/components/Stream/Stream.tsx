@@ -12,7 +12,8 @@ interface streamState{
         text: string,
         duration: number
     }[],
-    isPlay: boolean
+    isPlay: boolean,
+    currentSpeechId: number
 }
 
 interface streamProps{
@@ -26,7 +27,8 @@ class Stream extends Component<streamProps, streamState> {
         super(props);
         this.state = {
             isPlay: false,
-            audioInfo: []
+            audioInfo: [],
+            currentSpeechId: -1
         };
     }
 
@@ -37,6 +39,17 @@ class Stream extends Component<streamProps, streamState> {
                 {
                     audioInfo: data
                 });
+    }
+
+    getCurrentSpeechId=async() => {
+        const resp = await this.apiManager.getCurrentSpeechId();
+        const data : number = await resp.json();
+        this.setState(
+            {
+                currentSpeechId: data
+            }
+        )
+        return data;
     }
 
 
