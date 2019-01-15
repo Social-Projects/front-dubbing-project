@@ -4,17 +4,48 @@ import PlaySection from './PlaySection/PlaySection';
 import Aux from '../../../hoc/Auxiliary';
 import WithClass from '../../../hoc/WithClass';
 import classes from './ActionSection.module.css';
+import apiManager from '../../../apiManager';
 
-interface ActionSectionProps {}
-
-class ActionSection extends Component<ActionSectionProps, any> {
-    constructor(props: ActionSectionProps) {
+class ActionSection extends Component<any, any> {
+    apiManager = new apiManager();
+    constructor(props: any) {
         super(props);
         this.state = {
             numAudio: 1,
             totalTime: 90,
-            currentTime: 35
+            currentTime: 35,
+            currentSpeechId: null
         };
+    }
+
+    playHandler =() =>{
+        this.apiManager.playSpeech();
+    }
+    
+    pauseHandler =() =>{
+        this.apiManager.pauseSpeech();
+    }
+
+    nextSpeechHandler = () =>{
+        this.apiManager.nextSpeech();
+    }
+
+    prevSpeechHandler = async() =>{
+        this.apiManager.prevSpeech();
+    }
+
+    playByIdHandler = (index:number) => {
+        this.apiManager.playSpeechById(index);
+    }
+
+    getCurrentSpeechId=async() =>{
+        const resp = await this.apiManager.getCurrentSpeechId();
+        const data = await resp.json();
+        this.setState(
+            {
+                currentSpeechId: data
+            }
+        )
     }
 
     render() {
