@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Header from './components/Header/Header';
+import Play from './components/Play/Play';
 import Logo from './components/Logo/img/logo.png';
-import Login from './components/Login/Login';
 import './App.css';
+
 
 class App extends Component {
   render() {
@@ -10,8 +11,7 @@ class App extends Component {
       <div className="App">
         <Header />
         <main>
-        <img className="logoImg" width="200px" src={Logo} alt=""/>
-        <Login/>
+          <Play/>
         </main>
       </div>
     );
