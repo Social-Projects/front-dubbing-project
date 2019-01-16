@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import ButtonSection from './ButtonSection/ButtonSection';
 import PlaySection from './PlaySection/PlaySection';
-import Aux from '../../../hoc/Auxiliary';
-import WithClass from '../../../hoc/WithClass';
+import Aux from '../../hoc/Auxiliary';
+import WithClass from '../../hoc/WithClass';
 import classes from './ActionSection.module.css';
-import apiManager from '../../../apiManager';
+import apiManager from '../../apiManager';
 
 class ActionSection extends Component<any, any> {
     apiManager = new apiManager();

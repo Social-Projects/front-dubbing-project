@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Header from './components/Header/Header';
-import Sidebar from './components/Sidebar/Sidebar';
+import Header from './Header/Header';
+import Sidebar from './Sidebar/Sidebar';
 import PerformancesPage from './components/Performances/PerformancesPage';
 import Stream from './components/Stream/Stream';
 

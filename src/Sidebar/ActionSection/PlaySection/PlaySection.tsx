@@ -1,6 +1,6 @@
 import React from 'react';
-import Aux from '../../../../hoc/Auxiliary';
-import WithClass from '../../../../hoc/WithClass';
+import Aux from '../../../hoc/Auxiliary';
+import WithClass from '../../../hoc/WithClass';
 import classes from './PlaySection.module.css';
 
 interface PlaySectionProps {

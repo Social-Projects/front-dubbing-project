@@ -2,7 +2,7 @@ import React from 'react';
 import Aux from '../../../hoc/Auxiliary';
 import WithClass from '../../../hoc/WithClass';
 import classes from './StreamHead.module.css';
-import Button from '../../Button/Button';
+import Button from '../../../Button/Button';
 import Radium from 'radium';
 
 interface streamHeadProps {
