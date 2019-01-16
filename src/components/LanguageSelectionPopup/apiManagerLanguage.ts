@@ -4,7 +4,7 @@ class apiManagerLanguage
     
     constructor()
     {
-        this.backendUrl = "http://localhost:5000/";
+        this.backendUrl = "http://localhost:44323/";
     }
     async createLang(json: string): Promise<Response> {
         console.log("createLang");
