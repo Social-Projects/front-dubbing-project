@@ -4,11 +4,13 @@
     font-size: 18px;
 }
 
-#btn-audio-add{
+.btn-audio-add{
+    padding-left: 10px;
     font-size: 18px;
     border: none;
     background: none;
     color: #8cc152;
+    cursor: pointer;
 }
   
 #btn-audio-upload {
@@ -27,4 +29,5 @@
     border-radius: 3px;
     padding-left: 4%;
     color: #fff;
+    margin-bottom: 25px;
 }

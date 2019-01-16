@@ -1,80 +1,111 @@
-import * as React from 'react';
-import axios from 'axios';
+import * as React from "react";
 import AudioItem from "./AudioItem";
-import './AudioUpload.css';
-import API from '../util/api';
+import "./AudioUpload.css";
+import API from "../util/api";
 
 export interface IAudioUploadProps { }
 
 export interface IAudioUploadState {
-  filesToBeUpload: []
+  filesToBeUpload: any[];
+  textToAudioFiles: string[];
 }
 
 export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
-  constructor(props : IAudioUploadProps) {
-  
+  constructor(props: IAudioUploadProps) {
     super(props);
 
     this.state = {
-      filesToBeUpload: [] 
-    }
+      filesToBeUpload: [],
+      textToAudioFiles: []
+    };
+
+    this.fileChangedHandler = this.fileChangedHandler.bind(this);
+    this.fileDeleteHandler = this.fileDeleteHandler.bind(this);
+    this.fileUploadHandler = this.fileUploadHandler.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
   }
 
-  private fileChangedHandler = (event) => {
-    // Saving files to 'filesToBeUpload' state
+  private fileChangedHandler = (event: any) => {
     this.setState({
       filesToBeUpload: event.target.files
     });
-  }
+  };
 
-  fileDeleteHandler = (event) => {
+  fileDeleteHandler = (event: any) => {
     const fileToDeleteId = event.target.id;
+    const textToDeleteId = event.target.id;
 
-    let files = [...this.state.filesToBeUpload]
+    let textArr = [...this.state.textToAudioFiles];
+    let files = [...this.state.filesToBeUpload];
     files.splice(fileToDeleteId, 1);
+    textArr.splice(textToDeleteId, 1);
 
     this.setState({
-      filesToBeUpload: files
+      filesToBeUpload: files,
+      textToAudioFiles: textArr
     });
-  }
+  };
 
-  fileUploadHandler = () => {
-    // Checking if file array is empty
+  fileUploadHandler = async (performanceId: number) => {
     if (this.state.filesToBeUpload.length > 0) {
-
-      //Geting text from textarea
-      const textToAudioArray = document.getElementsByClassName('audio-text');
-
-      let filesArray = this.state.filesToBeUpload;
-
       let formData = new FormData();
 
-      for (var i = 0; i < filesArray.length; i++) {
-        // Adding data to formData element
-        formData = new FormData();
-        formData.append("AudioFile", filesArray[i]);
-        formData.append("Text", textToAudioArray[i].value);
+      for (var i = 0; i < this.state.filesToBeUpload.length; i++) {
+        let speech = {
+          text: this.state.textToAudioFiles[i],
+          performanceId: performanceId,
+          id: 0
+        };
 
-        // Sending post requset to server
-        API.post('upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+        let textResponse = await API.post("speech", speech, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          }
+        });
+
+        formData = new FormData();
+
+        formData.append("AudioFile", this.state.filesToBeUpload[i]);
+        formData.append("SpeechId", textResponse.data["id"]);
+        formData.append("LanguageId", "1");
+
+        await API.post("audio/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
         });
       }
-    }
-    else {
+    } else {
       alert("Select audio files");
     }
-  }
+  };
+
+  onTextChange = (text: string) => {
+    let textArr = [...this.state.textToAudioFiles];
+
+    if (!textArr.includes(text)) {
+      textArr.push(text);
+
+      this.setState({
+        textToAudioFiles: textArr
+      });
+    } else {
+      alert("Two similar strings");
+    }
+  };
 
   render() {
-
-    // Mapping selected files
     const filesToBeUpload = [...this.state.filesToBeUpload];
-    const filesList = filesToBeUpload.map((item, index) => <AudioItem 
-                                                              key={item.name} 
-                                                              name={item.name} 
-                                                              id={index} 
-                                                              onDelete={this.fileDeleteHandler}/>);
+    const filesList = filesToBeUpload.map((item, index) => (
+      <AudioItem
+        key={item.name}
+        name={item.name}
+        id={index}
+        audio={item.audio}
+        onDelete={this.fileDeleteHandler}
+        onTextChange={this.onTextChange.bind(this)}
+      />
+    ));
 
     return (
       <div className="audio-upload-section">
@@ -84,25 +115,25 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
               <label>Аудіо</label>
 
               <input
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
+                id="file-1"
                 type="file"
                 accept="audio/*"
                 onChange={this.fileChangedHandler}
-                ref={fileInput => this.fileInput = fileInput}
-                multiple />
+                multiple
+              />
 
-              <button id="btn-audio-add" onClick={() => this.fileInput.click()}><i className="fas fa-plus-circle"></i></button>
-              <button id="btn-audio-upload" onClick={this.fileUploadHandler}><i className="fas fa-upload"></i> Завантажити</button>
+              <label
+                htmlFor="file-1"
+                className="fas fa-plus-circle btn-audio-add"
+              />
+
             </div>
           </div>
         </div>
-
-        {/* Files to be upload list */}
         <div className="container">
           <div id="audio-container" className="row">
-
             {filesList}
-
           </div>
         </div>
       </div>
