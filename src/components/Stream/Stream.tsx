@@ -7,9 +7,9 @@ import classes from './Stream.module.css';
 import apiManager from '../../apiManager';
 import { async } from 'q';
 
-interface streamState{
+interface streamState {
     audioInfo: {
-        id:number,
+        id: number,
         text: string,
         duration: number
     }[],
@@ -17,7 +17,7 @@ interface streamState{
     currentSpeechId: number
 }
 
-interface streamProps{
+interface streamProps {
 
 }
 
@@ -115,18 +115,18 @@ class Stream extends Component<streamProps, streamState> {
         };
     }
 
-    getAudioInfo = async(index:number) =>{
+    getAudioInfo = async (index: number) => {
         const resp = await this.apiManager.getSpeechInfo(index);
-            const data = await resp.json();
-            this.setState(
-                {
-                    audioInfo: data
-                });
+        const data = await resp.json();
+        this.setState(
+            {
+                audioInfo: data
+            });
     }
 
-    getCurrentSpeechId=async() => {
+    getCurrentSpeechId = async () => {
         const resp = await this.apiManager.getCurrentSpeechId();
-        const data : number = await resp.json();
+        const data: number = await resp.json();
         this.setState(
             {
                 currentSpeechId: data
@@ -135,12 +135,20 @@ class Stream extends Component<streamProps, streamState> {
         return data;
     }
 
+    playByIdHandler = (index: number) => {
+        this.apiManager.playSpeechById(index);
+        this.getCurrentSpeechId();
+    }
+
 
     render() {
         return (
             <Aux>
-                <StreamHead name="Назва вистави" isPlaybacking={this.state.isPlay}/>
-                <StreamAudios audios={this.state.audioInfo} currentAudioId={this.state.currentSpeechId}/>
+                <StreamHead name="Назва вистави" isPlaybacking={this.state.isPlay} />
+                <StreamAudios
+                    audios={this.state.audioInfo}
+                    currentAudioId={this.state.currentSpeechId}
+                    playByIdHandler={this.playByIdHandler} />
             </Aux>
         )
     }

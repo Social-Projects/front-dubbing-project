@@ -3,7 +3,7 @@ import Aux from '../../../../hoc/Auxiliary';
 import WithClass from '../../../../hoc/WithClass';
 import classes from './ButtonSection.module.css';
 
-interface buttonSectionProps {};
+interface buttonSectionProps { };
 
 const buttonSection = (props: buttonSectionProps) => {
     return (
