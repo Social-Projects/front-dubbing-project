@@ -13,7 +13,7 @@ class ActionSection extends Component<any, any> {
         this.state = {
             numAudio: 1,
             totalTime: 90,
-            currentTime: 0,
+            currentTime: 35,
             currentSpeechId: null
         };
     }
@@ -22,10 +22,6 @@ class ActionSection extends Component<any, any> {
         this.apiManager.playSpeech();
     }
     
-    playByIdHandler = (index:number) => {
-        this.apiManager.playSpeechById(index);
-    }
-
     pauseHandler =() =>{
         this.apiManager.pauseSpeech();
     }
@@ -38,6 +34,10 @@ class ActionSection extends Component<any, any> {
         this.apiManager.prevSpeech();
     }
 
+    playByIdHandler = (index:number) => {
+        this.apiManager.playSpeechById(index);
+    }
+
     getCurrentSpeechId=async() =>{
         const resp = await this.apiManager.getCurrentSpeechId();
         const data = await resp.json();
@@ -47,7 +47,6 @@ class ActionSection extends Component<any, any> {
             }
         )
     }
-
 
     render() {
         return (

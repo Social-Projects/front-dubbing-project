@@ -3,6 +3,7 @@ import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
 import PerformancesPage from './components/Performances/PerformancesPage';
 import Stream from './components/Stream/Stream';
+
 import { Router, Route, Switch } from 'react-router-dom';
 import Aux from './hoc/Auxiliary';
 import history from './history'

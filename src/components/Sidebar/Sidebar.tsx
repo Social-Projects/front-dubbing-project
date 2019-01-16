@@ -11,11 +11,19 @@ class Sidebar extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
 
+        let isPerfomancesLinkActive = true;
+        let isStreamLinkActive = false;
+        if (location.pathname === '/stream')
+        {
+            isPerfomancesLinkActive = false;
+            isStreamLinkActive = true;
+        }
+
         this.state = {
             links: [
-                { isActive: true },
+                { isActive: isPerfomancesLinkActive },
                 { isActive: false },
-                { isActive: false }
+                { isActive: isStreamLinkActive }
             ] 
         };
     }
@@ -49,7 +57,6 @@ class Sidebar extends React.Component<any, any> {
                 <nav className="nav">
                     <Link to="/">
                         <SidebarItem
-                            href=""
                             name="Вистави"
                             imgSrc={perfomanceLogo}
                             isActive={this.state.links[0].isActive}
@@ -57,7 +64,6 @@ class Sidebar extends React.Component<any, any> {
                     </Link>
                     <Link to="/">
                         <SidebarItem
-                            href=""
                             name="Події"
                             imgSrc={eventLogo}
                             isActive={this.state.links[1].isActive}
@@ -65,7 +71,6 @@ class Sidebar extends React.Component<any, any> {
                     </Link>
                     <Link to="/stream">
                         <SidebarItem
-                            href=""
                             name="Трансляції"
                             imgSrc={streamLogo}
                             isActive={this.state.links[2].isActive}

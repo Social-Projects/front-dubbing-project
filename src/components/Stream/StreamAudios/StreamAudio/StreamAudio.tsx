@@ -1,16 +1,15 @@
 import React from 'react';
 import Aux from '../../../../hoc/Auxiliary';
 import WithClass from '../../../../hoc/WithClass';
-import classes from './PlaySection.module.css';
+import classes from './StreamAudio.module.css';
 
-interface PlaySectionProps {
-    numAudio: number,
-    totalTime: number,
-    currentTime: number
-};
+interface AudioProps {
+    text: string;
+    duration: number;
+    isPlaying: boolean;
+}
 
-const playSection = (props: PlaySectionProps) => {
-
+const audio = (props: AudioProps) => {
     const getViewNumber = (number: number): string => {
         if (number < 10)
         {
@@ -28,15 +27,22 @@ const playSection = (props: PlaySectionProps) => {
         return `${getViewNumber(minutes)}:${getViewNumber(seconds)}`;
     };
 
+    const iconActionsClasses = ["fas", classes.icon, "fa-play-circle"];
+    if (props.isPlaying)
+    {
+        iconActionsClasses.pop();
+        iconActionsClasses.push('fa-pause-circle');
+    }
+
     return (
         <Aux>
-            <span className={classes.numAudio}>#{getViewNumber(props.numAudio)}</span>
-            <span className={classes.playbackTime}>
-                {convSecondsToMinutes(props.currentTime)} / {convSecondsToMinutes(props.totalTime)}
+            <i className={iconActionsClasses.join(" ")}></i>
+            <span>
+                {props.text}
             </span>
-            <input className={classes.playbackScale} type="range" value={props.currentTime} max={props.totalTime}/>
+            <span className={classes.time}>{convSecondsToMinutes(props.duration)}</span>
         </Aux>
     )
-}
+};
 
-export default WithClass(playSection, classes.playSection);
+export default WithClass(audio, classes.audio);

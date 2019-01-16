@@ -3,7 +3,9 @@ import Aux from '../../../../hoc/Auxiliary';
 import WithClass from '../../../../hoc/WithClass';
 import classes from './ButtonSection.module.css';
 
-const buttonSection = (props: any) => {
+interface buttonSectionProps {};
+
+const buttonSection = (props: buttonSectionProps) => {
     return (
         <Aux>
             <a href="" className={classes.prev}>
