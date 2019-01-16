@@ -14,31 +14,48 @@ class ActionSection extends Component<any, any> {
             numAudio: 1,
             totalTime: 90,
             currentTime: 35,
-            currentSpeechId: null
+            currentSpeechId: null,
+            isPlaying: null
         };
     }
 
-    playHandler =() =>{
-        this.apiManager.playSpeech();
-    }
-    
-    pauseHandler =() =>{
-        this.apiManager.pauseSpeech();
+    playPauseHandler = () => {
+        if (!this.state.isPlaying) {
+            this.apiManager.playSpeech();
+            this.setState(
+                {
+                    isPlaying: true
+                }
+            )
+            this.getStateCurrentSpeechId();
+        }
+        else {
+            this.apiManager.pauseSpeech();
+            this.setState(
+                {
+                    isPlaying: true
+                }
+            )
+            this.getStateCurrentSpeechId();
+        }
     }
 
-    nextSpeechHandler = () =>{
+    nextSpeechHandler = () => {
         this.apiManager.nextSpeech();
+        this.getStateCurrentSpeechId();
     }
 
-    prevSpeechHandler = async() =>{
+    prevSpeechHandler = async () => {
         this.apiManager.prevSpeech();
+        this.getStateCurrentSpeechId();
     }
 
-    playByIdHandler = (index:number) => {
+    playByIdHandler = (index: number) => {
         this.apiManager.playSpeechById(index);
+        this.getStateCurrentSpeechId();
     }
 
-    getCurrentSpeechId=async() =>{
+    getStateCurrentSpeechId = async () => {
         const resp = await this.apiManager.getCurrentSpeechId();
         const data = await resp.json();
         this.setState(
@@ -51,7 +68,11 @@ class ActionSection extends Component<any, any> {
     render() {
         return (
             <Aux>
-                <ButtonSection />
+                <ButtonSection
+                    playHandler={this.playPauseHandler}
+                    nextSpeechHandler={this.nextSpeechHandler}
+                    prevSpeechHandler={this.prevSpeechHandler}
+                />
                 <PlaySection
                     numAudio={this.state.numAudio}
                     totalTime={this.state.totalTime}

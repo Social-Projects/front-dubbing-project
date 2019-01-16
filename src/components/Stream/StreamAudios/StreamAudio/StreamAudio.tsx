@@ -4,15 +4,17 @@ import WithClass from '../../../../hoc/WithClass';
 import classes from './StreamAudio.module.css';
 
 interface AudioProps {
-    text: string;
-    duration: number;
-    isPlaying: boolean;
+    text: string,
+    duration: number,
+    isPlaying: boolean,
+    playByIdHandler: any,
+    currentAudioId: number
 }
 
 const audio = (props: AudioProps) => {
+
     const getViewNumber = (number: number): string => {
-        if (number < 10)
-        {
+        if (number < 10) {
             return `0${number}`;
         }
         else {
@@ -28,15 +30,16 @@ const audio = (props: AudioProps) => {
     };
 
     const iconActionsClasses = ["fas", classes.icon, "fa-play-circle"];
-    if (props.isPlaying)
-    {
+    if (props.isPlaying) {
         iconActionsClasses.pop();
         iconActionsClasses.push('fa-pause-circle');
     }
 
     return (
         <Aux>
-            <i className={iconActionsClasses.join(" ")}></i>
+            <i
+                className={iconActionsClasses.join(" ")}
+                onClick={props.playByIdHandler(props.currentAudioId)}></i>
             <span>
                 {props.text}
             </span>

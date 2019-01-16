@@ -65,7 +65,7 @@ class apiManager {
 
     //Using for display list of audio on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Perfomance/AudiosInfo/${indexPerfomance}`,
+        const response = await fetch(`${this.backendUrl}api/perfomance/${indexPerfomance}/speeches`,
             {
                 method: 'GET',
                 headers: {
@@ -112,8 +112,8 @@ class apiManager {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin':'*'
-              }
+                'Access-Control-Allow-Origin': '*'
+            }
         });
         return response;
     }
