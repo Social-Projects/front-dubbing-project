@@ -8,6 +8,7 @@
   height: 50px;
   line-height: 50px;
   
+  
 }
 .main-div {
   background: #17212b none repeat scroll 0 0;
@@ -38,12 +39,12 @@
 
 #inputEmail{
     background: #242f3d;
-    width: 350px;
+    width: 100%;
     background-color: #242f3d;
 
 }
 #inputPassword{
-    width: 350px;
+    width: 100%;
     background: #242f3d;
     background-color: #242f3d;
 }
@@ -53,7 +54,7 @@
   border-color: #563a9d;
   color: #ffffff;
   font-size: 14px;
-  width: 350px;
+  width: 100%;
   height: 45px;
   border-radius: 5px;
   line-height: 50px;
