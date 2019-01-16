@@ -20,6 +20,7 @@ class Play extends React.Component<{}, PlayState>{
           }
       };
       render() {
+       
         let status = this.state.isMusicPlaying 
         ? 'PAUSE' 
         : 'PLAY';
@@ -28,15 +29,11 @@ class Play extends React.Component<{}, PlayState>{
             <p className="text-center">Spectacle Name</p>
             <button className={status}  onClick={this.handleClick.bind(this)}>
            { status }</button>   
-          <SelectLang/>
+          <SelectLang /* isEnabled={this.state.isMusicPlaying} *//> 
           </div>
         );
       }
 }
 
-function PlayButton(props:any) {
-    const className = props.isMusicPlaying ? 'play active' : 'play';
-    return <a href="#" title="Play video" className={className} />;
-  }
 
   export default Play;

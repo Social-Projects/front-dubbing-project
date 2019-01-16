@@ -1,12 +1,12 @@
 import React from 'react';
 import './Logo.css';
+import logo from './img/logo.png';
 
 class Logo extends React.Component {
     render() {
         return (
-            <a href="index.html" className="header-logo">
-                Театр ляльок
-            </a>
+            <img src={logo} className="header-logo"/>
+                      
         )
     }
 }
