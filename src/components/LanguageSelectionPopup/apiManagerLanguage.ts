@@ -1,15 +1,14 @@
-class apiManager
+class apiManagerLanguage
 {
-    
-   
     backendUrl = "";
     
     constructor()
     {
-        this.backendUrl = "https://localhost:44323/";
+        this.backendUrl = "http://localhost:44323/";
     }
-    async createPerformance(json: string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`,{
+    async createLang(json: string): Promise<Response> {
+        console.log("createLang");
+        const response = await fetch(`${this.backendUrl}api/Language`,{
             
             method: 'POST',
             headers: {
@@ -21,8 +20,9 @@ class apiManager
         });
             return response;
     }
-    async updatePerformance(json:string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`,{
+    
+    async updateLang(json:string): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Language`,{
             
             method: 'PUT',
             headers: {
@@ -34,27 +34,27 @@ class apiManager
         });
             return response;
     }
-    async getPerformances(): Promise<Response>
+    async getLang(): Promise<Response>
     {
-        const response = await fetch(`${this.backendUrl}api/Performance`);
-        return response;
-    }
-    async getPerformanceById(index:number): Promise<Response>
-    {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`,{
+        const response = await fetch(`${this.backendUrl}api/Language`,{
             
             method: 'GET',
-            mode:'no-cors',
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin':'*'
-            }});
+            }
+        });
         return response;
     }
-    async removePerformance(index:number): Promise<Response>
+    async getLangById(index:number): Promise<Response>
     {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`,{
+        const response = await fetch(`${this.backendUrl}api/Language/${index}`);
+        return response;
+    }
+    async removeLang(index:number): Promise<Response>
+    {
+        const response = await fetch(`${this.backendUrl}api/Language/${index}`,{
             
             method: 'DELETE',
             headers: {
@@ -65,4 +65,4 @@ class apiManager
             return response;
     }
 }
-export default apiManager;
+export default apiManagerLanguage;

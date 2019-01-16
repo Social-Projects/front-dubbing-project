@@ -1,9 +1,10 @@
 import React, { Component, createRef } from 'react';
 import apiManager from "../../apiManager";
 import { Link } from 'react-router-dom';
-import "./EditPerformance.css";
 import AudioUpload from '../AudioUpload';
 import IAudioUploadProps from '../AudioUpload';
+import "./EditPerformance.css"; 
+import history from '../../history'
 
 interface editPerformanceState {
     id: number,
@@ -62,7 +63,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
 
                 this.child.current.fileUploadHandler(this.state.id);
 
-                history.back();
+                history.push("/performance");
             }
             else {
                 console.log(resp.status);
@@ -80,7 +81,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
 
                 this.child.current.fileUploadHandler(JSONObj["id"]);
                 
-                history.back();
+                history.push("/performance");
             }
             else {
                 console.log(resp.status);
