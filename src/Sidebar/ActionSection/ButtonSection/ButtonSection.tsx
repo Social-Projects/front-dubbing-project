@@ -3,7 +3,9 @@ import Aux from '../../../hoc/Auxiliary';
 import WithClass from '../../../hoc/WithClass';
 import classes from './ButtonSection.module.css';
 
-interface buttonSectionProps { };
+interface buttonSectionProps {
+    playPauseHandler:any
+ };
 
 const buttonSection = (props: buttonSectionProps) => {
     return (
@@ -12,8 +14,8 @@ const buttonSection = (props: buttonSectionProps) => {
                 <i className="fas fa-fast-backward"></i>
             </a>
 
-            <a href="" className={classes.act}>
-                <i className="fas fa-play"></i>
+            <a href="" className={classes.act} onClick={(event) => props.playPauseHandler(event)}>
+                <i className="fas fa-play" ></i>
             </a>
 
             <a href="" className={classes.next}>

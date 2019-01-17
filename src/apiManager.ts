@@ -51,7 +51,9 @@ class apiManager {
         return response;
     }
     async removePerformance(index: number): Promise<Response> {
+        console.log("here");
         const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
+            
 
             method: 'DELETE',
             headers: {
@@ -60,13 +62,15 @@ class apiManager {
                 'Access-Control-Allow-Origin': '*'
             }
         });
+        
         return response;
     }
 
 
     //Using for display list of audio on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/perfomance/${indexPerfomance}/speeches`,
+        console.log("getSpeechInfo");
+        const response = await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`,
             {
                 method: 'GET',
                 headers: {
@@ -115,6 +119,13 @@ class apiManager {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             }
+        });
+        return response;
+    }
+
+    async load(performanceId:number): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
+            method: 'GET'
         });
         return response;
     }

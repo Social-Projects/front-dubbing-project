@@ -19,7 +19,8 @@ class ActionSection extends Component<any, any> {
         };
     }
 
-    playPauseHandler = () => {
+    playPauseHandler = (event : any) => {
+        event.preventDefault();
         if (!this.state.isPlaying) {
             this.apiManager.playSpeech();
             this.setState(
@@ -27,7 +28,7 @@ class ActionSection extends Component<any, any> {
                     isPlaying: true
                 }
             )
-            this.getStateCurrentSpeechId();
+            
         }
         else {
             this.apiManager.pauseSpeech();
@@ -36,23 +37,23 @@ class ActionSection extends Component<any, any> {
                     isPlaying: true
                 }
             )
-            this.getStateCurrentSpeechId();
+            
         }
     }
 
     nextSpeechHandler = () => {
         this.apiManager.nextSpeech();
-        this.getStateCurrentSpeechId();
+        
     }
 
     prevSpeechHandler = async () => {
         this.apiManager.prevSpeech();
-        this.getStateCurrentSpeechId();
+        
     }
 
     playByIdHandler = (index: number) => {
         this.apiManager.playSpeechById(index);
-        this.getStateCurrentSpeechId();
+        
     }
 
     getStateCurrentSpeechId = async () => {
@@ -65,11 +66,12 @@ class ActionSection extends Component<any, any> {
         )
     }
 
+
     render() {
         return (
             <Aux>
                 <ButtonSection
-                    playHandler={this.playPauseHandler}
+                    playPauseHandler={this.playPauseHandler}
                     nextSpeechHandler={this.nextSpeechHandler}
                     prevSpeechHandler={this.prevSpeechHandler}
                 />
