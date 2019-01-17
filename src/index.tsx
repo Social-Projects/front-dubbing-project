@@ -5,6 +5,8 @@ import './index.css';
 import PerformancesPage from './components/Performances/PerformancesPage';
 import editPerformance from './components/Performances/editPerformance';
 import * as serviceWorker from './serviceWorker';
+
+
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import App from './App';
