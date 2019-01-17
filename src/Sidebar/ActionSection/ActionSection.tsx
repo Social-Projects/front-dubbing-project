@@ -19,10 +19,10 @@ class ActionSection extends Component<any, any> {
         };
     }
 
-    playPauseHandler = (event : any) => {
+    playPauseHandler = async(event : any) => {
         event.preventDefault();
         if (!this.state.isPlaying) {
-            this.apiManager.playSpeech();
+            await this.apiManager.playSpeech();
             this.setState(
                 {
                     isPlaying: true
@@ -31,29 +31,28 @@ class ActionSection extends Component<any, any> {
             
         }
         else {
-            this.apiManager.pauseSpeech();
+            await this.apiManager.pauseSpeech();
             this.setState(
                 {
-                    isPlaying: true
+                    isPlaying: false
                 }
             )
             
         }
     }
 
-    nextSpeechHandler = () => {
+    nextSpeechHandler = async (event : any) => {
+        await event.preventDefault();
         this.apiManager.nextSpeech();
-        
     }
 
-    prevSpeechHandler = async () => {
-        this.apiManager.prevSpeech();
-        
+    prevSpeechHandler = async (event : any) => {
+        await event.preventDefault();
+        this.apiManager.prevSpeech();   
     }
 
-    playByIdHandler = (index: number) => {
-        this.apiManager.playSpeechById(index);
-        
+    playByIdHandler = async (index: number) => {
+        await this.apiManager.playSpeechById(index);
     }
 
     getStateCurrentSpeechId = async () => {
