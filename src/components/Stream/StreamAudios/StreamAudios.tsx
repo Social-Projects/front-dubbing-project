@@ -16,9 +16,10 @@ const streamAudios = (props: StreamAudioProps) => {
             text={audio.text}
             duration={audio.duration}
             key={index}
+            currentAudioId={audio.id}
             isPlaying={props.currentAudioId === audio.id ? true : false}
             playByIdHandler={props.playByIdHandler}
-            currentAudioId={props.currentAudioId} />
+             />
     });
 
     return (

@@ -33,13 +33,21 @@ const audio = (props: AudioProps) => {
     if (props.isPlaying) {
         iconActionsClasses.pop();
         iconActionsClasses.push('fa-pause-circle');
+    } 
+    else{
+        iconActionsClasses.pop();
+        iconActionsClasses.push('fa-play-circle');
+    }
+
+    function playHandler() {
+        console.log(props.currentAudioId);
+
+        props.playByIdHandler(props.currentAudioId)
     }
 
     return (
         <Aux>
-            <i
-                className={iconActionsClasses.join(" ")}
-                onClick={props.playByIdHandler(props.currentAudioId)}></i>
+            <i className={iconActionsClasses.join(" ")} onClick={playHandler}></i>
             <span>
                 {props.text}
             </span>
