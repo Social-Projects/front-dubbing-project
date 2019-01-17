@@ -2,9 +2,10 @@ class apiManager {
 
 
     backendUrl = "";
-
-    constructor() {
-        this.backendUrl = "http://localhost:5000/";
+    
+    constructor()
+    {
+        this.backendUrl = "https://localhost:44323/";
     }
     async createPerformance(json: string): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance`, {

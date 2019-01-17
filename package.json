@@ -13,6 +13,7 @@
     "@types/react-router": "^4.4.3",
     "@types/react-router-dom": "^4.3.1",
     "@types/reactstrap": "^6.4.3",
+    "axios": "^0.18.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
     "babel-jest": "23.6.0",
@@ -65,10 +66,9 @@
     "sass-loader": "7.1.0",
     "style-loader": "0.23.0",
     "terser-webpack-plugin": "1.1.0",
-    "typescript": "^3.2.2",
     "url-loader": "1.1.1",
     "webpack": "4.19.1",
-    "webpack-dev-server": "3.1.9",
+    "webpack-dev-server": "^3.1.14",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "3.6.3"
   },
@@ -131,5 +131,9 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.2"
   }
 }
