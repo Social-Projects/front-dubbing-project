@@ -36,6 +36,7 @@ class Stream extends Component<streamProps, streamState> {
     getSpeechInfo = async (index: number) => {
         const resp = await this.apiManager.getSpeechInfo(index);
         const data = await resp.json();
+        
         this.setState(
             {
                 audioInfo: data
@@ -47,9 +48,6 @@ class Stream extends Component<streamProps, streamState> {
 
         if(resp.status == 200){
         const data: number = await resp.json();
-        
-      
-        
         this.setState(
             {
                 currentSpeechId: data
@@ -62,9 +60,9 @@ class Stream extends Component<streamProps, streamState> {
         }
     }
 
-    playByIdHandler = (index: number) => {
-        this.apiManager.playSpeechById(index);
-        this.getCurrentSpeechId();
+    playByIdHandler = async(index: number) => {
+        await this.apiManager.playSpeechById(index);
+        await this.getCurrentSpeechId();
     }
 
 
