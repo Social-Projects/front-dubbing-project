@@ -73,11 +73,7 @@ class Stream extends Component<streamProps, streamState> {
     }
 
     async componentDidMount() {
-        // this.setState({
-        //     perfomanceId: parseInt(this.props.match.params.number.toString())
-        // });
         console.log("state: " + this.state.perfomanceId);
-
         await this.apiManager.load(this.state.perfomanceId);
         await this.getSpeechInfo(this.state.perfomanceId);
     }
