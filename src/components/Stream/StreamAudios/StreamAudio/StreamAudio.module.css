@@ -1,0 +1,28 @@
+.audio {
+    position: relative;
+    padding: 12px 78px 8px 64px;
+    background-color: #17212b;
+    border-bottom: 1px solid #535354;
+}
+
+.audio .icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 11px;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.audio .icon:hover {
+    font-size: 38px;
+}
+
+.audio .time {
+    position: absolute;
+    top: 21px;
+    right: 15px;
+    font-size: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+}

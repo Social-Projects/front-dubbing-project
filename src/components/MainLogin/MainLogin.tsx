@@ -8,7 +8,7 @@ class MainLogin extends React.Component{
     render(){ 
         return(
             
-    <div className="App">
+    <div className="MainLogin">
          <img className="logoImg" width="200px" src={Logo} alt=""/>
          <Login/>
     </div>

@@ -109,32 +109,22 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
     return (
       <div className="audio-upload-section">
-        <div className="container">
-          <div className="row">
-            <div className="col-sm-12 audio-header">
-              <label>Аудіо</label>
-
-              <input
-                style={{ display: "none" }}
-                id="file-1"
-                type="file"
-                accept="audio/*"
-                onChange={this.fileChangedHandler}
-                multiple
-              />
-
-              <label
-                htmlFor="file-1"
-                className="fas fa-plus-circle btn-audio-add"
-              />
-
-            </div>
-          </div>
+        <div className="col-sm-12 audio-header">
+          <label>Аудіо</label>
+  
+          <input
+            style={{ display: "none" }}
+            id="file-1"
+            type="file"
+            accept="audio/*"
+            onChange={this.fileChangedHandler}
+            multiple
+          />
+  
+          <label htmlFor="file-1" className="fas fa-plus-circle btn-audio-add" />
         </div>
-        <div className="container">
-          <div id="audio-container" className="row">
-            {filesList}
-          </div>
+        <div id="audio-container" className="row">
+          {filesList}
         </div>
       </div>
     );

@@ -5,6 +5,7 @@ import AudioUpload from '../AudioUpload';
 import IAudioUploadProps from '../AudioUpload';
 import "./EditPerformance.css"; 
 import history from '../../history'
+import LanguageSelectionPopup from "../LanguageSelectionPopup/LanguageSelectionPopup"
 
 interface editPerformanceState {
     id: number,
@@ -133,6 +134,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 <textarea className="descrField" name="description" onChange={this.handleChange} value={this.state.description} />
 
                 <AudioUpload ref={this.child}></AudioUpload>
+                <LanguageSelectionPopup
+                buttonLabel="Керувати мовами дубляжу"></LanguageSelectionPopup>{/*popup for language management. Created by reactstrap. Props here https://reactstrap.github.io/components/modals/ */}
+        
 
 
             </div>

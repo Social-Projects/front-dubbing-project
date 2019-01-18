@@ -10,8 +10,12 @@
     transition: background-color 0.3s;
 }
 
-.nav-item:hover {
+a:not(:nth-child(3)) .nav-item:hover {
     background-color: #242f3d;
+}
+
+a:nth-child(3) {
+    cursor: default;
 }
 
 .nav-item-active {
