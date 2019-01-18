@@ -7,25 +7,29 @@ import streamLogo from './img/stream-logo.png';
 import './Sidebar.css';
 import { Link } from 'react-router-dom';
 
-class Sidebar extends React.Component<any, any> {
+interface SidebarState {
+    links: {
+        isActive: boolean
+    }[],
+    performanceId: number
+}
+
+class Sidebar extends React.Component<{}, SidebarState> {
     constructor(props: any) {
         super(props);
-
-        let isPerfomancesLinkActive = true;
-        let isStreamLinkActive = false;
-        if (location.pathname === '/stream')
-        {
-            isPerfomancesLinkActive = false;
-            isStreamLinkActive = true;
-        }
-
         this.state = {
             links: [
-                { isActive: isPerfomancesLinkActive },
+                { isActive: true },
                 { isActive: false },
-                { isActive: isStreamLinkActive }
-            ] 
+                { isActive: false }
+            ],
+            performanceId: -1
         };
+    }
+
+    componentDidMount() {
+        //setInterval(() => this.checkIsStreamPageActive(), 1000);
+        console.log("Sidebar componentDidMound");
     }
 
     changeLinkActive = (index: number): void => {
@@ -45,11 +49,44 @@ class Sidebar extends React.Component<any, any> {
         });
     }
 
+    // checkIsStreamPageActive = () => {
+    //     // if (localStorage.getItem("isStreamActive") != null) {
+    //     //     let performanceInString: any = "";
+    //     //     performanceInString = localStorage.getItem("isStreamActive");
+    //     //     let perfomance = JSON.parse(performanceInString);
+            
+    //     //     this.changeLinkActive(2);
+    //     //     localStorage.removeItem("isStreamActive");
+    //     // }
+    //     // else {
+    //     //     return;
+    //     // }
+    // }
+
+    static getDerivedStateFromProps(props: any, state: any) {
+        const pathName = location.pathname;
+        const segments = pathName.split('/');
+        const newState = {
+            ...state
+        };
+
+        if (segments[1] === 'stream') {
+            newState.links.forEach((link: any) => link.isActive = false);
+            newState.links[2].isActive = true;
+            newState.performanceId = parseInt(segments[2]);
+        }
+        else {
+            newState.performanceId = -1;
+        }
+
+        return newState;
+    }
+
     render() {
 
-        let actionSection: any = null;
-        if (window.location.pathname === '/stream') {
-            actionSection = <ActionSection />;
+        let actionSection = null;
+        if (this.state.performanceId !== -1) {
+            actionSection = <ActionSection performanceId={this.state.performanceId} />;
         }
 
         return (
@@ -69,13 +106,13 @@ class Sidebar extends React.Component<any, any> {
                             isActive={this.state.links[1].isActive}
                             clicked={() => this.changeLinkActive(1)} />
                     </Link>
-                    <Link to="/stream">
+                    <a href="" onClick={(event) => event.preventDefault()}>
                         <SidebarItem
                             name="Трансляції"
                             imgSrc={streamLogo}
                             isActive={this.state.links[2].isActive}
-                            clicked={() => this.changeLinkActive(2)} />
-                    </Link>
+                            clicked={() => {}} />
+                    </a>
                 </nav>
                 
                 {actionSection}

@@ -6,8 +6,10 @@ import WithClass from '../../hoc/WithClass';
 import classes from './Stream.module.css';
 import apiManager from '../../apiManager';
 import { async } from 'q';
+import SidebarItem from '../../Sidebar/SidebarItem';
 
 interface streamState {
+    perfomanceId: number,
     audioInfo: {
         id: number,
         text: string,
@@ -18,7 +20,11 @@ interface streamState {
 }
 
 interface streamProps {
-
+    match: {
+        params: {
+            number: number
+        }
+    }
 }
 
 class Stream extends Component<streamProps, streamState> {
@@ -27,6 +33,7 @@ class Stream extends Component<streamProps, streamState> {
     constructor(props: any) {
         super(props);
         this.state = {
+            perfomanceId: -1,
             isPlay: false,
             audioInfo: [
                 {
@@ -140,6 +147,11 @@ class Stream extends Component<streamProps, streamState> {
         this.getCurrentSpeechId();
     }
 
+    componentDidMount() {
+        this.setState({
+            perfomanceId: this.props.match.params.number
+        });
+    }
 
     render() {
         return (

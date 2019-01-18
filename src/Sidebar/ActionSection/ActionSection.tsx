@@ -6,11 +6,26 @@ import WithClass from '../../hoc/WithClass';
 import classes from './ActionSection.module.css';
 import apiManager from '../../apiManager';
 
-class ActionSection extends Component<any, any> {
+interface ActionSectionProps {
+    performanceId: number;
+};
+
+interface ActionSectionState {
+    performanceId: number,
+    numAudio: number,
+    totalTime: number,
+    currentTime: number,
+    currentSpeechId: any,
+    isPlaying: any
+};
+
+class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     apiManager = new apiManager();
     constructor(props: any) {
         super(props);
+
         this.state = {
+            performanceId: this.props.performanceId,
             numAudio: 1,
             totalTime: 90,
             currentTime: 35,
@@ -72,6 +87,7 @@ class ActionSection extends Component<any, any> {
                     playHandler={this.playPauseHandler}
                     nextSpeechHandler={this.nextSpeechHandler}
                     prevSpeechHandler={this.prevSpeechHandler}
+                    isPlaying={this.state.isPlaying}
                 />
                 <PlaySection
                     numAudio={this.state.numAudio}

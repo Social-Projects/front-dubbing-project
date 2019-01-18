@@ -9,6 +9,7 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 20px;
+    cursor: pointer;
 
     transition: color 0.3s;
 }
@@ -26,19 +27,29 @@
 }
 
 .btnSection .act {
-    width: 80px;
-    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
-
-    font-size: 40px;
-    background-color: #8cc152;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
+    font-size: 40px;
 
     transition: background-color 0.3s;
 }
 
-.btnSection .act:hover {
+.play {
+    background-color: #8cc152;
+}
+
+.play:hover {
     background-color: #659431;
+}
+
+.pause {
+    background-color: #da4453;
+}
+
+.pause:hover {
+    background-color: #cf1225;
 }

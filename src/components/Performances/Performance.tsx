@@ -22,9 +22,9 @@ class Performance extends Component<performanceProps>
             
                 <p className="col-md-6 pull-left perfTitle" >{this.props.title}</p>
                 <div className="col-md-6 text-right PerformanceButtons ">
-                        <Link to={"/performance/"+this.props.index} >
-                            <button className="editBtn" />
-                        </Link>
+                    <Link to={"/performance/"+this.props.index} >
+                        <button className="editBtn" />
+                    </Link>
                   
                     <button className="close" onClick={this.remove.bind(this)} >x</button>
                 </div>
@@ -33,8 +33,10 @@ class Performance extends Component<performanceProps>
             <p>
                 {this.props.description}
             </p>
-            <button className="gotoPerfBtn ">Перейти до вистави <div className="gotoImage" /></button>
-            </div>
+            <Link to={"/stream/" + this.props.index}>
+                <button className="gotoPerfBtn ">Перейти до вистави <div className="gotoImage" /></button>
+            </Link>
+        </div>
         );
     }
 }

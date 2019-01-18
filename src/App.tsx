@@ -25,14 +25,15 @@ class App extends Component {
                 <Route exact path="/" component={PerformancesPage} />
                 <Route path="/performance" component={PerformancesPage} />
                 <Route path="/login" component={MainLogin} />
-                <Route path="/stream" component={Stream} />
+                <Route path="/stream/:number" component={Stream} />
               </Switch>
             </Aux>
           </Router>
-          </main>
+        </main>
       </div>
     );
   }
 }
+
 export default App;
 

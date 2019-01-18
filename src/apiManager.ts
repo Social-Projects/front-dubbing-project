@@ -5,7 +5,7 @@ class apiManager {
     
     constructor()
     {
-        this.backendUrl = "https://localhost:44323/";
+        this.backendUrl = "https://localhost:5001/";
     }
     async createPerformance(json: string): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance`, {
@@ -41,7 +41,6 @@ class apiManager {
         const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
 
             method: 'GET',
-            mode: 'no-cors',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
