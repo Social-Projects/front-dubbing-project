@@ -80,7 +80,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                this.child.current.fileUploadHandler(JSONObj["id"]);
+                await this.child.current.fileUploadHandler(JSONObj["id"]);
                 
                 history.push("/performance");
             }
