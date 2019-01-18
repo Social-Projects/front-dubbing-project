@@ -27,7 +27,7 @@ button.close:hover {
     background-repeat: no-repeat;
     border: none; 
     width:16px;
-    margin-top: 10px;
+    margin-top: 2px;
     height:16px;
     cursor: default;
     -webkit-appearance: none;

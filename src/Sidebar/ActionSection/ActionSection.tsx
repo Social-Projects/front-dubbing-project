@@ -34,40 +34,40 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
         };
     }
 
-    playPauseHandler = () => {
+    playPauseHandler = async(event : any) => {
+        event.preventDefault();
         if (!this.state.isPlaying) {
-            this.apiManager.playSpeech();
+            await this.apiManager.playSpeech();
             this.setState(
                 {
                     isPlaying: true
                 }
             )
-            this.getStateCurrentSpeechId();
+            
         }
         else {
-            this.apiManager.pauseSpeech();
+            await this.apiManager.pauseSpeech();
             this.setState(
                 {
-                    isPlaying: true
+                    isPlaying: false
                 }
             )
-            this.getStateCurrentSpeechId();
+            
         }
     }
 
-    nextSpeechHandler = () => {
+    nextSpeechHandler = async (event : any) => {
+        await event.preventDefault();
         this.apiManager.nextSpeech();
-        this.getStateCurrentSpeechId();
     }
 
-    prevSpeechHandler = async () => {
-        this.apiManager.prevSpeech();
-        this.getStateCurrentSpeechId();
+    prevSpeechHandler = async (event : any) => {
+        await event.preventDefault();
+        this.apiManager.prevSpeech();   
     }
 
-    playByIdHandler = (index: number) => {
-        this.apiManager.playSpeechById(index);
-        this.getStateCurrentSpeechId();
+    playByIdHandler = async (index: number) => {
+        await this.apiManager.playSpeechById(index);
     }
 
     getStateCurrentSpeechId = async () => {
@@ -80,11 +80,12 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
         )
     }
 
+
     render() {
         return (
             <Aux>
                 <ButtonSection
-                    playHandler={this.playPauseHandler}
+                    playPauseHandler={this.playPauseHandler}
                     nextSpeechHandler={this.nextSpeechHandler}
                     prevSpeechHandler={this.prevSpeechHandler}
                     isPlaying={this.state.isPlaying}

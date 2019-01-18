@@ -35,96 +35,15 @@ class Stream extends Component<streamProps, streamState> {
         this.state = {
             perfomanceId: -1,
             isPlay: false,
-            audioInfo: [
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 120,
-                    id: 1
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 80,
-                    id: 2
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 65,
-                    id: 3
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 100,
-                    id: 4
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 95,
-                    id: 5
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 180,
-                    id: 6
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 194,
-                    id: 7
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 132,
-                    id: 8
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 177,
-                    id: 9
-                },
-                {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" +
-                        "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                        "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate" +
-                        "velit esse cillum dolore eu fugiat nulla pariatur.",
-                    duration: 185,
-                    id: 10
-                },
-            ],
-            //audioInfo: [],
+            audioInfo: [],
             currentSpeechId: -1
         };
     }
 
-    getAudioInfo = async (index: number) => {
+    getSpeechInfo = async (index: number) => {
         const resp = await this.apiManager.getSpeechInfo(index);
         const data = await resp.json();
+        
         this.setState(
             {
                 audioInfo: data
@@ -133,6 +52,8 @@ class Stream extends Component<streamProps, streamState> {
 
     getCurrentSpeechId = async () => {
         const resp = await this.apiManager.getCurrentSpeechId();
+
+        if(resp.status == 200){
         const data: number = await resp.json();
         this.setState(
             {
@@ -140,19 +61,26 @@ class Stream extends Component<streamProps, streamState> {
             }
         )
         return data;
+        }
+        else {
+            return -1;
+        }
     }
 
-    playByIdHandler = (index: number) => {
-        this.apiManager.playSpeechById(index);
-        this.getCurrentSpeechId();
+    playByIdHandler = async(index: number) => {
+        await this.apiManager.playSpeechById(index);
+        await this.getCurrentSpeechId();
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.setState({
             perfomanceId: this.props.match.params.number
         });
-    }
 
+        await this.apiManager.load(1);
+        await this.getSpeechInfo(1);
+    }
+    
     render() {
         return (
             <Aux>

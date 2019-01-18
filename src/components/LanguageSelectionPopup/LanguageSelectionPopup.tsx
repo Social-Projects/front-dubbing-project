@@ -141,6 +141,7 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
     }
 
     public render() {
+        
         var currentLangName = this.state.currentLang.name;
         let inputs = null
         if (this.state.radioState === "add") {
