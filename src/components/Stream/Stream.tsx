@@ -33,7 +33,7 @@ class Stream extends Component<streamProps, streamState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            perfomanceId: -1,
+            perfomanceId: this.props.match.params.number,
             isPlay: false,
             audioInfo: [],
             currentSpeechId: -1
@@ -73,12 +73,9 @@ class Stream extends Component<streamProps, streamState> {
     }
 
     async componentDidMount() {
-        this.setState({
-            perfomanceId: this.props.match.params.number
-        });
-
-        await this.apiManager.load(1);
-        await this.getSpeechInfo(1);
+        console.log("state: " + this.state.perfomanceId);
+        await this.apiManager.load(this.state.perfomanceId);
+        await this.getSpeechInfo(this.state.perfomanceId);
     }
     
     render() {
