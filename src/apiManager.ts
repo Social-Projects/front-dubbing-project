@@ -2,7 +2,7 @@ class apiManager {
     backendUrl = "";
 
     constructor() {
-        this.backendUrl = "https://localhost:44323/";
+        this.backendUrl = "https://localhost:5001/";
     }
 
     async createPerformance(json: string): Promise<Response> {
