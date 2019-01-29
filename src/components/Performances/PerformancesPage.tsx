@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import EditPerformance from "./EditPerformance/EditPerformance";
 
 class PerformancesPage extends Component {
-  
+
   render() {
     return (
       <Switch>
