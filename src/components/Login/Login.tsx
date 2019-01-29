@@ -1,43 +1,19 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './Login.css';
+import Logo from '../../assets/images/theater-logo.png';
+import Form from './Form/Form';
 
+class MainLogin extends React.Component {
 
-class Login extends React.Component {
     render() {
         return (
 
-            <div className="login-form">
-
-                <div className="main-div">
-                    <div >
-                        <h2>Вхід</h2>
-                    </div>
-
-                    <form id="Login" >
-
-                        <div className="form-group">
-                            <input type="email" className="form-control" id="inputEmail" placeholder="Логін" />
-                        </div>
-
-                        <div className="form-group">
-                            <input type="password" className="form-control" id="inputPassword" placeholder="Пароль" />
-                        </div>
-
-                        <button type="submit" className="btn btn-primary">Вхід</button>
-
-                        <label className="remember">
-                            <span>Запам'ятати</span> <span><input id="remember-me" name="remember-me" type="checkbox" /></span>
-                        </label>
-
-                        <div id="register-link" className="text-right">
-                            <a href="#" className="text-info" >Забули пароль?</a>
-                        </div>
-
-                    </form>
-
-                </div>
+            <div className="MainLogin">
+                <img className="logoImg" width="200px" src={Logo} alt="" />
+                <Form />
             </div>
         )
     }
 }
-export default Login;
+
+export default MainLogin;

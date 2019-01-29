@@ -4,13 +4,12 @@ import StreamAudios from './StreamAudios/StreamAudios';
 import Aux from '../../hoc/Auxiliary';
 import WithClass from '../../hoc/WithClass';
 import classes from './Stream.module.css';
-import apiManager from '../../apiManager';
+import apiManager from '../../util/apiManager';
 import { async } from 'q';
-import SidebarItem from '../../Sidebar/SidebarItem';
 
 interface streamState {
     perfomanceId: number,
-    audioInfo: {
+    speechInfo: {
         id: number,
         text: string,
         duration: number
@@ -35,7 +34,7 @@ class Stream extends Component<streamProps, streamState> {
         this.state = {
             perfomanceId: this.props.match.params.number,
             isPlay: false,
-            audioInfo: [],
+            speechInfo: [],
             currentSpeechId: -1
         };
     }
@@ -46,7 +45,7 @@ class Stream extends Component<streamProps, streamState> {
         
         this.setState(
             {
-                audioInfo: data
+                speechInfo: data
             });
     }
 
@@ -83,7 +82,7 @@ class Stream extends Component<streamProps, streamState> {
             <Aux>
                 <StreamHead name="Назва вистави" isPlaybacking={this.state.isPlay} />
                 <StreamAudios
-                    audios={this.state.audioInfo}
+                    audios={this.state.speechInfo}
                     currentAudioId={this.state.currentSpeechId}
                     playByIdHandler={this.playByIdHandler} />
             </Aux>

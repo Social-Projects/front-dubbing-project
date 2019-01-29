@@ -1,0 +1,1 @@
+export const LOAD_STREAM = 'LOAD_STREAM';
