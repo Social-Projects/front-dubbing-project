@@ -200,7 +200,7 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
 
             <div className="languageButton">
                 <Button
-                    color="danger"
+                    color="primary"
                     onClick={this.toggle}>{this.props.buttonLabel}</Button>
                 <Modal
                     isOpen={this.state.modal}
