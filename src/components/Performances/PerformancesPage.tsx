@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import PerformanceList from "./PerformanceList"
+import PerformanceList from "./PerformanceList/PerformanceList"
+
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
-import editPerformance from "./editPerformance";
+import EditPerformance from "./EditPerformance/EditPerformance";
 
 class PerformancesPage extends Component {
   
@@ -12,7 +13,7 @@ class PerformancesPage extends Component {
           <Redirect to="/performance" />
         )} />
         <Route exact path='/performance' component={PerformanceList} />
-        <Route path='/performance/:number' component={editPerformance} />
+        <Route path='/performance/:number' component={EditPerformance} />
       </Switch>
     );
   }

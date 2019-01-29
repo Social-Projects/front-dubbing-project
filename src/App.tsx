@@ -1,39 +1,33 @@
-
 import React, { Component } from 'react';
-import Header from './Header/Header';
-import Sidebar from './Sidebar/Sidebar';
-import LanguageSelectionPopup from "./components/LanguageSelectionPopup/LanguageSelectionPopup";
-import './App.css';
+import { Route, Switch } from 'react-router-dom';
+
+import Header from './components/Toolbar/Header/Header';
+import Sidebar from './components/Toolbar/Sidebar/Sidebar';
 import PerformancesPage from './components/Performances/PerformancesPage';
 import Stream from './components/Stream/Stream';
-
-import { Router, Route, Switch } from 'react-router-dom';
+import Login from './components/Login/Login';
 import Aux from './hoc/Auxiliary';
-import history from './history'
-import MainLogin from './components/MainLogin/MainLogin';
+import LanguageSelectionPopup from "./components/LanguageSelectionPopup/LanguageSelectionPopup";
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <Aux>
         <Header />
         <main>
-          <Router history={history} >
-            <Aux>
-              <Sidebar />
-              <Switch>
-                <Route exact path="/" component={PerformancesPage} />
-                <Route path="/performance" component={PerformancesPage} />
-                <Route path="/login" component={MainLogin} />
-                <Route path="/stream/:number" component={Stream} />
-              </Switch>
-            </Aux>
-          </Router>
+          <Sidebar />
+          <Switch>
+            <Route path="/login" component={Login} />
+            <Route exact path="/" component={PerformancesPage} />
+            <Route path="/performance" component={PerformancesPage} />
+            <Route path="/event"
+                   render={() => <h1 style={{textAlign: 'center'}}>This section in development mode!</h1>}/>
+            <Route exact path="/stream/:number" component={Stream} />
+          </Switch>
         </main>
-      </div>
+      </Aux>
     );
   }
 }
 
 export default App;
-

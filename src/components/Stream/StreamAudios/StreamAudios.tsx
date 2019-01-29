@@ -10,16 +10,14 @@ interface StreamAudioProps {
 }
 
 const streamAudios = (props: StreamAudioProps) => {
-
     const audios = props.audios.map((audio: any, index: number) => {
         return <StreamAudio
-            text={audio.text}
-            duration={audio.duration}
-            key={index}
-            currentAudioId={audio.id}
-            isPlaying={props.currentAudioId === audio.id ? true : false}
-            playByIdHandler={props.playByIdHandler}
-             />
+                    text={audio.text}
+                    duration={audio.duration}
+                    key={index}
+                    currentAudioId={audio.id}
+                    isPlaying={props.currentAudioId === audio.id ? true : false}
+                    playByIdHandler={props.playByIdHandler} />
     });
 
     return (
