@@ -34,6 +34,10 @@ class Sidebar extends React.Component<{}, SidebarState> {
             updatedState.performanceId = parseInt(segments[2]);
         }
 
+        if (segments[1] !== 'stream' && updatedState.performanceId !== -1) {
+            updatedState.performanceId = -1;
+        }
+
         return updatedState;
     }
 
