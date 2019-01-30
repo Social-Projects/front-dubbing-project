@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./Performance.css"
+import PopupRemovePerformance from "./PopupRemovePerformance/PopupRemovePerformance"
 
 interface performanceProps {
     deleteMethod:any,
@@ -25,8 +26,7 @@ class Performance extends Component<performanceProps>
                     <Link to={"/performance/"+this.props.index} >
                         <button className="editBtn" />
                     </Link>
-                  
-                    <button className="close" onClick={this.remove.bind(this)} >x</button>
+                    <PopupRemovePerformance buttonLabel="x" removeMethod={this.remove.bind(this)}></PopupRemovePerformance>
                 </div>
             </div>
 
