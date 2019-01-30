@@ -7,7 +7,7 @@ import PerformancesPage from './components/Performances/PerformancesPage';
 import Stream from './components/Stream/Stream';
 import Login from './components/Login/Login';
 import Aux from './hoc/Auxiliary';
-import LanguageSelectionPopup from "./components/LanguageSelectionPopup/LanguageSelectionPopup";
+
 
 class App extends Component {
   render() {

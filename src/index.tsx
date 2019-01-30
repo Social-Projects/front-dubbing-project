@@ -10,10 +10,14 @@ import history from './util/history';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
+import config from 'react-global-configuration';
+import configuration from './config';
 
 const reducer = combineReducers({
     stream: streamReducer
 });
+
+config.set(configuration);
 
 const store = createStore(reducer);
 

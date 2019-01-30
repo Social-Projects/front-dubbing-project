@@ -1,8 +1,9 @@
+import config from 'react-global-configuration';
 class apiManager {
     backendUrl = "";
 
     constructor() {
-        this.backendUrl = "https://localhost:5001/";
+        this.backendUrl = config.get("urlApi");
     }
 
     async createPerformance(json: string): Promise<Response> {
