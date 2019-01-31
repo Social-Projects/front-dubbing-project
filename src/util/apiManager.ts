@@ -1,4 +1,5 @@
 import config from 'react-global-configuration';
+
 class apiManager {
     backendUrl = "";
 
@@ -72,7 +73,7 @@ class apiManager {
         return response;
     }
 
-    //Using for display list of audio on stream page
+    //Using for display list of speeches on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
         console.log("try get speeches info");
         const response = await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`, {
@@ -87,14 +88,14 @@ class apiManager {
         return response;
     }
 
-    async playSpeech(): Promise<Response> {
-        console.log("try to play");
-        const response = await fetch(`${this.backendUrl}api/Streaming/Play`, {
-            method: 'GET'
-        });
-        console.log("play");
-        return response;
-    }
+    // async playSpeech(): Promise<Response> {
+    //     console.log("try to play");
+    //     const response = await fetch(`${this.backendUrl}api/Streaming/Play`, {
+    //         method: 'GET'
+    //     });
+    //     console.log("play");
+    //     return response;
+    // }
 
     async playSpeechById(index: number): Promise<Response> {
         console.log("try to play by id");
@@ -114,23 +115,23 @@ class apiManager {
         return response;
     }
 
-    async nextSpeech(): Promise<Response> {
-        console.log("try play next speech");
-        const response = await fetch(`${this.backendUrl}api/Streaming/NextSpeech`, {
-            method: 'GET'
-        });
-        console.log("play next speech");
-        return response;
-    }
+    // async nextSpeech(): Promise<Response> {
+    //     console.log("try play next speech");
+    //     const response = await fetch(`${this.backendUrl}api/Streaming/NextSpeech`, {
+    //         method: 'GET'
+    //     });
+    //     console.log("play next speech");
+    //     return response;
+    // }
 
-    async prevSpeech(): Promise<Response> {
-        console.log("try play previous speech");
-        const response = await fetch(`${this.backendUrl}api/Streaming/PrevSpeech`, {
-            method: 'GET'
-        });
-        console.log("play previous speech");
-        return response;
-    }
+    // async prevSpeech(): Promise<Response> {
+    //     console.log("try play previous speech");
+    //     const response = await fetch(`${this.backendUrl}api/Streaming/PrevSpeech`, {
+    //         method: 'GET'
+    //     });
+    //     console.log("play previous speech");
+    //     return response;
+    // }
 
     async getCurrentSpeechId(): Promise<Response> {
         console.log("try get current speech id");
@@ -146,6 +147,7 @@ class apiManager {
         return response;
     }
 
+    // Load required speeches to stream service
     async load(performanceId: number): Promise<Response> {
         console.log("try load");
         const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
