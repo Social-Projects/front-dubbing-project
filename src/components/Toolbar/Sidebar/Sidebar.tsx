@@ -1,7 +1,7 @@
 import React from 'react';
+
 import SidebarItem from './SidebarItem/SidebarItem';
 import ActionSection from './ActionSection/ActionSection';
-
 import './Sidebar.css';
 
 import perfomanceLogo from '../../../assets/images/perfomance-logo.png';
@@ -72,5 +72,6 @@ class Sidebar extends React.Component<{}, SidebarState> {
         )
     }
 }
+
 
 export default Sidebar;

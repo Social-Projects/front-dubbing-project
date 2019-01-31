@@ -10,7 +10,7 @@ interface SidebarItemProps {
     path: string
 }
 
-class SidebarItem extends React.PureComponent<SidebarItemProps> {
+class SidebarItem extends React.Component<SidebarItemProps> {
     constructor(props: SidebarItemProps) {
         super(props);
     }

@@ -6,7 +6,8 @@ import classes from './StreamAudios.module.css';
 interface StreamAudioProps {
     audios: any,
     currentAudioId: number,
-    playByIdHandler: any
+    playByIdHandler: any,
+    isPlaying: boolean
 }
 
 const streamAudios = (props: StreamAudioProps) => {
@@ -16,7 +17,7 @@ const streamAudios = (props: StreamAudioProps) => {
                     duration={audio.duration}
                     key={index}
                     currentAudioId={audio.id}
-                    isPlaying={props.currentAudioId === audio.id ? true : false}
+                    isPlaying={props.currentAudioId === audio.id && props.isPlaying ? true : false}
                     playByIdHandler={props.playByIdHandler} />
     });
 
