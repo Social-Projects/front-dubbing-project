@@ -16,19 +16,22 @@ interface state {
 class PopupRemovePerformance extends React.Component<props, state> {
   constructor(props: any) {
     super(props);
-    this.tooltipToggle = this.tooltipToggle.bind(this);
     this.state = {
       modal: false,
       tooltipOpen: false
     };
 
     this.toggle = this.toggle.bind(this);
+    this.tooltipToggle = this.tooltipToggle.bind(this);
   }
+  
 
   toggle() {
     this.setState({
-      modal: !this.state.modal
+      modal: !this.state.modal,
+      tooltipOpen: false
     });
+
   }
 
   tooltipToggle() {
@@ -36,33 +39,30 @@ class PopupRemovePerformance extends React.Component<props, state> {
       tooltipOpen: !this.state.tooltipOpen
     });
   }
+  
 
   render() {
     return (
       <div>
-        <button className="close" onClick={this.toggle} id="xbutton">{this.props.buttonLabel}</button>
-        <Tooltip placement="top" isOpen={this.state.tooltipOpen} autohide={false} target="xbutton" toggle={this.tooltipToggle}>
+        <span className="close" onClick={this.toggle} id="xbutton">{this.props.buttonLabel}</span>
+        <Tooltip placement="left" isOpen={this.state.tooltipOpen} autohide={true} target="xbutton" toggle={this.tooltipToggle}>
           Видалити виставу
         </Tooltip>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className="removePerformancePopup">
           <ModalHeader
             className="popupHeader"
-            toggle={this.toggle}>Modal title</ModalHeader>
+            toggle={this.toggle}></ModalHeader>
           <ModalBody
             className="popupBody">
             Видалення вистави приведе до видалення всіх фраз і аудіофайлів. Ви дійсно хочете видалити виставу? Натисніть 'Видалити', щоб видалити виставу або натисніть 'Відмінити', щоб відмінити видалення.
           </ModalBody>
           <ModalFooter
             className="popupHeader">
-            <Button color="danger" onClick={this.props.removeMethod} id="removeButton">Видалити</Button>{' '}
-            <Tooltip placement="top" isOpen={this.state.tooltipOpen} autohide={false} target="removeButton" toggle={this.tooltipToggle}>
-              Видалити виставу
-            </Tooltip>
-
+            <Button color="danger" onClick={this.props.removeMethod}>Видалити</Button>
             <Button color="primary" onClick={this.toggle}>Відмінити</Button>
           </ModalFooter>
         </Modal>
-      </div>
+      </div >
     );
   }
 }
