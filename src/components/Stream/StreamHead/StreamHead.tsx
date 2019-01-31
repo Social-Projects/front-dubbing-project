@@ -7,7 +7,8 @@ import Radium from 'radium';
 
 interface streamHeadProps {
     name: string;
-    isPlaybacking: boolean
+    isPlaybacking: boolean,
+    clicked: Function
 }
 
 const streamHead = (props: streamHeadProps) => {
@@ -39,7 +40,7 @@ const streamHead = (props: streamHeadProps) => {
     return (
         <Aux>
             <span className={classes.title}>{props.name}</span>
-                <Button {...btnStyles}>
+                <Button {...btnStyles} clicked={props.clicked}>
                     {icon}
                 </Button>
         </Aux>
