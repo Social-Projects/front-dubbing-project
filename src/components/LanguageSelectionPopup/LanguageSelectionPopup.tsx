@@ -80,20 +80,8 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
     }
 
     nameUpdateHandler = () => {
-        const langIndex = this.state.languages.findIndex(p => {
-            return p.id === this.state.currentLang.id;
-        });
-        const language = {
-            ...this.state.languages[langIndex]
-        };
-        language.name = this.state.currentLang.name;
-
-        const languages = [...this.state.languages];
-        languages[langIndex] = language;
         this.onUpdateLang(this.state.currentLang);
-
         this.setState({
-            languages: languages,
             currentLang: { id: -1, name: "" }
         });
         this.toggle();
@@ -104,36 +92,21 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
     }
 
     languageDeleteHandler = () => {
-        const langIndex = this.state.languages.findIndex(p => {
-            return p.id === this.state.currentLang.id;
-        });
-        const languages = [...this.state.languages];
-        languages.splice(langIndex, 1);
         this.onDelLang(this.state.currentLang);
         this.setState({
-            languages: languages,
             currentLang: { id: -1, name: "" }
         });
         this.toggle();
     }
 
     languageAddHandler = () => {
-        const id = this.state.languages[this.state.languages.length - 1].id + 1;
-
-        const languages = [...this.state.languages];
         const newLanguage = {
-            id: id,
+            id: 0,
             name: this.state.currentLang.name
         };
-        languages.push(newLanguage);
         this.onAddLang(newLanguage);
-        this.setState({
-            languages: languages,
-            currentLang: { id: -1, name: "" }
-        });
         this.toggle();
     }
-
 
 
     componentDidMount() {
