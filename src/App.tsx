@@ -12,9 +12,6 @@ import LanguageSelectionPopup from "./components/LanguageSelectionPopup/Language
 // import { alertActions } from './LoginHelper/_actions';
 // import { PrivateRoute } from './LoginHelper/_components';
 
-
-
-
 class App extends Component {
   
   render() {

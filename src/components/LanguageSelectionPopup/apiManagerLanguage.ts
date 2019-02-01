@@ -1,10 +1,10 @@
+import config from 'react-global-configuration';
 class apiManagerLanguage
-{
+{    
     backendUrl = "";
-    
     constructor()
     {
-        this.backendUrl = "https://localhost:5001/";
+        this.backendUrl = config.get('urlApi');
     }
     async createLang(json: string): Promise<Response> {
         console.log("createLang");

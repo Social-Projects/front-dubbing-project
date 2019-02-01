@@ -10,7 +10,8 @@ interface ButtonProps {
     transitionDuration: string;
     className: string;
     text: string;
-    hover?: Object
+    hover?: Object,
+    clicked?: any
 }
 
 class Button extends React.Component<ButtonProps> {
@@ -29,7 +30,7 @@ class Button extends React.Component<ButtonProps> {
         };
 
         return (
-            <button style={style} className={this.props.className}>
+            <button style={style} className={this.props.className} onClick={this.props.clicked}>
                 {this.props.children}
                 <span>{this.props.text}</span>
             </button>
