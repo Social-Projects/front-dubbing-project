@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
+import KeyBinding from 'react-keybinding-component';
 
 import * as actions from '../../../../store/actions/index';
 import StateType from '../../../../store/state/state';
@@ -9,6 +10,8 @@ import PlaySection from './PlaySection/PlaySection';
 import Aux from '../../../../hoc/Auxiliary';
 import WithClass from '../../../../hoc/WithClass';
 import apiManager from '../../../../util/apiManager';
+import { KeyChars } from '../../../../util/keyChars';
+
 import classes from './ActionSection.module.css';
 
 interface ActionSectionProps {
@@ -31,8 +34,21 @@ interface ActionSectionState {
     currentTime: number
 };
 
+interface IMapKeyBindings {
+    [KeyChars.Ctrl]: boolean,
+    [KeyChars.ArrowRight]: boolean,
+    [KeyChars.ArrowLeft]: boolean,
+    [key: string]: boolean
+};
+
 class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
-    apiManager = new apiManager();
+    private apiManager = new apiManager();
+    private map: IMapKeyBindings = {
+        [KeyChars.Ctrl]: false,
+        [KeyChars.ArrowRight]: false,
+        [KeyChars.ArrowLeft]: false
+    };
+    private repeat: boolean = true;
 
     constructor(props: any) {
         super(props);
@@ -128,6 +144,32 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
         await this.apiManager.playSpeechById(id);
     }
 
+    checkKeys = (...keys: string[]) => {
+        for (let i = 0; i < keys.length; i++) {
+            if (!this.map[keys[i]]) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    onKeyDownUpHandler = async (event: KeyboardEvent) => {
+        this.map[event.key] = event.type === 'keydown';
+        
+        if (this.checkKeys(KeyChars.Ctrl, KeyChars.ArrowRight) && this.repeat) {
+            this.repeat = false;
+            await this.nextSpeechHandler(event);
+        }
+        else if (this.checkKeys(KeyChars.Ctrl, KeyChars.ArrowLeft) && this.repeat) {
+            this.repeat = false;
+            await this.prevSpeechHandler(event);
+        }
+        else if (event.type === 'keyup') {
+            this.repeat = true;
+        }
+    };
+
     render() {
         const totalDuration = this.props.speeches !== undefined
                                 ? this.props.speeches[this.props.currentSpeechIndex].duration
@@ -144,6 +186,8 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                     numAudio={this.props.currentSpeechIndex + 1}
                     totalTime={totalDuration}
                     currentTime={this.state.currentTime} />
+                <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event) } type='keydown'/>
+                <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event) } type='keyup'/>
             </Aux>
         )
     }

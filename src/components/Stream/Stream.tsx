@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import KeyBinding from 'react-keybinding-component';
 
 import StreamHead from './StreamHead/StreamHead';
 import StreamAudios from './StreamAudios/StreamAudios';
@@ -8,6 +9,7 @@ import WithClass from '../../hoc/WithClass';
 import apiManager from '../../util/apiManager';
 import * as actionCreators from '../../store/actions/index'; 
 import StateType from '../../store/state/state';
+import { KeyChars } from '../../util/keyChars';
 
 import classes from './Stream.module.css';
 
@@ -36,8 +38,17 @@ interface streamProps {
     onChangeStreamStateToInitial: Function
 }
 
+interface IMapKeysBinding {
+    [KeyChars.Space]: boolean,
+    [key: string]: boolean
+};
+
 class Stream extends Component<streamProps, streamState> {
-    apiManager = new apiManager();
+    private apiManager: apiManager = new apiManager();
+    private map: IMapKeysBinding = {
+        [KeyChars.Space]: false
+    };
+    private repeat: boolean = true;
 
     constructor(props: any) {
         super(props);
@@ -106,6 +117,28 @@ class Stream extends Component<streamProps, streamState> {
         }
     };
     
+    checkKeys = (...keys: string[]) => {
+        for (let i = 0; i < keys.length; i++) {
+            if (!this.map[keys[i]]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    onKeyDownUpHandler = async (event: KeyboardEvent) => {
+        this.map[event.key] = event.type === 'keydown';
+        
+        if (this.checkKeys(KeyChars.Space) && this.repeat) {
+            await this.playPauseHandler(event);
+            this.repeat = false;
+        }
+        else if (event.type === 'keyup'){
+            this.repeat = true;
+        }
+    }
+
     render() {
         return (
             <Aux>
@@ -118,6 +151,8 @@ class Stream extends Component<streamProps, streamState> {
                     currentAudioId={this.props.currentSpeechId}
                     playByIdHandler={this.playByIdHandler}
                     isPlaying={this.props.isPlaying} />
+                <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event)} type='keydown'/>
+                <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event)} type='keyup'/>
             </Aux>
         )
     }
