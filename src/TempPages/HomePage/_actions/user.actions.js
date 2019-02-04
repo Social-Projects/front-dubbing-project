@@ -1,7 +1,7 @@
-import { userConstants } from '../_constants';
-import { userService } from '../_services';
+import { userConstants } from '/Users/Юрий/front-dubbing-project/src/LoginHelper/_constants';
+import { userService } from '/Users/Юрий/front-dubbing-project/src/LoginHelper/_services';
 import { alertActions } from './';
-import { history } from '../_helpers';
+import { history } from '/Users/Юрий/front-dubbing-project/src/LoginHelper/_helpers';
 
 export const userActions = {
     login,

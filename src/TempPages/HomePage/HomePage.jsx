@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { userActions } from '../LoginHelper/_actions'
+import { userActions } from '../HomePage/_actions';
 
 class HomePage extends React.Component {
     componentDidMount() {

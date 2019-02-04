@@ -13,15 +13,20 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import config from 'react-global-configuration';
 import configuration from './config';
+import {store} from './LoginHelper/_helpers';
+
 
 const reducer = combineReducers({
     stream: streamReducer
 });
 config.set(configuration);
-const store = createStore(reducer, composeWithDevTools(applyMiddleware(
-    thunk
-)));
 
+
+// const store = createStore(reducer, composeWithDevTools(applyMiddleware(
+//     thunk
+// )));
+import { configureFakeBackend } from './LoginHelper/_helpers/fake-backend';
+configureFakeBackend();
 
 const app = (
     <Provider store={store}>
