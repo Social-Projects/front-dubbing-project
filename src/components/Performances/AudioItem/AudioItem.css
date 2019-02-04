@@ -27,3 +27,17 @@
     font-size: 18px;
     color: #939393;
 }
+.btn-audio-upload {
+    background: none;
+    color: blueviolet;
+    border: none;
+    transition: background-color 0.25s;
+    border-radius: 20px;
+    margin-right: 5px; 
+    text-align: right;
+    cursor: pointer;
+    padding-right: 10px;
+    margin-bottom: 5px;
+    -webkit-appearance: none;
+    text-decoration: underline;
+}

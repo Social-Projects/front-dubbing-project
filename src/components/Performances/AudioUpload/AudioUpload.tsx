@@ -1,13 +1,25 @@
 import * as React from "react";
-import AudioItem from "../AudioItem/AudioItem";
 import "./AudioUpload.css";
 import API from "../../../util/api";
+import AudioItem from "../AudioItem/AudioItem";
 
 export interface IAudioUploadProps { }
 
 export interface IAudioUploadState {
-  filesToBeUpload: any[];
-  textToAudioFiles: string[];
+  performanceId: number,
+
+  languages: {
+    id: number,
+    name: string
+  }[],
+
+  speeches: {
+    id: number,
+    text?: string,
+    isNew?: boolean,
+    onDelete: (index: number) => void,
+    onTextChange: (string: string, index: number) => void
+  }[]
 }
 
 export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
@@ -15,95 +27,160 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     super(props);
 
     this.state = {
-      filesToBeUpload: [],
-      textToAudioFiles: []
-    };
+      performanceId: -1,
+      languages: [],
+      speeches: []
+    }
 
-    this.fileChangedHandler = this.fileChangedHandler.bind(this);
-    this.fileDeleteHandler = this.fileDeleteHandler.bind(this);
-    this.fileUploadHandler = this.fileUploadHandler.bind(this);
-    this.onTextChange = this.onTextChange.bind(this);
+    this.addItemHandler = this.addItemHandler.bind(this);
+    this.deleteItemHandler = this.deleteItemHandler.bind(this);
+    this.uploadHandler = this.uploadHandler.bind(this);
+    this.textChangeHandler = this.textChangeHandler.bind(this);
   }
 
-  private fileChangedHandler = (event: any) => {
-    this.setState({
-      filesToBeUpload: event.target.files
-    });
-  };
+  private addItemHandler = () => {
+    let speeches = this.state.speeches;
 
-  fileDeleteHandler = (event: any) => {
-    const fileToDeleteId = event.target.id;
-    const textToDeleteId = event.target.id;
+    let speechItem = {
+      id: this.state.speeches.length,
+      languages: this.state.languages,
+      isNew: true,
+      onDelete: this.deleteItemHandler,
+      onTextChange: this.textChangeHandler
+    };
 
-    let textArr = [...this.state.textToAudioFiles];
-    let files = [...this.state.filesToBeUpload];
-    files.splice(fileToDeleteId, 1);
-    textArr.splice(textToDeleteId, 1);
+    speeches.push(speechItem);
 
     this.setState({
-      filesToBeUpload: files,
-      textToAudioFiles: textArr
+      speeches: speeches
     });
-  };
+  }
 
-  fileUploadHandler = async (performanceId: number) => {
-    if (this.state.filesToBeUpload.length > 0) {
-      let formData = new FormData();
+  private deleteItemHandler = async (index: number) => {
+    if(this.state.performanceId == -1) {
+      let speeches = this.state.speeches.filter(obj => {
+        return obj.id != index;
+      });
 
-      for (var i = 0; i < this.state.filesToBeUpload.length; i++) {
+      this.setState({
+        speeches: speeches
+      });
+    } else {
+      let removeResponse = await API.delete("speech/" + index)
+      if(removeResponse.status == 200) {
+        let speeches = this.state.speeches.filter(obj => {
+          return obj.id != index;
+        });
+
+        this.setState({
+          speeches: speeches
+        });
+      }
+    }
+  }
+
+  private textChangeHandler = (string: string, index: number) => {
+    let speeches = [...this.state.speeches];
+
+    for(let i = 0; i < speeches.length; i++) { 
+      if(speeches[i].id == index) {
+        speeches[i].text = string;  
+      } 
+    }
+
+    this.setState({
+      speeches: speeches
+    });
+  }
+
+  uploadHandler = async (performanceId: number, update: boolean) => {
+    if(update){
+      for(let i = 0; i < this.state.speeches.length; i++) {
         let speech = {
-          text: this.state.textToAudioFiles[i],
-          performanceId: performanceId,
-          id: 0
-        };
+          id: this.state.speeches[i].id,
+          text: this.state.speeches[i].text,
+          isNew: this.state.speeches[i].isNew,
+          performanceId: performanceId
+        }
 
-        let textResponse = await API.post("speech", speech, {
+        if(!speech.isNew) {
+          await API.put("speech", speech, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            }
+          });
+        } else {
+          await API.post("speech", speech, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            }
+          });
+        }
+      }
+    } else {
+      for(let i = 0; i < this.state.speeches.length; i++) {
+        let speech = {
+          id: 0,
+          text: this.state.speeches[i].text,
+          performanceId: performanceId
+        }
+
+        let speechResponse = await API.post("speech", speech, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*"
           }
         });
-
-        formData = new FormData();
-
-        formData.append("AudioFile", this.state.filesToBeUpload[i]);
-        formData.append("SpeechId", textResponse.data["id"]);
-        formData.append("LanguageId", "1");
-
-        await API.post("audio/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        });
       }
-    } else {
-      alert("Select audio files");
     }
-  };
+  }
 
-  onTextChange = (text: string) => {
-    let textArr = [...this.state.textToAudioFiles];
+  async audioComponentDidMount(performanceId: number) {
+    const languagesResponse = await API.get("language");
+    if (languagesResponse.status == 200) {
+      this.setState({
+        languages: languagesResponse.data
+      });
+    }
 
-    if (!textArr.includes(text)) {
-      textArr.push(text);
+    const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
+    if (performanceSpeechesResponse.status == 200) {
+      let speeches = [];
+      for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
+        let speechItem = {
+          id: performanceSpeechesResponse.data[i].id,
+          text: performanceSpeechesResponse.data[i].text,
+          languages: this.state.languages,
+          onDelete: this.deleteItemHandler,
+          onTextChange: this.textChangeHandler
+        }
+
+        speeches.push(speechItem);
+      }
 
       this.setState({
-        textToAudioFiles: textArr
+        performanceId: performanceSpeechesResponse.data.performanceId,
+        speeches: speeches
       });
-    } else {
-      alert("Two similar strings");
     }
-  };
+  }
 
   render() {
-    const filesToBeUpload = [...this.state.filesToBeUpload];
-    const filesList = filesToBeUpload.map((item, index) => (
+    const items = [...this.state.speeches];
+
+    const itemsList = items.map((item, index) => (
       <AudioItem
-        key={item.name}
-        name={item.name}
-        id={index}
-        audio={item.audio}
-        onDelete={this.fileDeleteHandler}
-        onTextChange={this.onTextChange.bind(this)}
+        key={index}
+        id={item.id}
+        text={item.text}
+        languages={this.state.languages}
+        onDelete={item.onDelete}
+        onTextChange={item.onTextChange}
       />
     ));
 
@@ -111,20 +188,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       <div className="audio-upload-section">
         <div className="col-sm-12 audio-header">
           <label>Аудіо</label>
-  
-          <input
-            style={{ display: "none" }}
-            id="file-1"
-            type="file"
-            accept="audio/*"
-            onChange={this.fileChangedHandler}
-            multiple
-          />
-  
-          <label htmlFor="file-1" className="fas fa-plus-circle btn-audio-add" />
+
+          <button className="fas fa-plus-circle btn-audio-add" onClick={this.addItemHandler} />
         </div>
         <div id="audio-container" className="row">
-          {filesList}
+          {itemsList}
         </div>
       </div>
     );

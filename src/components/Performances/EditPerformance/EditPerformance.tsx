@@ -61,7 +61,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                this.child.current.fileUploadHandler(this.state.id);
+                this.child.current.uploadHandler(this.state.id, true);
 
                 history.push("/performance");
             }
@@ -79,7 +79,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                await this.child.current.fileUploadHandler(JSONObj["id"]);
+                await this.child.current.uploadHandler(JSONObj["id"], false);
                 
                 history.push("/performance");
             }
@@ -99,16 +99,26 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     title: data.title,
                     description: data.description
                 })
+
+                if (!this.child.current) {
+                    return;
+                }
+
+                this.child.current.audioComponentDidMount(data.id);
+
             }
             else {
                 console.log(resp.status)
             }
+        } else {
+            if (!this.child.current) {
+                return;
+            }
+            
+            this.child.current.audioComponentDidMount(this.state.id);
         }
 
     }
-
-
-
 
     render() {
 

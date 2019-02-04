@@ -31,3 +31,8 @@
     color: #fff;
     margin-bottom: 25px;
 }
+
+.choose-audio-btn {
+    font-size: 12px;
+    margin: 3px;
+}
