@@ -58,16 +58,16 @@ class Stream extends Component<streamProps, streamState> {
         };
     }
 
-    getCurrentSpeechId = async () => {
-        const resp = await this.apiManager.getCurrentSpeechId();
+    // getCurrentSpeechId = async () => {
+    //     const resp = await this.apiManager.getCurrentSpeechId();
 
-        if(resp.status == 200) {
-            const data: number = await resp.json();
-            this.props.onSaveCurrentSpeechId(data);
-        } else {
-            console.log('Something went wrong!');
-        }
-    }
+    //     if(resp.status == 200) {
+    //         const data: number = await resp.json();
+    //         this.props.onSaveCurrentSpeechId(data);
+    //     } else {
+    //         console.log('Something went wrong!');
+    //     }
+    // }
 
     playByIdHandler = async(id: number) => {
         // if ((this.props.isPlaying && id !== this.props.currentSpeechId) || this.state.isFirst) {
@@ -86,7 +86,7 @@ class Stream extends Component<streamProps, streamState> {
 
         if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
             await this.apiManager.playSpeechById(id);
-            await this.getCurrentSpeechId();
+            this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
 
             if (this.state.isFirst) {
@@ -96,7 +96,7 @@ class Stream extends Component<streamProps, streamState> {
             }
         } else if (!this.props.isPlaying) {
             await this.apiManager.playSpeechById(id);
-            await this.getCurrentSpeechId();
+            this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
         } else {
             await this.apiManager.pauseSpeech();
