@@ -1,7 +1,2 @@
-export {
-    savePerformanceId,
-    loadSpeeches,
-    saveCurrentSpeechId,
-    changeStreamingStatus,
-    changeStreamStateToInitial
-} from './stream';
+export * from './stream';
+export * from './PopupConfirmationDialog/actions'

@@ -14,9 +14,11 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import config from 'react-global-configuration';
 import configuration from './config';
+import popupConfirmationDialogReducer from './store/reducers/popupConfirmationDialogReducer';
 
 const reducer = combineReducers({
-    stream: streamReducer
+    stream: streamReducer,
+    popupConfirmationDialog: popupConfirmationDialogReducer
 });
 
 config.set(configuration);

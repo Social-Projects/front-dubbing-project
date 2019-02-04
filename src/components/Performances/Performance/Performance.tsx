@@ -1,19 +1,30 @@
-import React, { Component } from "react";
+import React, { Component, Dispatch } from "react";
 import { Link } from "react-router-dom";
 import "./Performance.css"
-import PopupRemovePerformance from "./PopupRemovePerformance/PopupRemovePerformance"
+import PopupConfirmationDialog from "../../PopupConfirmationDialog/PopupConfirmationDialog"
 import { Tooltip } from 'reactstrap';
+import { AnyAction } from 'redux';
+import * as actions from '../../../store/actions/PopupConfirmationDialog/actions';
+import { connect } from 'react-redux';
 
-interface performanceProps {
+interface IPerformanceProps {
     deleteMethod: any,
     index: number,
     title: string,
     description: string
 }
-interface performanceState{
+
+interface IDispatchProps {
+    onModalShow: () => void,
+    onModalHide: () => void
+}
+
+interface AllProps extends IPerformanceProps, IDispatchProps {}
+
+interface performanceState {
     tooltipOpen: boolean
 }
-class Performance extends Component<performanceProps, performanceState>
+class Performance extends Component<AllProps, performanceState>
 {
     constructor(props: any) {
         super(props);
@@ -33,7 +44,6 @@ class Performance extends Component<performanceProps, performanceState>
         this.props.deleteMethod(this.props.index);
     }
     render() {
-
         return (
             <div className="performance">
 
@@ -48,7 +58,18 @@ class Performance extends Component<performanceProps, performanceState>
                             </Tooltip>
 
                         </Link>
-                        <PopupRemovePerformance buttonLabel="x" removeMethod={this.remove.bind(this)}></PopupRemovePerformance>
+                        <button onClick={(e) => this.props.onModalShow()}>
+                            lollo
+                        </button>
+                        <PopupConfirmationDialog
+                            type="span" //span or button or Button or something else (just add case in popup)
+                            labelActionButton="X"
+                            toolTipActionButton="Видалити виставу" 
+                            removeMethod={this.remove.bind(this)}
+                            message="Видалення вистави приведе до видалення всіх фраз і аудіофайлів. Ви дійсно хочете видалити виставу? Натисніть 'Видалити', щоб видалити виставу або натисніть 'Відмінити', щоб відмінити видалення."
+                            labelDangerButton="Видалити"
+                            labelPrimaryButton="Відмінити"
+                        />
                     </div>
                 </div>
 
@@ -63,4 +84,15 @@ class Performance extends Component<performanceProps, performanceState>
     }
 }
 
-export default Performance
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
+    return {
+        onModalShow: () => dispatch(actions.modalShow()),
+        onModalHide: () => dispatch(actions.modalHide())
+    }
+};
+  
+export default connect(
+    null,
+    mapDispatchToProps
+)(Performance);
+  
