@@ -4,10 +4,6 @@ import DropdownLanguage from "./DropdownLanguage";
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import "./LanguageSelectionPopup.css";
 import apiManager from "./apiManagerLanguage";
-import { async } from 'q';
-import { AnyAction } from 'redux';
-import * as actions from '../../store/actions/PopupConfirmationDialog/actions';
-import { connect } from 'react-redux';
 import PopupConfirmationDialog from "../PopupConfirmationDialog/PopupConfirmationDialog"
 interface languageState {
     modal: boolean,
@@ -25,15 +21,10 @@ interface languageState {
 interface languageProps {
     buttonLabel: string
 }
-interface IDispatchProps {
-    onModalShow: () => void,
-    onModalHide: () => void
-}
 
-interface AllProps extends languageProps, IDispatchProps { }
-
-class LanguageSelectionPopup extends React.Component<AllProps, languageState> {
+export default class LanguageSelectionPopup extends React.Component<languageProps, languageState> {
     apiManager = new apiManager();
+    child = React.createRef<PopupConfirmationDialog>();
 
     constructor(props: any) {
         super(props);
@@ -117,6 +108,13 @@ class LanguageSelectionPopup extends React.Component<AllProps, languageState> {
         this.toggle();
     }
 
+    toggleChildComponent = async (e: any) => {
+        if (!this.child.current) {
+            return;
+        }
+        this.child.current.toggle();
+    }
+
 
     componentDidMount() {
         this.getLang();
@@ -172,12 +170,13 @@ class LanguageSelectionPopup extends React.Component<AllProps, languageState> {
                     <Form>
                         <Button
                             color="danger"
-                            onClick={() => this.props.onModalShow()} >Видалити мову</Button><br />
+                            onClick={this.toggleChildComponent} >Видалити мову</Button><br />
                         <PopupConfirmationDialog
                             removeMethod={this.languageDeleteHandler.bind(this)}
-                            message="мова."
+                            message="Видалення мови приведе до видалення усіх аудіозаписів звязаних з цією мовою. Ви дійсно хочете видалити виставу?"
                             labelDangerButton="Видалити"
                             labelPrimaryButton="Відмінити"
+                            ref={this.child}
                         />
                     </Form>
                 </div>
@@ -226,15 +225,3 @@ class LanguageSelectionPopup extends React.Component<AllProps, languageState> {
         );
     }
 }
-
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
-    return {
-        onModalShow: () => dispatch(actions.modalShow()),
-        onModalHide: () => dispatch(actions.modalHide())
-    }
-};
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(LanguageSelectionPopup);

@@ -9,8 +9,5 @@ export default interface State {
         isPlaying: boolean,
         currentSpeechId: number,
         currentSpeechIndex: number
-    },
-    popupConfirmationDialog: {
-        modal: boolean
     }
 }

@@ -1,11 +1,8 @@
-import React, { Component, Dispatch } from "react";
+import React, { Component, Dispatch, ReactEventHandler } from "react";
 import { Link } from "react-router-dom";
 import "./Performance.css"
 import PopupConfirmationDialog from "../../PopupConfirmationDialog/PopupConfirmationDialog"
 import { Tooltip } from 'reactstrap';
-import { AnyAction } from 'redux';
-import * as actions from '../../../store/actions/PopupConfirmationDialog/actions';
-import { connect } from 'react-redux';
 
 interface IPerformanceProps {
     deleteMethod: any,
@@ -14,23 +11,17 @@ interface IPerformanceProps {
     description: string
 }
 
-interface IDispatchProps {
-    onModalShow: () => void,
-    onModalHide: () => void
-}
-
-interface AllProps extends IPerformanceProps, IDispatchProps { }
-
 interface performanceState {
     tooltipEditOpen: boolean,
     tooltipRemoveOpen: boolean,
 }
-class Performance extends Component<AllProps, performanceState>
+export default class Performance extends Component<IPerformanceProps, performanceState>
 {
+    child = React.createRef<PopupConfirmationDialog>();
     constructor(props: any) {
         super(props);
         this.tooltipEditToggle = this.tooltipEditToggle.bind(this);
-        this.tooltipRemoveToggle= this.tooltipRemoveToggle.bind(this);
+        this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
         this.state = {
             tooltipEditOpen: false,
             tooltipRemoveOpen: false
@@ -42,7 +33,7 @@ class Performance extends Component<AllProps, performanceState>
             tooltipEditOpen: !this.state.tooltipEditOpen
         });
     }
-    tooltipRemoveToggle(){
+    tooltipRemoveToggle() {
         this.setState({
             tooltipRemoveOpen: !this.state.tooltipRemoveOpen
         });
@@ -50,6 +41,13 @@ class Performance extends Component<AllProps, performanceState>
 
     remove() {
         this.props.deleteMethod(this.props.index);
+    }
+
+    toggleChildComponent = async (e: any) => {
+        if (!this.child.current) {
+            return;
+        }
+        this.child.current.toggle();
     }
     render() {
         return (
@@ -64,18 +62,19 @@ class Performance extends Component<AllProps, performanceState>
                             <Tooltip placement="left" isOpen={this.state.tooltipEditOpen} autohide={false} target="editBtn" toggle={this.tooltipEditToggle}>
                                 Редагувати виставу
                             </Tooltip>
-
                         </Link>
-
-                        <span className="close" onClick={(e) => this.props.onModalShow()} id="actionButton">x</span>
+                        <div>
+                            <span className="close" onClick={this.toggleChildComponent} id="actionButton">x</span>
+                        </div>
                         <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target="actionButton" toggle={this.tooltipRemoveToggle}>
                             Видалити виставу
                         </Tooltip>
                         <PopupConfirmationDialog
                             removeMethod={this.remove.bind(this)}
-                            message="Видалення вистави приведе до видалення всіх фраз і аудіофайлів. Ви дійсно хочете видалити виставу? Натисніть 'Видалити', щоб видалити виставу або натисніть 'Відмінити', щоб відмінити видалення."
+                            message="Видалення вистави приведе до видалення всіх фраз і аудіофайлів. Ви дійсно хочете видалити виставу?"
                             labelDangerButton="Видалити"
                             labelPrimaryButton="Відмінити"
+                            ref={this.child}
                         />
                     </div>
                 </div>
@@ -90,15 +89,3 @@ class Performance extends Component<AllProps, performanceState>
         );
     }
 }
-
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
-    return {
-        onModalShow: () => dispatch(actions.modalShow()),
-        onModalHide: () => dispatch(actions.modalHide())
-    }
-};
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(Performance);

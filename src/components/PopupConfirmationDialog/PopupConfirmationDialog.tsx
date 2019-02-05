@@ -9,10 +9,6 @@ import {
 } from 'reactstrap';
 import './PopupConfirmationDialog.css';
 import '../Performances/Performance/Performance.css';
-import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import * as actions from '../../store/actions/PopupConfirmationDialog/actions';
-import State from '../../store/state/state';
 
 interface props {
   removeMethod: any,
@@ -21,26 +17,17 @@ interface props {
   labelPrimaryButton: string
 }
 
-interface IReduxStateType {
+interface state {
+  tooltipOpen: boolean
   modal: boolean;
 }
 
-interface IDispatchPropsType {
-  onModalShow: () => void,
-  onModalHide: () => void
-}
-
-interface state {
-  tooltipOpen: boolean
-}
-
-interface AllProps extends IReduxStateType, IDispatchPropsType, props {}
-
-class PopupConfirmationDialog extends React.Component<AllProps, state> {
+export default class PopupConfirmationDialog extends React.Component<props, state> {
   constructor(props: any) {
     super(props);
     this.state = {
-      tooltipOpen: false
+      tooltipOpen: false,
+      modal: false
     };
 
     this.toggle = this.toggle.bind(this);
@@ -49,13 +36,11 @@ class PopupConfirmationDialog extends React.Component<AllProps, state> {
 
 
   toggle() {
-    this.props.modal
-      ? this.props.onModalHide()
-      : this.props.onModalShow();
-
     this.setState({
-      tooltipOpen: false
+      tooltipOpen: false,
+      modal: !this.state.modal
     });
+    console.log("toggle");
   }
 
   tooltipToggle() {
@@ -65,11 +50,9 @@ class PopupConfirmationDialog extends React.Component<AllProps, state> {
   }
 
   render() {
-    const { modal} = this.props;
-    
     return (
       <div>
-        <Modal isOpen={modal} toggle={this.toggle} className="removePerformancePopup">
+        <Modal isOpen={this.state.modal} toggle={this.toggle} className="removePerformancePopup">
           <ModalHeader
             className="popupHeader"
             toggle={this.toggle}></ModalHeader>
@@ -87,22 +70,3 @@ class PopupConfirmationDialog extends React.Component<AllProps, state> {
     );
   }
 }
-
-const mapStateToProps = (state: State) => {
-  const { modal } = state.popupConfirmationDialog;
-  return {
-      modal: modal
-  };
-};
-
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
-  return {
-    onModalShow: () => dispatch(actions.modalShow()),
-    onModalHide: () => dispatch(actions.modalHide())
-  }
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopupConfirmationDialog);
