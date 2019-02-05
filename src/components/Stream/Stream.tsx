@@ -10,6 +10,7 @@ import apiManager from '../../util/apiManager';
 import * as actionCreators from '../../store/actions/index'; 
 import StateType from '../../store/state/state';
 import { KeyChars } from '../../util/keyChars';
+import { playbackManager } from '../../util/playbackManager';
 
 import classes from './Stream.module.css';
 
@@ -58,32 +59,7 @@ class Stream extends Component<streamProps, streamState> {
         };
     }
 
-    // getCurrentSpeechId = async () => {
-    //     const resp = await this.apiManager.getCurrentSpeechId();
-
-    //     if(resp.status == 200) {
-    //         const data: number = await resp.json();
-    //         this.props.onSaveCurrentSpeechId(data);
-    //     } else {
-    //         console.log('Something went wrong!');
-    //     }
-    // }
-
     playByIdHandler = async(id: number) => {
-        // if ((this.props.isPlaying && id !== this.props.currentSpeechId) || this.state.isFirst) {
-        //     await this.apiManager.playSpeechById(id);
-        //     await this.getCurrentSpeechId();
-
-        //     this.props.onChangeStreamingStatus(true);
-        //     this.setState({
-        //         isFirst: false
-        //     });
-        // }
-        // else {
-        //     await this.apiManager.pauseSpeech();
-        //     this.props.onChangeStreamingStatus(false);
-        // }
-
         if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
             await this.apiManager.playSpeechById(id);
             this.props.onSaveCurrentSpeechId(id);

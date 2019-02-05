@@ -58,3 +58,13 @@ export const changeStreamStateToInitial = () => {
         type: actionTypes.CHANGE_STREAM_STATE_TO_INITIAL
     };
 };
+
+// Change current playback time
+export const changeCurrentPlaybackTime = (currentPlaybackTime: number) => {
+    return {
+        type: actionTypes.CHANGE_CURRENT_PLAYBACK_TIME,
+        payload: {
+            currentPlaybackTime: currentPlaybackTime
+        }
+    };
+};
