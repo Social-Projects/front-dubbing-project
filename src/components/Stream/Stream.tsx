@@ -36,7 +36,8 @@ interface streamProps {
     onLoadSpeeches: Function,
     onSaveCurrentSpeechId: Function,
     onChangeStreamingStatus: Function,
-    onChangeStreamStateToInitial: Function
+    onChangeStreamStateToInitial: Function,
+    onChangeCurrentPlaybackTime: Function
 }
 
 interface IMapKeysBinding {
@@ -64,6 +65,8 @@ class Stream extends Component<streamProps, streamState> {
             await this.apiManager.playSpeechById(id);
             this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
 
             if (this.state.isFirst) {
                 this.setState({
@@ -74,9 +77,13 @@ class Stream extends Component<streamProps, streamState> {
             await this.apiManager.playSpeechById(id);
             this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
+
+            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
         } else {
             await this.apiManager.pauseSpeech();
             this.props.onChangeStreamingStatus(false);
+
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
         }
     }
     
@@ -86,10 +93,14 @@ class Stream extends Component<streamProps, streamState> {
         if (!this.props.isPlaying) {
             await this.apiManager.playSpeechById(this.props.currentSpeechId);
             this.props.onChangeStreamingStatus(true);
+
+            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
         }
         else {
             await this.apiManager.pauseSpeech();
             this.props.onChangeStreamingStatus(false);
+
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
         }
     };
     
@@ -152,7 +163,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onLoadSpeeches: (id: number) => dispatch(actionCreators.loadSpeeches(id)),
         onSaveCurrentSpeechId: (id: number) => dispatch(actionCreators.saveCurrentSpeechId(id)),
         onChangeStreamingStatus: (status: boolean) => dispatch(actionCreators.changeStreamingStatus(status)),
-        onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial())
+        onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial()),
+        onChangeCurrentPlaybackTime: (time: number) => dispatch(actionCreators.changeCurrentPlaybackTime(time))
     };
 };
 
