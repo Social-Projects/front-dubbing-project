@@ -1,11 +1,14 @@
-import React from 'react';
+import React,{Dispatch} from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip } from 'reactstrap';
 import DropdownLanguage from "./DropdownLanguage";
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import "./LanguageSelectionPopup.css";
 import apiManager from "./apiManagerLanguage";
 import { async } from 'q';
-
+import { AnyAction } from 'redux';
+import * as actions from '../../store/actions/PopupConfirmationDialog/actions';
+import { connect } from 'react-redux';
+import PopupConfirmationDialog from "../PopupConfirmationDialog/PopupConfirmationDialog"
 interface languageState {
     modal: boolean,
     radioState: string,
@@ -22,8 +25,14 @@ interface languageState {
 interface languageProps {
     buttonLabel: string
 }
+interface IDispatchProps {
+    onModalShow: () => void,
+    onModalHide: () => void
+}
 
-export default class LanguageSelectionPopup extends React.Component<languageProps, languageState> {
+interface AllProps extends languageProps, IDispatchProps { }
+
+class LanguageSelectionPopup extends React.Component<AllProps, languageState> {
     apiManager = new apiManager();
 
     constructor(props: any) {
@@ -163,7 +172,13 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
                     <Form>
                         <Button
                             color="danger"
-                            onClick={() => this.languageDeleteHandler()} >Видалити мову</Button><br />
+                            onClick={() => this.props.onModalShow()} >Видалити мову</Button><br />
+                        <PopupConfirmationDialog
+                            removeMethod={this.languageDeleteHandler.bind(this)}
+                            message="мова."
+                            labelDangerButton="Видалити"
+                            labelPrimaryButton="Відмінити"
+                        />
                     </Form>
                 </div>
             );
@@ -212,3 +227,14 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
     }
 }
 
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
+    return {
+        onModalShow: () => dispatch(actions.modalShow()),
+        onModalHide: () => dispatch(actions.modalHide())
+    }
+};
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(LanguageSelectionPopup);
