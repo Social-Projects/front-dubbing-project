@@ -14,7 +14,8 @@ interface StateType {
     }[],
     isPlaying: boolean,
     currentSpeechId: number,
-    currentSpeechIndex: number
+    currentSpeechIndex: number,
+    currentPlaybackTime: number
 };
 
 const initialState = {
@@ -22,7 +23,8 @@ const initialState = {
     speeches: undefined,
     isPlaying: false,
     currentSpeechId: -1,
-    currentSpeechIndex: -1
+    currentSpeechIndex: -1,
+    currentPlaybackTime: 0
 };
 
 const reducer = (state: StateType = initialState, action: ActionType) => {
@@ -46,6 +48,9 @@ const reducer = (state: StateType = initialState, action: ActionType) => {
             break;
         case actionTypes.CHANGE_STREAMING_STATUS:
             updatedState.isPlaying = action.payload.isPlaying;
+            break;
+        case actionTypes.CHANGE_CURRENT_PLAYBACK_TIME:
+            updatedState.currentPlaybackTime = action.payload.currentPlaybackTime;
             break;
         case actionTypes.CHANGE_STREAM_STATE_TO_INITIAL:
             updatedState = initialState;
