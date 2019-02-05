@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Login.css';
 import Logo from '../../assets/images/theater-logo.png';
-import Form from './Form/Form';
+import {Form} from './Form/Form';
 
 class MainLogin extends React.Component {
 
