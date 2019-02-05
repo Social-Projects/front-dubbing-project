@@ -15,13 +15,10 @@ import * as actions from '../../store/actions/PopupConfirmationDialog/actions';
 import State from '../../store/state/state';
 
 interface props {
-  labelActionButton: string,
-  toolTipActionButton:string,
   removeMethod: any,
   message: string,
   labelDangerButton: string,
-  labelPrimaryButton: string,
-  type: string,
+  labelPrimaryButton: string
 }
 
 interface IReduxStateType {
@@ -67,27 +64,11 @@ class PopupConfirmationDialog extends React.Component<AllProps, state> {
     });
   }
 
-
   render() {
-    const { modal, labelActionButton } = this.props;
-    let button = null;
-    switch (this.props.type) {
-      case "button":
-        button = (<button className="actionButton" onClick={this.toggle} id="actionButton">{labelActionButton}</button>);
-        break;
-      case "Button":
-        button = (<Button className="actionButton" onClick={this.toggle} id="actionButton">{labelActionButton}</Button>);
-        break;
-      case "span":
-        button = (<span className="actionButton" onClick={this.toggle} id="actionButton">{labelActionButton}</span>);
-        break;
-    }
+    const { modal} = this.props;
+    
     return (
       <div>
-        {button}
-        <Tooltip placement="left" isOpen={this.state.tooltipOpen} autohide={true} target="actionButton" toggle={this.tooltipToggle}>
-          {this.props.toolTipActionButton}
-        </Tooltip>
         <Modal isOpen={modal} toggle={this.toggle} className="removePerformancePopup">
           <ModalHeader
             className="popupHeader"

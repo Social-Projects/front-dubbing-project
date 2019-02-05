@@ -19,24 +19,32 @@ interface IDispatchProps {
     onModalHide: () => void
 }
 
-interface AllProps extends IPerformanceProps, IDispatchProps {}
+interface AllProps extends IPerformanceProps, IDispatchProps { }
 
 interface performanceState {
-    tooltipOpen: boolean
+    tooltipEditOpen: boolean,
+    tooltipRemoveOpen: boolean,
 }
 class Performance extends Component<AllProps, performanceState>
 {
     constructor(props: any) {
         super(props);
-        this.tooltipToggle = this.tooltipToggle.bind(this);
+        this.tooltipEditToggle = this.tooltipEditToggle.bind(this);
+        this.tooltipRemoveToggle= this.tooltipRemoveToggle.bind(this);
         this.state = {
-            tooltipOpen: false
+            tooltipEditOpen: false,
+            tooltipRemoveOpen: false
         };
     }
 
-    tooltipToggle() {
+    tooltipEditToggle() {
         this.setState({
-            tooltipOpen: !this.state.tooltipOpen
+            tooltipEditOpen: !this.state.tooltipEditOpen
+        });
+    }
+    tooltipRemoveToggle(){
+        this.setState({
+            tooltipRemoveOpen: !this.state.tooltipRemoveOpen
         });
     }
 
@@ -53,18 +61,17 @@ class Performance extends Component<AllProps, performanceState>
                     <div className="col-md-6 text-right PerformanceButtons ">
                         <Link to={"/performance/" + this.props.index} >
                             <button className="editBtn" id="editBtn" />
-                            <Tooltip placement="left" isOpen={this.state.tooltipOpen} autohide={false} target="editBtn" toggle={this.tooltipToggle}>
+                            <Tooltip placement="left" isOpen={this.state.tooltipEditOpen} autohide={false} target="editBtn" toggle={this.tooltipEditToggle}>
                                 Редагувати виставу
                             </Tooltip>
 
                         </Link>
-                        <button onClick={(e) => this.props.onModalShow()}>
-                            lollo
-                        </button>
+
+                        <span className="close" onClick={(e) => this.props.onModalShow()} id="actionButton">x</span>
+                        <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target="actionButton" toggle={this.tooltipRemoveToggle}>
+                            Видалити виставу
+                        </Tooltip>
                         <PopupConfirmationDialog
-                            type="span" //span or button or Button or something else (just add case in popup)
-                            labelActionButton="X"
-                            toolTipActionButton="Видалити виставу" 
                             removeMethod={this.remove.bind(this)}
                             message="Видалення вистави приведе до видалення всіх фраз і аудіофайлів. Ви дійсно хочете видалити виставу? Натисніть 'Видалити', щоб видалити виставу або натисніть 'Відмінити', щоб відмінити видалення."
                             labelDangerButton="Видалити"
@@ -90,9 +97,8 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
         onModalHide: () => dispatch(actions.modalHide())
     }
 };
-  
+
 export default connect(
     null,
     mapDispatchToProps
 )(Performance);
-  
