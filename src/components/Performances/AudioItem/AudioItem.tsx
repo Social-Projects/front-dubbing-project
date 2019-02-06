@@ -13,6 +13,13 @@ export interface IAudioItemProps {
     name: string
   }[],
 
+  fileToBeUploadData: {
+    audioId?: number,
+    fileName: any,
+    languageId: number,
+    speechIndex: number
+  }[]
+
   onDelete: (index: number) => void,
   onTextChange: (string: string, index: number) => void
   onFileChange: (fileName: string, languageId: number, speechIndex: number) => void
@@ -38,7 +45,6 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     formData = new FormData();
 
     formData.append("AudioFile", audio);
-    formData.append("LanguageId", languageId);
 
     await API.post("audio/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" }
@@ -65,6 +71,8 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
   render() {
     const languages = [...this.props.languages];
+    const filesToUpload = [...this.props.fileToBeUploadData];
+
     const langList = languages.map((item, index) => (
       <div key={item.id} id={index.toString()}>
         <span>{item.name}: </span>
@@ -77,7 +85,15 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           accept="audio/*"
           onChange={this.onChange}
         />
-      </div>
+        <label htmlFor={item.id.toString()} className="lang-btn">Завантажити</label>
+        
+        {filesToUpload.map(file => {
+          if(file.speechIndex == this.props.id && file.languageId == item.id)
+          {
+            return <span>{file.fileName}</span>
+          }
+        })}
+      </div>   
     ));
 
     return (

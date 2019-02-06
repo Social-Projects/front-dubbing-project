@@ -41,3 +41,11 @@
     -webkit-appearance: none;
     text-decoration: underline;
 }
+
+.lang-btn {
+    background-color: #8cc152; 
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}

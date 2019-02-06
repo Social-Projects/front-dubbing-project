@@ -331,6 +331,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         text={item.text}
         languages={this.state.languages}
         onDelete={item.onDelete}
+        fileToBeUploadData={this.state.fileToBeUploadData}
         onTextChange={item.onTextChange}
         onFileChange={item.onFileChange}
         ref={this.child}

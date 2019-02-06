@@ -33,6 +33,7 @@
 }
 
 .choose-audio-btn {
+    display: none;
     font-size: 12px;
     margin: 3px;
 }
