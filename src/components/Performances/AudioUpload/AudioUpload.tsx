@@ -80,8 +80,18 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         speeches: speeches
       });
     } else {
-      let removeResponse = await API.delete("speech/" + index)
-      if (removeResponse.status == 200) {
+      if (isNullOrUndefined(this.state.speeches[index])) {
+        let removeResponse = await API.delete("speech/" + index)
+        if (removeResponse.status == 200) {
+          let speeches = this.state.speeches.filter(obj => {
+            return obj.id != index;
+          });
+
+          this.setState({
+            speeches: speeches
+          });
+        }
+      } else {
         let speeches = this.state.speeches.filter(obj => {
           return obj.id != index;
         });
@@ -185,24 +195,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                     "Access-Control-Allow-Origin": "*"
                   }
                 });
-              } 
-              // else {
-              //   // If there is new file data to upload, uploading it
-              //   let item = {
-              //     fileName: this.state.fileToBeUploadData[j].fileName,
-              //     languageId: this.state.fileToBeUploadData[j].languageId,
-              //     speechId: speechResponse.data.id,
-              //     id: 0
-              //   }
-
-              //   await API.post("audio", item, {
-              //     headers: {
-              //       Accept: "application/json",
-              //       "Content-Type": "application/json",
-              //       "Access-Control-Allow-Origin": "*"
-              //     }
-              //   });
-              // }
+              }
             }
           }
         } else { // if speeches is new just uploading them
