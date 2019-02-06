@@ -2,11 +2,12 @@ import * as React from "react";
 import "./AudioItem.css";
 import API from "../../../util/api";
 import reducer from "../../../store/reducers/streamReducer";
+import { fileURLToPath } from "url";
 
 export interface IAudioItemProps {
   id: number,
   text?: string,
-  
+
   languages: {
     id: number,
     name: string
@@ -14,40 +15,36 @@ export interface IAudioItemProps {
 
   onDelete: (index: number) => void,
   onTextChange: (string: string, index: number) => void
+  onFileChange: (fileName: string, languageId: number, speechIndex: number) => void
 }
 
-interface IAudioItemState {}
+interface IAudioItemState { }
 
-export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {  
+export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
   constructor(props: IAudioItemProps) {
     super(props);
 
     this.handleBlur = this.handleBlur.bind(this);
-    this.fileUploadHandler = this.fileUploadHandler.bind(this);
     this.deleteHandler = this.deleteHandler.bind(this);
   }
 
-  private fileUploadHandler = async (event: any, speechId?: string ) => {
-    const audioFile = event.target.files[0];
+  private onChange = async (event: any) => {
+    const audio = event.target.files[0];
     const languageId = event.target.id;
+    const speechIndex = event.target.parentNode.parentNode.id;
 
-    if(speechId === undefined) {
-      speechId = '1';
-    }
+    let formData = new FormData();
 
-    if (audioFile != null) {
-      let formData = new FormData();
+    formData = new FormData();
 
-      formData = new FormData();
+    formData.append("AudioFile", audio);
+    formData.append("LanguageId", languageId);
 
-      formData.append("AudioFile", audioFile);
-      formData.append("LanguageId", languageId.toString());
-      formData.append("SpeechId", speechId);
+    await API.post("audio/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
 
-      await API.post("audio/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-    }
+    this.props.onFileChange(audio.name, languageId, speechIndex);
   }
 
   private handleBlur = (event: any) => {
@@ -60,7 +57,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       event.target.value = '';
     }
   }
-  
+
   private deleteHandler = (event: any) => {
     const deleteItemId = event.target.id;
     this.props.onDelete(deleteItemId);
@@ -68,20 +65,20 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
   render() {
     const languages = [...this.props.languages];
-    const langList = languages.map(item => (
-      <div key={item.id}>
+    const langList = languages.map((item, index) => (
+      <div key={item.id} id={index.toString()}>
         <span>{item.name}: </span>
 
         <input
+          key={index}
           className="choose-audio-btn"
           id={item.id.toString()}
           type="file"
           accept="audio/*"
-          onChange={this.fileUploadHandler}
+          onChange={this.onChange}
         />
       </div>
     ));
-
 
     return (
       <div className="container">
@@ -101,9 +98,9 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
                 defaultValue={this.props.text}
               />
             </div>
-            <div className="col-sm-7">
+            <div className="col-sm-7" id={this.props.id.toString()}>
 
-              {langList.length > 0 ? langList : <p style={{color: "red"}}>Can't connect to server</p>}
+              {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
 
             </div>
           </div>
