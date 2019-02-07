@@ -49,7 +49,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     await API.post("audio/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
-
+    console.log("SI:" + speechIndex);
     this.props.onFileChange(audio.name, languageId, speechIndex);
   }
 
@@ -68,7 +68,16 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     const deleteItemId = event.target.id;
     this.props.onDelete(deleteItemId);
   }
-
+  handleUploadClick(event:any)
+  {
+    let parent = event.target.parentElement.parentElement as HTMLElement;
+    let ch = parent.getElementsByClassName('choose-audio-btn').namedItem(event.target.id.toString())  as HTMLElement;
+ 
+    console.log(ch);
+  
+    ch.click();
+    
+  }
   render() {
     const languages = [...this.props.languages];
     const filesToUpload = [...this.props.fileToBeUploadData];
@@ -85,8 +94,9 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           accept="audio/*"
           onChange={this.onChange}
         />
-        <label htmlFor={item.id.toString()} className="lang-btn">Завантажити</label>
-        
+
+        <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>upload</button>
+
         {filesToUpload.map(file => {
           if(file.speechIndex == this.props.id && file.languageId == item.id)
           {

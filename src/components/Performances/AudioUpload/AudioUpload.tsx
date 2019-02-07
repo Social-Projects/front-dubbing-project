@@ -276,6 +276,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         languages: languagesResponse.data
       });
     }
+    if (performanceId != -1){
 
     const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
     if (performanceSpeechesResponse.status == 200) {
@@ -298,6 +299,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         speeches: speeches
       });
     }
+    
 
     let files = [];
     for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
@@ -319,6 +321,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     this.setState({
       fileToBeUploadData: files
     });
+  }
   }
 
   render() {

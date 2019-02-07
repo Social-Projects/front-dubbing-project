@@ -5,7 +5,6 @@ import AudioUpload from '../AudioUpload/AudioUpload';
 import "./EditPerformance.css"; 
 import history from '../../../util/history'
 
-
 interface editPerformanceState {
     id: number,
     title: string,
@@ -61,9 +60,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                this.child.current.uploadHandler(this.state.id, true);
-
-                history.push("/performance");
+                await this.child.current.uploadHandler(this.state.id, true);
+                history.push("/performance/" + this.state.id);
+                await this.loadData();
             }
             else {
                 console.log(resp.status);
@@ -80,16 +79,16 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 }
 
                 await this.child.current.uploadHandler(JSONObj["id"], false);
-                
-                history.push("/performance");
+                history.push("/performance/" + JSONObj["id"]);
+                await this.loadData();
             }
             else {
                 console.log(resp.status);
             }
         }
     }
-
-    async componentDidMount() {
+    async loadData()
+    {
         if (this.props.match.params.number != 'new') {
             const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
             if (resp.status == 200) {
@@ -117,7 +116,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
             
             this.child.current.audioComponentDidMount(this.state.id);
         }
-
+    }
+    componentDidMount() {
+      this.loadData();
     }
 
     render() {
