@@ -6,11 +6,11 @@ import PerformancesPage from './components/Performances/PerformancesPage';
 import Stream from './components/Stream/Stream';
 import Login from './components/Login/Login';
 import Aux from './hoc/Auxiliary';
-import LanguageSelectionPopup from "./components/LanguageSelectionPopup/LanguageSelectionPopup";
+import LanguageSelectionPopup from './components/LanguageSelectionPopup/LanguageSelectionPopup';
 
 import { connect } from 'react-redux';
 import { history } from './LoginHelper/_helpers';
-import { alertActions } from './TempPages/HomePage/_actions';
+import { alertActions } from './LoginHelper/_actions';
 import { PrivateRoute } from './LoginHelper/_components';
 import {HomePage} from './TempPages/HomePage';
 import {LoginPage} from './TempPages/LoginPage';

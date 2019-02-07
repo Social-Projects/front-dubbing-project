@@ -2,7 +2,7 @@ import React from 'react';
 import './Form.css';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { userActions } from 'C:/Users/Юрий/front-dubbing-project/src/TempPages/HomePage/_actions/user.actions.js';
+import { userActions } from '../../../LoginHelper/_actions';
 
 
 class Form extends React.Component {

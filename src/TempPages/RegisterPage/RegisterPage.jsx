@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-import { userActions } from '../HomePage/_actions';
+import './Form.css'
+import { userActions } from '../../LoginHelper/_actions';
 
 class RegisterPage extends React.Component {
     constructor(props) {
@@ -48,7 +48,9 @@ class RegisterPage extends React.Component {
         const { registering  } = this.props;
         const { user, submitted } = this.state;
         return (
-            <div className="col-md-6 col-md-offset-3">
+            <div className="login-form">
+
+            <div className="main-div">
                 <h2>Register</h2>
                 <form name="form" onSubmit={this.handleSubmit}>
                     <div className={'form-group' + (submitted && !user.firstName ? ' has-error' : '')}>
@@ -87,6 +89,7 @@ class RegisterPage extends React.Component {
                         <Link to="/login" className="btn btn-link">Cancel</Link>
                     </div>
                 </form>
+            </div>
             </div>
         );
     }

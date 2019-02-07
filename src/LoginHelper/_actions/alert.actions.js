@@ -1,4 +1,4 @@
-import { alertConstants } from '/Users/Юрий/front-dubbing-project/src/LoginHelper/_constants';
+import { alertConstants } from '../_constants';
 
 export const alertActions = {
     success,
