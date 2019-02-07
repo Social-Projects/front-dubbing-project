@@ -58,14 +58,14 @@ class Form extends React.Component {
                         <div  className={'form-group' + (submitted && !username ? ' has-error' : '')}>
                             <input type="text" className="form-control" name="username" id="inputEmail" placeholder="Логін" value={username} onChange={this.handleChange} />
                             {submitted && !username &&
-                            <div className="help-block">Username is required</div>
+                            <div className="help-block">Заповніть поле "Логін"</div>
                         }
                         </div>
 
                         <div  className={'form-group' + (submitted && !username ? ' has-error' : '')}>
                             <input type="password" className="form-control" id="inputPassword" name="password" placeholder="Пароль"  value={password} onChange={this.handleChange}/>
                             {submitted && !password &&
-                            <div className="help-block">Password is required</div>
+                            <div className="help-block">Заповніть поле "Пароль"</div>
                         }
                         </div>
 
