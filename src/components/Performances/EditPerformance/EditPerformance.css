@@ -16,12 +16,12 @@ input[type="text"], textarea {
     height: 30px;
     padding: 10px;
     outline: none;
-    transition: box-shadow 0.3s;
+    transition: box-shadow 0.4s;
 }
 input[type="text"]:focus, textarea:focus{
     outline: none !important;
-    border: 2px solid #364456;
-    box-shadow: 0 0 7px #364456;
+    border: 1px solid #447ecb;
+    box-shadow: 0 0 5px white;
 }
 
 .editForm{

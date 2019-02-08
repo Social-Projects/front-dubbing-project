@@ -95,7 +95,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           onChange={this.onChange}
         />
 
-        <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>upload</button>
+        <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>Завантажити</button>
 
         {filesToUpload.map(file => {
           if(file.speechIndex == this.props.id && file.languageId == item.id)
