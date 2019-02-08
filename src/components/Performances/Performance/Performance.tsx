@@ -58,17 +58,16 @@ export default class Performance extends Component<IPerformanceProps, performanc
                     <p className="col-md-6 pull-left perfTitle" >{this.props.title}</p>
                     <div className="col-md-6 text-right PerformanceButtons ">
                         <Link to={"/performance/" + this.props.index} >
-                            <button className="editBtn" id="editBtn" />
-                            <Tooltip placement="left" isOpen={this.state.tooltipEditOpen} autohide={false} target="editBtn" toggle={this.tooltipEditToggle}>
-                                Редагувати виставу
-                            </Tooltip>
+                            <button className="editBtn" id={"editBtn"+this.props.index}/>
+                            <Tooltip placement="left" isOpen={this.state.tooltipEditOpen} autohide={false} target={"editBtn"+this.props.index} toggle={this.tooltipEditToggle}>
+                                Редагувати виставу </Tooltip>
                         </Link>
                         <div>
-                            <span className="close" onClick={this.toggleChildComponent} id="actionButton">x</span>
+                            <span className="close" onClick={this.toggleChildComponent} id={"actionButton"+this.props.index}>x</span>
+                            <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"actionButton"+this.props.index} toggle={this.tooltipRemoveToggle}>
+                                Видалити виставу </Tooltip>
                         </div>
-                        <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target="actionButton" toggle={this.tooltipRemoveToggle}>
-                            Видалити виставу
-                        </Tooltip>
+
                         <PopupConfirmationDialog
                             removeMethod={this.remove.bind(this)}
                             message="Видалення вистави приведе до видалення всіх фраз і аудіофайлів. Ви дійсно хочете видалити виставу?"
