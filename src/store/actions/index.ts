@@ -3,5 +3,6 @@ export {
     loadSpeeches,
     saveCurrentSpeechId,
     changeStreamingStatus,
-    changeStreamStateToInitial
+    changeStreamStateToInitial,
+    changeCurrentPlaybackTime
 } from './stream';
