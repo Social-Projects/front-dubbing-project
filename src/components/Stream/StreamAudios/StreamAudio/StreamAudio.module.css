@@ -12,6 +12,7 @@
     left: 11px;
     font-size: 32px;
     cursor: pointer;
+    transition: 0.1s;
 }
 
 .audio .icon:hover {

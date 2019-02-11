@@ -10,6 +10,7 @@ import apiManager from '../../util/apiManager';
 import * as actionCreators from '../../store/actions/index'; 
 import StateType from '../../store/state/state';
 import { KeyChars } from '../../util/keyChars';
+import { playbackManager } from '../../util/playbackManager';
 
 import classes from './Stream.module.css';
 
@@ -35,7 +36,8 @@ interface streamProps {
     onLoadSpeeches: Function,
     onSaveCurrentSpeechId: Function,
     onChangeStreamingStatus: Function,
-    onChangeStreamStateToInitial: Function
+    onChangeStreamStateToInitial: Function,
+    onChangeCurrentPlaybackTime: Function
 }
 
 interface IMapKeysBinding {
@@ -58,36 +60,13 @@ class Stream extends Component<streamProps, streamState> {
         };
     }
 
-    // getCurrentSpeechId = async () => {
-    //     const resp = await this.apiManager.getCurrentSpeechId();
-
-    //     if(resp.status == 200) {
-    //         const data: number = await resp.json();
-    //         this.props.onSaveCurrentSpeechId(data);
-    //     } else {
-    //         console.log('Something went wrong!');
-    //     }
-    // }
-
     playByIdHandler = async(id: number) => {
-        // if ((this.props.isPlaying && id !== this.props.currentSpeechId) || this.state.isFirst) {
-        //     await this.apiManager.playSpeechById(id);
-        //     await this.getCurrentSpeechId();
-
-        //     this.props.onChangeStreamingStatus(true);
-        //     this.setState({
-        //         isFirst: false
-        //     });
-        // }
-        // else {
-        //     await this.apiManager.pauseSpeech();
-        //     this.props.onChangeStreamingStatus(false);
-        // }
-
         if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
             await this.apiManager.playSpeechById(id);
             this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
 
             if (this.state.isFirst) {
                 this.setState({
@@ -98,9 +77,13 @@ class Stream extends Component<streamProps, streamState> {
             await this.apiManager.playSpeechById(id);
             this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
+
+            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
         } else {
             await this.apiManager.pauseSpeech();
             this.props.onChangeStreamingStatus(false);
+
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
         }
     }
     
@@ -110,10 +93,14 @@ class Stream extends Component<streamProps, streamState> {
         if (!this.props.isPlaying) {
             await this.apiManager.playSpeechById(this.props.currentSpeechId);
             this.props.onChangeStreamingStatus(true);
+
+            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
         }
         else {
             await this.apiManager.pauseSpeech();
             this.props.onChangeStreamingStatus(false);
+
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
         }
     };
     
@@ -176,7 +163,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onLoadSpeeches: (id: number) => dispatch(actionCreators.loadSpeeches(id)),
         onSaveCurrentSpeechId: (id: number) => dispatch(actionCreators.saveCurrentSpeechId(id)),
         onChangeStreamingStatus: (status: boolean) => dispatch(actionCreators.changeStreamingStatus(status)),
-        onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial())
+        onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial()),
+        onChangeCurrentPlaybackTime: (time: number) => dispatch(actionCreators.changeCurrentPlaybackTime(time))
     };
 };
 
