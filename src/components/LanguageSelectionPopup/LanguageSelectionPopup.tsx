@@ -4,8 +4,7 @@ import DropdownLanguage from "./DropdownLanguage";
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import "./LanguageSelectionPopup.css";
 import apiManager from "./apiManagerLanguage";
-import { async } from 'q';
-
+import PopupConfirmationDialog from "../PopupConfirmationDialog/PopupConfirmationDialog"
 interface languageState {
     modal: boolean,
     radioState: string,
@@ -25,6 +24,7 @@ interface languageProps {
 
 export default class LanguageSelectionPopup extends React.Component<languageProps, languageState> {
     apiManager = new apiManager();
+    child = React.createRef<PopupConfirmationDialog>();
 
     constructor(props: any) {
         super(props);
@@ -108,6 +108,13 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
         this.toggle();
     }
 
+    toggleChildComponent = async (e: any) => {
+        if (!this.child.current) {
+            return;
+        }
+        this.child.current.toggle();
+    }
+
 
     componentDidMount() {
         this.getLang();
@@ -163,7 +170,14 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
                     <Form>
                         <Button
                             color="danger"
-                            onClick={() => this.languageDeleteHandler()} >Видалити мову</Button><br />
+                            onClick={this.toggleChildComponent} >Видалити мову</Button><br />
+                        <PopupConfirmationDialog
+                            removeMethod={this.languageDeleteHandler.bind(this)}
+                            message="Видалення мови приведе до видалення усіх аудіозаписів звязаних з цією мовою. Ви дійсно хочете видалити виставу?"
+                            labelDangerButton="Видалити"
+                            labelPrimaryButton="Відмінити"
+                            ref={this.child}
+                        />
                     </Form>
                 </div>
             );
@@ -211,4 +225,3 @@ export default class LanguageSelectionPopup extends React.Component<languageProp
         );
     }
 }
-
