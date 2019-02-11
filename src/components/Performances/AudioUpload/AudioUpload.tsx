@@ -3,6 +3,7 @@ import "./AudioUpload.css";
 import API from "../../../util/api";
 import AudioItem from "../AudioItem/AudioItem";
 import { isNullOrUndefined } from "util";
+import { Tooltip } from 'reactstrap';
 
 export interface IAudioUploadProps { }
 
@@ -28,7 +29,8 @@ export interface IAudioUploadState {
     fileName: any,
     languageId: number,
     speechIndex: number
-  }[]
+  }[],
+  tooltipAddOpen: boolean,
 }
 
 export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
@@ -42,13 +44,16 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       performanceId: -1,
       languages: [],
       speeches: [],
-      fileToBeUploadData: []
+      fileToBeUploadData: [],
+      tooltipAddOpen: false
     }
 
     this.addItemHandler = this.addItemHandler.bind(this);
     this.deleteItemHandler = this.deleteItemHandler.bind(this);
     this.uploadHandler = this.uploadHandler.bind(this);
     this.textChangeHandler = this.textChangeHandler.bind(this);
+    this.tooltipAddToggle = this.tooltipAddToggle.bind(this);
+
   }
 
   private addItemHandler = () => {
@@ -324,6 +329,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   }
   }
 
+   tooltipAddToggle() {
+        this.setState({
+            tooltipAddOpen: !this.state.tooltipAddOpen
+        });
+    }
+
   render() {
     const items = [...this.state.speeches];
 
@@ -344,9 +355,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     return (
       <div className="audio-upload-section">
         <div className="col-sm-12 audio-header">
-          <label>Аудіо</label>
+          <label>Фраза</label>
 
-          <button className="fas fa-plus-circle btn-audio-add" onClick={this.addItemHandler} />
+          <button className="fas fa-plus-circle btn-audio-add" onClick={this.addItemHandler} id={"addBtn"}/>
+          <Tooltip placement="right" isOpen={this.state.tooltipAddOpen} autohide={false} target={"addBtn"} toggle={this.tooltipAddToggle}>
+            Додати фразу </Tooltip>
         </div>
         <div id="audio-container" className="row">
           {itemsList}

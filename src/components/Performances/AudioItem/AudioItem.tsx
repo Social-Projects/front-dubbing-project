@@ -3,6 +3,7 @@ import "./AudioItem.css";
 import API from "../../../util/api";
 import reducer from "../../../store/reducers/streamReducer";
 import { fileURLToPath } from "url";
+import { Tooltip } from 'reactstrap';
 
 export interface IAudioItemProps {
   id: number,
@@ -25,7 +26,9 @@ export interface IAudioItemProps {
   onFileChange: (fileName: string, languageId: number, speechIndex: number) => void
 }
 
-interface IAudioItemState { }
+interface IAudioItemState {
+  tooltipRemoveOpen: boolean,
+ }
 
 export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
   constructor(props: IAudioItemProps) {
@@ -33,6 +36,10 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
     this.handleBlur = this.handleBlur.bind(this);
     this.deleteHandler = this.deleteHandler.bind(this);
+    this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
+    this.state = {
+            tooltipRemoveOpen: false
+        };
   }
 
   private onChange = async (event: any) => {
@@ -78,6 +85,13 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     ch.click();
     
   }
+
+  tooltipRemoveToggle() {
+        this.setState({
+            tooltipRemoveOpen: !this.state.tooltipRemoveOpen
+        });
+  }
+
   render() {
     const languages = [...this.props.languages];
     const filesToUpload = [...this.props.fileToBeUploadData];
@@ -110,7 +124,9 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       <div className="container">
         <div className="row">
           <div className="col-sm-11">
-            <button onClick={this.deleteHandler} className="btn-audio-item-delete">
+            <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"removeButton"+this.props.id} toggle={this.tooltipRemoveToggle}>
+            Видалити фразу </Tooltip>
+            <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton"+this.props.id}>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
             </button>
           </div>
