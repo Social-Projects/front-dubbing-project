@@ -16,6 +16,7 @@ import classes from './Stream.module.css';
 
 interface streamState {
     perfomanceId: number,
+    performanceName: string,
     isFirst: boolean
 }
 
@@ -27,6 +28,7 @@ interface streamProps {
     },
     isPlaying: boolean,
     currentSpeechId: number,
+    maxDuration: number,
     speeches: {
         id: number,
         text: string,
@@ -56,6 +58,7 @@ class Stream extends Component<streamProps, streamState> {
         super(props);
         this.state = {
             perfomanceId: this.props.match.params.number,
+            performanceName: '',
             isFirst: true
         };
     }
@@ -66,7 +69,10 @@ class Stream extends Component<streamProps, streamState> {
             this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
             playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
+            playbackManager.play(
+                this.props.onChangeCurrentPlaybackTime,
+                this.pause.bind(this),
+                this.props.maxDuration);
 
             if (this.state.isFirst) {
                 this.setState({
@@ -78,7 +84,10 @@ class Stream extends Component<streamProps, streamState> {
             this.props.onSaveCurrentSpeechId(id);
             this.props.onChangeStreamingStatus(true);
 
-            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
+            playbackManager.play(
+                this.props.onChangeCurrentPlaybackTime,
+                this.pause.bind(this),
+                this.props.maxDuration);
         } else {
             await this.apiManager.pauseSpeech();
             this.props.onChangeStreamingStatus(false);
@@ -87,6 +96,13 @@ class Stream extends Component<streamProps, streamState> {
         }
     }
     
+    pause = async () => {
+        await this.apiManager.pauseSpeech();
+        this.props.onChangeStreamingStatus(false);
+
+        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+    };
+
     playPauseHandler = async (event: Event) => {
         event.preventDefault();
 
@@ -94,13 +110,13 @@ class Stream extends Component<streamProps, streamState> {
             await this.apiManager.playSpeechById(this.props.currentSpeechId);
             this.props.onChangeStreamingStatus(true);
 
-            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
+            playbackManager.play(
+                this.props.onChangeCurrentPlaybackTime,
+                this.pause.bind(this),
+                this.props.maxDuration);
         }
         else {
-            await this.apiManager.pauseSpeech();
-            this.props.onChangeStreamingStatus(false);
-
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+            await this.pause();
         }
     };
     
@@ -130,7 +146,7 @@ class Stream extends Component<streamProps, streamState> {
         return (
             <Aux>
                 <StreamHead
-                    name="Назва вистави"
+                    name={this.state.performanceName}
                     isPlaybacking={this.props.isPlaying}
                     clicked={this.playPauseHandler} />
                 <StreamAudios
@@ -147,9 +163,16 @@ class Stream extends Component<streamProps, streamState> {
     async componentDidMount() {
         console.log("state: " + this.state.perfomanceId);
         await this.apiManager.load(this.state.perfomanceId);
+        if (this.state.performanceName === '') {
+            const response = await this.apiManager.getPerformanceById(this.state.perfomanceId);
+            let performance = await response.json();
+            this.setState({
+                performanceName: performance.title
+            });
+        }
 
         this.props.onSavePerformanceId(this.state.perfomanceId);
-        this.props.onLoadSpeeches(this.state.perfomanceId);;
+        this.props.onLoadSpeeches(this.state.perfomanceId);
     }
 
     componentWillUnmount() {
@@ -172,7 +195,8 @@ const mapStateToProps = (state: StateType) => {
     return {
         speeches: state.stream.speeches,
         isPlaying: state.stream.isPlaying,
-        currentSpeechId: state.stream.currentSpeechId
+        currentSpeechId: state.stream.currentSpeechId,
+        maxDuration: state.stream.maxDuration
     };
 };
 

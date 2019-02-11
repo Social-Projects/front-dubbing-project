@@ -88,14 +88,17 @@ class apiManager {
         return response;
     }
 
-    // async playSpeech(): Promise<Response> {
-    //     console.log("try to play");
-    //     const response = await fetch(`${this.backendUrl}api/Streaming/Play`, {
-    //         method: 'GET'
-    //     });
-    //     console.log("play");
-    //     return response;
-    // }
+    
+
+    // Load required speeches to stream service
+    async load(performanceId: number): Promise<Response> {
+        console.log("try load");
+        const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
+            method: 'GET'
+        });
+        console.log("load");
+        return response;
+    }
 
     async playSpeechById(index: number): Promise<Response> {
         console.log("try to play by id");
@@ -115,6 +118,15 @@ class apiManager {
         return response;
     }
 
+    // async playSpeech(): Promise<Response> {
+    //     console.log("try to play");
+    //     const response = await fetch(`${this.backendUrl}api/Streaming/Play`, {
+    //         method: 'GET'
+    //     });
+    //     console.log("play");
+    //     return response;
+    // }
+
     // async nextSpeech(): Promise<Response> {
     //     console.log("try play next speech");
     //     const response = await fetch(`${this.backendUrl}api/Streaming/NextSpeech`, {
@@ -133,29 +145,19 @@ class apiManager {
     //     return response;
     // }
 
-    async getCurrentSpeechId(): Promise<Response> {
-        console.log("try get current speech id");
-        const response = await fetch(`${this.backendUrl}api/Streaming/CurrentSpeechId`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        });
-        console.log("get current speech id");
-        return response;
-    }
-
-    // Load required speeches to stream service
-    async load(performanceId: number): Promise<Response> {
-        console.log("try load");
-        const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
-            method: 'GET'
-        });
-        console.log("load");
-        return response;
-    }
+    // async getCurrentSpeechId(): Promise<Response> {
+    //     console.log("try get current speech id");
+    //     const response = await fetch(`${this.backendUrl}api/Streaming/CurrentSpeechId`, {
+    //         method: 'GET',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json',
+    //             'Access-Control-Allow-Origin': '*'
+    //         }
+    //     });
+    //     console.log("get current speech id");
+    //     return response;
+    // }
 }
 
 export default apiManager;
