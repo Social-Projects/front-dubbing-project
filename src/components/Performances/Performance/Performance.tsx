@@ -1,4 +1,4 @@
-import React, { Component, Dispatch, ReactEventHandler } from "react";
+import React, { Component, ReactEventHandler } from "react";
 import { Link } from "react-router-dom";
 import "./Performance.css"
 import PopupConfirmationDialog from "../../PopupConfirmationDialog/PopupConfirmationDialog"
