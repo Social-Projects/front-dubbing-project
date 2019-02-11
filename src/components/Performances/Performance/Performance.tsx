@@ -21,8 +21,8 @@ class Performance extends Component<performanceProps>
             
             <div className="row">
             
-                <p className="col-md-6 pull-left perfTitle" >{this.props.title}</p>
-                <div className="col-md-6 text-right PerformanceButtons ">
+                <p className="col-md-11 pull-left perfTitle" >{this.props.title}</p>
+                <div className="col-md-1 text-right PerformanceButtons ">
                     <Link to={"/performance/"+this.props.index} >
                         <button className="editBtn" />
                     </Link>
@@ -30,7 +30,7 @@ class Performance extends Component<performanceProps>
                 </div>
             </div>
 
-            <p>
+            <p className="perfDescr">
                 {this.props.description}
             </p>
             <Link to={"/stream/" + this.props.index}>
