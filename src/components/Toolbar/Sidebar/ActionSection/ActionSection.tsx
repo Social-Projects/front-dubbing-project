@@ -21,6 +21,7 @@ interface ActionSectionProps {
     currentSpeechId: number,
     currentSpeechIndex: number,
     currentPlaybackTime: number,
+    maxDuration: number,
     speeches: {
         id: number,
         text: string,
@@ -69,13 +70,20 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
             await this.playByIdHandler(this.props.currentSpeechId);
             this.props.onChangeStreamingStatus(true);
 
-            playbackManager.play(this.props.onChangeCurrentPlaybackTime);
+            playbackManager.play(
+                this.props.onChangeCurrentPlaybackTime,
+                this.pause.bind(this),
+                this.props.maxDuration);
         } else if(this.props.isPlaying) {
-            await this.apiManager.pauseSpeech();
-            this.props.onChangeStreamingStatus(false);
-
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+            await this.pause();
         }
+    }
+
+    pause = async () => {
+        await this.apiManager.pauseSpeech();
+        this.props.onChangeStreamingStatus(false);
+
+        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     }
 
     nextSpeechHandler = async (event : Event) => {
@@ -88,7 +96,10 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
 
             if (this.props.isPlaying) {
                 await this.playByIdHandler(nextSpeechId);
-                playbackManager.play(this.props.onChangeCurrentPlaybackTime);
+                playbackManager.play(
+                    this.props.onChangeCurrentPlaybackTime,
+                    this.pause.bind(this),
+                    this.props.maxDuration);
             }   
         }
     }
@@ -103,7 +114,10 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
 
             if (this.props.isPlaying) {
                 await this.apiManager.playSpeechById(prevSpeechId);
-                playbackManager.play(this.props.onChangeCurrentPlaybackTime);
+                playbackManager.play(
+                    this.props.onChangeCurrentPlaybackTime,
+                    this.pause.bind(this),
+                    this.props.maxDuration);
             }
         }
     }
@@ -147,7 +161,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
 
         // Delete later
 
-        const totalDuration = 30;
+        //const totalDuration = 30;
 
         return (
             <Aux>
@@ -159,7 +173,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                 />
                 <PlaySection
                     numAudio={this.props.currentSpeechIndex + 1}
-                    totalTime={totalDuration}
+                    totalTime={this.props.maxDuration}
                     currentTime={this.props.currentPlaybackTime} />
                 <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event) } type='keydown'/>
                 <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event) } type='keyup'/>
@@ -174,7 +188,8 @@ const mapStateToProps = (state: StateType) => {
         speeches: state.stream.speeches,
         currentSpeechId: state.stream.currentSpeechId,
         currentSpeechIndex: state.stream.currentSpeechIndex,
-        currentPlaybackTime: state.stream.currentPlaybackTime
+        currentPlaybackTime: state.stream.currentPlaybackTime,
+        maxDuration: state.stream.maxDuration
     };
 };
 

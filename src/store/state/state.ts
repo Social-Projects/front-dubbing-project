@@ -9,6 +9,7 @@ export default interface State {
         isPlaying: boolean,
         currentSpeechId: number,
         currentSpeechIndex: number,
-        currentPlaybackTime: number
+        currentPlaybackTime: number,
+        maxDuration: number
     }
 }
