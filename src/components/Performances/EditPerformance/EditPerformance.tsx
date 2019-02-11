@@ -1,14 +1,18 @@
 import React, { Component, createRef } from 'react';
-import apiManager from "../../../util/apiManager";
 import { Link } from 'react-router-dom';
+
 import AudioUpload from '../AudioUpload/AudioUpload';
+import apiManager from "../../../util/apiManager";
+import history from '../../../util/history';
+import Spinner from '../../UI/Spinner/Spinner';
 import "./EditPerformance.css"; 
-import history from '../../../util/history'
+
 
 interface editPerformanceState {
     id: number,
     title: string,
-    description: string
+    description: string,
+    isShow: boolean
 }
 interface editPerformanceProps {
     match: {
@@ -29,7 +33,8 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
         this.state = {
             id: -1,
             title: '',
-            description: ''
+            description: '',
+            isShow: false
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -53,6 +58,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
         }
     }
     async handleSave() {
+        this.setState({
+            isShow: true
+        });
         if (this.state.id != -1) {
             const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
             if (resp.status == 200) {
@@ -61,6 +69,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 }
 
                 await this.child.current.uploadHandler(this.state.id, true);
+                this.setState({
+                    isShow: false
+                });
                 history.push("/performance/" + this.state.id);
                 await this.loadData();
             }
@@ -86,6 +97,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 console.log(resp.status);
             }
         }
+        this.setState({
+            isShow: false
+        });
     }
     async loadData()
     {
@@ -125,6 +139,8 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
 
         return (
             <div className="editForm">
+                <Spinner isShow={this.state.isShow} />
+
                 <div className="formHeader">
                     <p>{this.props.match.params.number == "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">
