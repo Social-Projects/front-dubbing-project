@@ -61,6 +61,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   }
 
   private handleBlur = (event: any) => {
+    console.log("blur");
     let trimedString = event.target.value.trim();
     let index = event.target.id;
 
@@ -134,10 +135,10 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
             <div className="col-sm-12">
               <textarea
                 id={this.props.id.toString()}
-                onBlur={this.handleBlur}
+                onChange={this.handleBlur}
                 className="audio-text"
                 placeholder="Введіть оригінал тексту до аудіо."
-                defaultValue={this.props.text}
+                value={this.props.text}
               />
             </div>
             <div className="col-sm-7" id={this.props.id.toString()}>

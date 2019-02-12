@@ -80,9 +80,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       let speeches = this.state.speeches.filter(obj => {
         return obj.id != index;
       });
-
+      let audios = this.state.fileToBeUploadData.filter(obj => {
+        return obj.speechIndex != index;
+      });
       this.setState({
-        speeches: speeches
+        speeches: speeches,
+        fileToBeUploadData : audios
       });
     } else {
       if (isNullOrUndefined(this.state.speeches[index])) {
@@ -91,9 +94,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           let speeches = this.state.speeches.filter(obj => {
             return obj.id != index;
           });
-
+          let audios = this.state.fileToBeUploadData.filter(obj => {
+            return obj.speechIndex != index;
+          });
           this.setState({
-            speeches: speeches
+            speeches: speeches,
+            fileToBeUploadData : audios
           });
         }
       } else {
@@ -349,6 +355,9 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   render() {
     const items = [...this.state.speeches];
 
+    console.log("items");
+    console.log(items);
+
     const itemsList = items.map((item, index) => (
       <AudioItem
         key={index}
@@ -362,6 +371,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         ref={this.child}
       />
     ));
+    console.log(itemsList);
 
     return (
       <div className="audio-upload-section">
