@@ -162,6 +162,14 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   // Uploading speeches and file data. Very massive and probably needs
   uploadHandler = async (performanceId: number, update: boolean) => {
+    const reqCount = this.state.speeches.length * this.state.languages.length;
+    const actualCount = this.state.fileToBeUploadData.length;
+    console.log("req + " + reqCount);
+    console.log("act " + actualCount);
+    if (reqCount != actualCount)
+    {
+      return -1;
+    }
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
         let speech = {
@@ -170,7 +178,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           isNew: this.state.speeches[i].isNew,
           performanceId: performanceId
         }
-
+        if (isNullOrUndefined(this.state.speeches[i].text))
+        {
+          return -2;
+        }
         // Cheking for new speeches
         if (!speech.isNew) {
           let speechResponse = await API.put("speech", speech, {

@@ -1,5 +1,5 @@
 const config = {
-    urlApi: "http://localhost:5000/" 
+    urlApi: "https://localhost:5001/" 
 };
 
 export default config;

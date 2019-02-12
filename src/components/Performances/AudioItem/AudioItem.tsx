@@ -67,6 +67,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     if (trimedString !== "") {
       this.props.onTextChange(trimedString, index);
     } else {
+      
       event.target.value = '';
     }
   }
@@ -124,9 +125,8 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       <div className="container">
         <div className="row">
           <div className="col-sm-11">
-            <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"removeButton"+this.props.id} toggle={this.tooltipRemoveToggle}>
-            Видалити фразу </Tooltip>
-            <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton"+this.props.id}>
+           
+            <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={this.props.id.toString() }>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
             </button>
           </div>

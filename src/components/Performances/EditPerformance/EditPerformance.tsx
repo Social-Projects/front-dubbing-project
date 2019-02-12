@@ -68,12 +68,32 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                await this.child.current.uploadHandler(this.state.id, true);
+                const result = await this.child.current.uploadHandler(this.state.id, true);
+                console.log(result);
+                if (result == -1)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                    alert('Завантажте всі аудіо!');
+
+                    return;
+                }
+                if (result == -2)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                    alert('Введіть текст фрази!');
+
+                    return;
+                }
                 this.setState({
                     isShow: false
                 });
                 history.push("/performance/" + this.state.id);
                 await this.loadData();
+            
             }
             else {
                 console.log(resp.status);
@@ -89,7 +109,26 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                await this.child.current.uploadHandler(JSONObj["id"], false);
+                const result = await this.child.current.uploadHandler(JSONObj["id"], false);
+                console.log(result);
+
+                if (result == -1)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                        alert('Завантажте всі аудіо!');
+                        return;
+                }
+                if (result == -2)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                    alert('Введіть текст фрази!');
+
+                    return;
+                }
                 history.push("/performance/" + JSONObj["id"]);
                 await this.loadData();
             }
