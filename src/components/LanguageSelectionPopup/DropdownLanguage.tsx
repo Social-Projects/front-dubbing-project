@@ -23,7 +23,7 @@ export default class DropdownLanguage extends React.Component<propsDropdownLangu
         this.toggle = this.toggle.bind(this);
         this.state = {
             dropdownOpen: false,
-            currentLanguage:  { id: 0, name: 'Мова' }
+            currentLanguage: { id: 0, name: 'Мова' }
         };
     }
 
@@ -33,7 +33,7 @@ export default class DropdownLanguage extends React.Component<propsDropdownLangu
         }));
     }
 
-    changeCurrentLanguageHandler = (lang:any) => {
+    changeCurrentLanguageHandler = (lang: any) => {
         const curLang = lang;
         this.props.updateCurrentLang(curLang);
         this.setState(state => ({
@@ -41,11 +41,21 @@ export default class DropdownLanguage extends React.Component<propsDropdownLangu
         }));
     }
 
+    compare(a : any,b : any) {
+        if (a.name < b.name)
+          return -1;
+        if (a.name > b.name)
+          return 1;
+        return 0;
+      }
+
     public render() {
         let language = null;
+        var sortable = this.props.languages.sort(this.compare);
+
         language = (
             <div>
-                {this.props.languages.map((lang, index) => {
+                {sortable.map((lang, index) => {
                     index = lang.id;
                     return <DropdownItem key={index} onClick={() => this.changeCurrentLanguageHandler(lang)}>{lang.name}</DropdownItem>
                 })}
