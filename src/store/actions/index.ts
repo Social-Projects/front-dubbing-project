@@ -4,5 +4,6 @@ export {
     saveCurrentSpeechId,
     changeStreamingStatus,
     changeStreamStateToInitial,
-    changeCurrentPlaybackTime
+    changeCurrentPlaybackTime,
+    changeConnectingStatus
 } from './stream';

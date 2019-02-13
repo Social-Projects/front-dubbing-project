@@ -68,3 +68,13 @@ export const changeCurrentPlaybackTime = (currentPlaybackTime: number) => {
         }
     };
 };
+
+// Change connecting status
+export const changeConnectingStatus = (status: boolean) => {
+    return {
+        type: actionTypes.CHANGE_CONNECTING_STATUS,
+        payload: {
+            status: status
+        }
+    };
+};

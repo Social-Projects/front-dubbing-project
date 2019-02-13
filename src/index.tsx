@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import config from 'react-global-configuration';
 import configuration from './config';
+import signalrManager from './util/signalrManager';
 
 const reducer = combineReducers({
     stream: streamReducer
@@ -32,6 +33,8 @@ const app = (
         </Router>
     </Provider>
 );
+
+export const signalRManager = new signalrManager();
 
 ReactDOM.render(app, document.getElementById('root'));
 

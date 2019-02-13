@@ -8,7 +8,8 @@ interface AudioProps {
     duration: number,
     isPlaying: boolean,
     playByIdHandler: any,
-    currentAudioId: number
+    currentAudioId: number,
+    connectingStatus: boolean
 }
 
 const audio = (props: AudioProps) => {
@@ -33,15 +34,17 @@ const audio = (props: AudioProps) => {
     if (props.isPlaying) {
         iconActionsClasses.pop();
         iconActionsClasses.push('fa-pause-circle');
-    } 
-    else{
+    } else {
         iconActionsClasses.pop();
         iconActionsClasses.push('fa-play-circle');
     }
 
+    if (!props.connectingStatus) {
+        iconActionsClasses.push(classes.disable);
+    }
+
     function playHandler() {
         console.log(props.currentAudioId);
-
         props.playByIdHandler(props.currentAudioId)
     }
 

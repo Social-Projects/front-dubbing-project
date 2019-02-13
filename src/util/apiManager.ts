@@ -1,4 +1,5 @@
 import config from 'react-global-configuration';
+import { signalRManager } from '../index';
 
 class apiManager {
     backendUrl = "";
@@ -73,6 +74,15 @@ class apiManager {
         return response;
     }
 
+    //Using to connect to hub
+    async connectToHub() {
+        await signalRManager.connectToHub();
+    }
+
+    async disconnectToHub() {
+        await signalRManager.disconnectFromHub();
+    }
+
     //Using for display list of speeches on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
         console.log("try get speeches info");
@@ -88,34 +98,32 @@ class apiManager {
         return response;
     }
 
-    
-
     // Load required speeches to stream service
-    async load(performanceId: number): Promise<Response> {
-        console.log("try load");
-        const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
-            method: 'GET'
-        });
-        console.log("load");
-        return response;
-    }
+    // async load(performanceId: number): Promise<Response> {
+    //     console.log("try load");
+    //     const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
+    //         method: 'GET'
+    //     });
+    //     console.log("load");
+    //     return response;
+    // }
 
-    async playSpeechById(index: number): Promise<Response> {
+    async playSpeechById(index: number) {
         console.log("try to play by id");
-        const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
-            method: 'GET'
-        });
+        // const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
+        //     method: 'GET'
+        // });
+        await signalRManager.sendCommand(index.toString());
         console.log("play by id");
-        return response;
     }
 
-    async pauseSpeech(): Promise<Response> {
+    async pauseSpeech() {
         console.log("try to pause");
-        const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
-            method: 'GET'
-        });
+        // const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
+        //     method: 'GET'
+        // });
+        await signalRManager.sendCommand('Pause');
         console.log("pause");
-        return response;
     }
 
     // async playSpeech(): Promise<Response> {

@@ -14,16 +14,26 @@
     transition: 0.3s;
 }
 
-.btnSection .prev:hover, .btnSection .next:hover {
-    font-size: 26px;
-}
-
 .btnSection .prev {
     left: 4%;
 }
 
 .btnSection .next {
     right: 4%;
+}
+
+.btnSection .prev:hover, .btnSection .next:hover {
+    font-size: 26px;
+}
+
+.prevNextDisable {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 20px !important;
+    cursor: default !important;
+}
+
+.prevNextDisable:hover {
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .btnSection .act {
@@ -36,6 +46,11 @@
     font-size: 40px;
 
     transition: background-color 0.3s;
+}
+
+.disable {
+    background-color: rgba(140, 193, 82, 0.7) !important;
+    cursor: default;
 }
 
 .play {

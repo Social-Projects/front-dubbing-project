@@ -26,6 +26,7 @@ interface streamProps {
             number: number
         }
     },
+    connectingStatus: boolean,
     isPlaying: boolean,
     currentSpeechId: number,
     maxDuration: number,
@@ -39,7 +40,8 @@ interface streamProps {
     onSaveCurrentSpeechId: Function,
     onChangeStreamingStatus: Function,
     onChangeStreamStateToInitial: Function,
-    onChangeCurrentPlaybackTime: Function
+    onChangeCurrentPlaybackTime: Function,
+    onChangeConnectingStatus: Function
 }
 
 interface IMapKeysBinding {
@@ -63,60 +65,79 @@ class Stream extends Component<streamProps, streamState> {
         };
     }
 
-    playByIdHandler = async(id: number) => {
-        if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
-            await this.apiManager.playSpeechById(id);
-            this.props.onSaveCurrentSpeechId(id);
-            this.props.onChangeStreamingStatus(true);
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-            playbackManager.play(
-                this.props.onChangeCurrentPlaybackTime,
-                this.pause.bind(this),
-                this.props.maxDuration);
+    changeConnectingStatus = async (event: Event) => {
+        event.preventDefault();
 
-            if (this.state.isFirst) {
-                this.setState({
-                    isFirst: false
-                });
-            }
-        } else if (!this.props.isPlaying) {
-            await this.apiManager.playSpeechById(id);
-            this.props.onSaveCurrentSpeechId(id);
-            this.props.onChangeStreamingStatus(true);
-
-            playbackManager.play(
-                this.props.onChangeCurrentPlaybackTime,
-                this.pause.bind(this),
-                this.props.maxDuration);
+        if (!this.props.connectingStatus) {
+            await this.apiManager.connectToHub();
+            this.props.onChangeConnectingStatus(true);
         } else {
+            await this.apiManager.disconnectToHub();
+            this.props.onChangeConnectingStatus(false);
+        }
+    };
+
+    playByIdHandler = async(id: number) => {
+        if (this.props.connectingStatus) {
+            if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
+                await this.apiManager.playSpeechById(id);
+                this.props.onSaveCurrentSpeechId(id);
+                this.props.onChangeStreamingStatus(true);
+    
+                playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+                playbackManager.play(
+                    this.props.onChangeCurrentPlaybackTime,
+                    this.pause.bind(this),
+                    this.props.maxDuration);
+    
+                if (this.state.isFirst) {
+                    this.setState({
+                        isFirst: false
+                    });
+                }
+            } else if (!this.props.isPlaying) {
+                await this.apiManager.playSpeechById(id);
+                this.props.onSaveCurrentSpeechId(id);
+                this.props.onChangeStreamingStatus(true);
+    
+                playbackManager.play(
+                    this.props.onChangeCurrentPlaybackTime,
+                    this.pause.bind(this),
+                    this.props.maxDuration);
+            } else {
+                await this.apiManager.pauseSpeech();
+                this.props.onChangeStreamingStatus(false);
+    
+                playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+            }
+        }
+    }
+    
+    pause = async () => {
+        if (this.props.connectingStatus) {
             await this.apiManager.pauseSpeech();
             this.props.onChangeStreamingStatus(false);
 
             playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
         }
-    }
-    
-    pause = async () => {
-        await this.apiManager.pauseSpeech();
-        this.props.onChangeStreamingStatus(false);
-
-        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     };
 
     playPauseHandler = async (event: Event) => {
-        event.preventDefault();
+        if (this.props.connectingStatus) {
+            event.preventDefault();
 
-        if (!this.props.isPlaying) {
-            await this.apiManager.playSpeechById(this.props.currentSpeechId);
-            this.props.onChangeStreamingStatus(true);
-
-            playbackManager.play(
-                this.props.onChangeCurrentPlaybackTime,
-                this.pause.bind(this),
-                this.props.maxDuration);
-        }
-        else {
-            await this.pause();
+            if (!this.props.isPlaying) {
+                await this.apiManager.playSpeechById(this.props.currentSpeechId);
+                this.props.onChangeStreamingStatus(true);
+    
+                playbackManager.play(
+                    this.props.onChangeCurrentPlaybackTime,
+                    this.pause.bind(this),
+                    this.props.maxDuration);
+            }
+            else {
+                await this.pause();
+            }
         }
     };
     
@@ -147,10 +168,11 @@ class Stream extends Component<streamProps, streamState> {
             <Aux>
                 <StreamHead
                     name={this.state.performanceName}
-                    isPlaybacking={this.props.isPlaying}
-                    clicked={this.playPauseHandler} />
+                    connectingStatus={this.props.connectingStatus}
+                    clicked={(event: Event) => this.changeConnectingStatus(event) } />
                 <StreamAudios
                     audios={this.props.speeches !== undefined ? this.props.speeches : []}
+                    connectingStatus={this.props.connectingStatus}
                     currentAudioId={this.props.currentSpeechId}
                     playByIdHandler={this.playByIdHandler}
                     isPlaying={this.props.isPlaying} />
@@ -162,7 +184,8 @@ class Stream extends Component<streamProps, streamState> {
 
     async componentDidMount() {
         console.log("state: " + this.state.perfomanceId);
-        await this.apiManager.load(this.state.perfomanceId);
+        //await this.apiManager.load(this.state.perfomanceId);
+
         if (this.state.performanceName === '') {
             const response = await this.apiManager.getPerformanceById(this.state.perfomanceId);
             let performance = await response.json();
@@ -187,7 +210,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onSaveCurrentSpeechId: (id: number) => dispatch(actionCreators.saveCurrentSpeechId(id)),
         onChangeStreamingStatus: (status: boolean) => dispatch(actionCreators.changeStreamingStatus(status)),
         onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial()),
-        onChangeCurrentPlaybackTime: (time: number) => dispatch(actionCreators.changeCurrentPlaybackTime(time))
+        onChangeCurrentPlaybackTime: (time: number) => dispatch(actionCreators.changeCurrentPlaybackTime(time)),
+        onChangeConnectingStatus: (status: boolean) => dispatch(actionCreators.changeConnectingStatus(status))
     };
 };
 
@@ -196,7 +220,8 @@ const mapStateToProps = (state: StateType) => {
         speeches: state.stream.speeches,
         isPlaying: state.stream.isPlaying,
         currentSpeechId: state.stream.currentSpeechId,
-        maxDuration: state.stream.maxDuration
+        maxDuration: state.stream.maxDuration,
+        connectingStatus: state.stream.connectingStatus
     };
 };
 

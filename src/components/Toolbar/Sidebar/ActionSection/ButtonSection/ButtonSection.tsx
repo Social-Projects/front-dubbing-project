@@ -7,33 +7,42 @@ interface buttonSectionProps {
     isPlaying: boolean,
     playPauseHandler:any,
     nextSpeechHandler:any,
-    prevSpeechHandler:any
+    prevSpeechHandler:any,
+    connectingStatus: boolean
 };
 
 const buttonSection = (props: buttonSectionProps) => {
-
-    const btnClasses = [classes.act, classes.play];
-    const iconClasses = ["fas", "fa-play"];
+    const mainBtnClasses = [classes.act, classes.play];
+    const mainBtnIconClasses = ["fas", "fa-play"];
 
     if (props.isPlaying === true) {
-        btnClasses.pop();
-        btnClasses.push(classes.pause);
+        mainBtnClasses.pop();
+        mainBtnClasses.push(classes.pause);
 
-        iconClasses.pop();
-        iconClasses.push("fa-pause");
+        mainBtnIconClasses.pop();
+        mainBtnIconClasses.push("fa-pause");
+    }
+
+    let prev = [classes.prev];
+    let next = [classes.next];
+    if (!props.connectingStatus) {
+        mainBtnClasses.push(classes.disable);
+        
+        prev.push(classes.prevNextDisable);
+        next.push(classes.prevNextDisable);
     }
 
     return (
         <Aux>
-            <a href="" className={classes.prev} onClick={(event) => props.prevSpeechHandler(event)}>
+            <a href="" className={prev.join(' ')} onClick={(event) => props.prevSpeechHandler(event)}>
                 <i className="fas fa-fast-backward"></i>
             </a>
 
-            <a href="" className={btnClasses.join(' ')} onClick={(event) => props.playPauseHandler(event)}>
-                <i className={iconClasses.join(' ')} ></i>
+            <a href="" className={mainBtnClasses.join(' ')} onClick={(event) => props.playPauseHandler(event)}>
+                <i className={mainBtnIconClasses.join(' ')} ></i>
             </a>
 
-            <a href="" className={classes.next} onClick={(event) => props.nextSpeechHandler(event)}>
+            <a href="" className={next.join(' ')} onClick={(event) => props.nextSpeechHandler(event)}>
                 <i className="fas fa-fast-forward"></i>
             </a>
         </Aux>
