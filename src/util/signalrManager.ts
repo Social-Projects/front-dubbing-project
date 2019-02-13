@@ -12,25 +12,29 @@ class signalrManager {
             .build();
     }
 
-    async connectToHub() {
+    async connectToHub(): Promise<void> {
         console.log('Try to connect to SignalR Hub');
 
         await this.connection.start()
+            .then(value => this.sendCommand('Start'))
             .catch(err => console.log(err));
     }
 
     async disconnectFromHub() {
         console.log('Try to disconnect from SignalR Hub');
 
-        await this.connection.stop()
-            .catch(err => console.log(err));
+        await this.sendCommand('End')
+                .then(() => this.connection.stop())
+                .catch(error => console.log(error));
     }
 
-    async sendCommand(command: string) {
+    async sendCommand(command: string): Promise<void> {
         console.log('Try send to SignalR Hub:' + command);
 
-        await this.connection.send("SendMessage", command)
-            .catch(err => console.log(err));
+        let response = await this.connection.send("SendMessage", command)
+                                .catch(err => console.log(err));
+
+        return response;
     }
 }
 

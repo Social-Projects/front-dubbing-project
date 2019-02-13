@@ -83,6 +83,10 @@ class apiManager {
         await signalRManager.disconnectFromHub();
     }
 
+    async endStream() {
+        await signalRManager.sendCommand('End');
+    }
+
     //Using for display list of speeches on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
         console.log("try get speeches info");

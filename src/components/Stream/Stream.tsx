@@ -72,7 +72,10 @@ class Stream extends Component<streamProps, streamState> {
             await this.apiManager.connectToHub();
             this.props.onChangeConnectingStatus(true);
         } else {
-            await this.pause();
+            this.props.onChangeStreamingStatus(false);
+            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+
+            this.props.onChangeConnectingStatus(false);
             await this.apiManager.disconnectToHub();
         }
     };
