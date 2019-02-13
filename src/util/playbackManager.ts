@@ -19,7 +19,6 @@ class PlaybackManager {
                 if (!this.isPause && this.currentTime < this.maxDuration) {
                     this.currentTime++;
                     changeCurrentPlaybackTime(this.currentTime);
-                    console.log(this.currentTime);
                 }
                 else if (this.currentTime >= this.maxDuration) {
                     pause();

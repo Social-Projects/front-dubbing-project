@@ -89,7 +89,6 @@ class apiManager {
 
     //Using for display list of speeches on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
-        console.log("try get speeches info");
         const response = await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`, {
             method: 'GET',
             headers: {
@@ -98,7 +97,6 @@ class apiManager {
                 'Access-Control-Allow-Origin': '*'
             }
         });
-        console.log("get speeches info");
         return response;
     }
 
@@ -113,21 +111,17 @@ class apiManager {
     // }
 
     async playSpeechById(index: number) {
-        console.log("try to play by id");
         // const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
         //     method: 'GET'
         // });
         await signalRManager.sendCommand(index.toString());
-        console.log("play by id");
     }
 
     async pauseSpeech() {
-        console.log("try to pause");
         // const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
         //     method: 'GET'
         // });
         await signalRManager.sendCommand('Pause');
-        console.log("pause");
     }
 
     // async playSpeech(): Promise<Response> {
