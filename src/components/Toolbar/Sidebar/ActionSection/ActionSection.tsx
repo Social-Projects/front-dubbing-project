@@ -83,12 +83,9 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     }
 
     pause = async () => {
-        if (this.props.connectingStatus) {
-            await this.apiManager.pauseSpeech();
-            this.props.onChangeStreamingStatus(false);
-
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-        }
+        await this.apiManager.pauseSpeech();
+        this.props.onChangeStreamingStatus(false);
+        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     }
 
     nextSpeechHandler = async (event : Event) => {
@@ -132,9 +129,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     }
 
     playByIdHandler = async (id: number) => {
-        if (this.props.connectingStatus) {
-            await this.apiManager.playSpeechById(id);
-        }
+        await this.apiManager.playSpeechById(id);
     }
 
     checkKeys = (...keys: string[]) => {

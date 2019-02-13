@@ -114,12 +114,9 @@ class Stream extends Component<streamProps, streamState> {
     }
     
     pause = async () => {
-        if (this.props.connectingStatus) {
-            await this.apiManager.pauseSpeech();
-            this.props.onChangeStreamingStatus(false);
-
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-        }
+        await this.apiManager.pauseSpeech();
+        this.props.onChangeStreamingStatus(false);
+        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     };
 
     playPauseHandler = async (event: Event) => {
