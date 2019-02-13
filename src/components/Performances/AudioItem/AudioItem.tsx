@@ -28,7 +28,7 @@ export interface IAudioItemProps {
 
 interface IAudioItemState {
   tooltipRemoveOpen: boolean,
- }
+}
 
 export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
   constructor(props: IAudioItemProps) {
@@ -38,8 +38,8 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.deleteHandler = this.deleteHandler.bind(this);
     this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
     this.state = {
-            tooltipRemoveOpen: false
-        };
+      tooltipRemoveOpen: false
+    };
   }
 
   private onChange = async (event: any) => {
@@ -61,12 +61,14 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   }
 
   private handleBlur = (event: any) => {
+    console.log("blur");
     let trimedString = event.target.value.trim();
     let index = event.target.id;
 
     if (trimedString !== "") {
       this.props.onTextChange(trimedString, index);
     } else {
+
       event.target.value = '';
     }
   }
@@ -75,21 +77,20 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     const deleteItemId = event.target.id;
     this.props.onDelete(deleteItemId);
   }
-  handleUploadClick(event:any)
-  {
+  handleUploadClick(event: any) {
     let parent = event.target.parentElement.parentElement as HTMLElement;
-    let ch = parent.getElementsByClassName('choose-audio-btn').namedItem(event.target.id.toString())  as HTMLElement;
- 
+    let ch = parent.getElementsByClassName('choose-audio-btn').namedItem(event.target.id.toString()) as HTMLElement;
+
     console.log(ch);
-  
+
     ch.click();
-    
+
   }
 
   tooltipRemoveToggle() {
-        this.setState({
-            tooltipRemoveOpen: !this.state.tooltipRemoveOpen
-        });
+    this.setState({
+      tooltipRemoveOpen: !this.state.tooltipRemoveOpen
+    });
   }
 
   render() {
@@ -112,32 +113,32 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
         <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>Завантажити</button>
 
         {filesToUpload.map(file => {
-          if(file.speechIndex == this.props.id && file.languageId == item.id)
-          {
+          if (file.speechIndex == this.props.id && file.languageId == item.id) {
             return <span>{file.fileName}</span>
           }
         })}
-      </div>   
+      </div>
     ));
 
     return (
       <div className="container">
         <div className="row">
           <div className="col-sm-11">
-            <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"removeButton"+this.props.id} toggle={this.tooltipRemoveToggle}>
-            Видалити фразу </Tooltip>
-            <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton"+this.props.id}>
+
+            <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton" + this.props.id}>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
             </button>
+            <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"removeButton" + this.props.id} toggle={this.tooltipRemoveToggle}>
+              Видалити фразу </Tooltip>
           </div>
           <div className="col-sm-11 audio-item">
             <div className="col-sm-12">
               <textarea
                 id={this.props.id.toString()}
-                onBlur={this.handleBlur}
+                onChange={this.handleBlur}
                 className="audio-text"
                 placeholder="Введіть оригінал тексту до аудіо."
-                defaultValue={this.props.text}
+                value={this.props.text}
               />
             </div>
             <div className="col-sm-7" id={this.props.id.toString()}>

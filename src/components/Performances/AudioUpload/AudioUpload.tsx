@@ -80,9 +80,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       let speeches = this.state.speeches.filter(obj => {
         return obj.id != index;
       });
-
+      let audios = this.state.fileToBeUploadData.filter(obj => {
+        return obj.speechIndex != index;
+      });
       this.setState({
-        speeches: speeches
+        speeches: speeches,
+        fileToBeUploadData : audios
       });
     } else {
       if (isNullOrUndefined(this.state.speeches[index])) {
@@ -91,9 +94,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           let speeches = this.state.speeches.filter(obj => {
             return obj.id != index;
           });
-
+          let audios = this.state.fileToBeUploadData.filter(obj => {
+            return obj.speechIndex != index;
+          });
           this.setState({
-            speeches: speeches
+            speeches: speeches,
+            fileToBeUploadData : audios
           });
         }
       } else {
@@ -162,6 +168,14 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   // Uploading speeches and file data. Very massive and probably needs
   uploadHandler = async (performanceId: number, update: boolean) => {
+    const reqCount = this.state.speeches.length * this.state.languages.length;
+    const actualCount = this.state.fileToBeUploadData.length;
+    console.log("req + " + reqCount);
+    console.log("act " + actualCount);
+    if (reqCount != actualCount)
+    {
+      return -1;
+    }
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
         let speech = {
@@ -170,7 +184,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           isNew: this.state.speeches[i].isNew,
           performanceId: performanceId
         }
-
+        if (isNullOrUndefined(this.state.speeches[i].text))
+        {
+          return -2;
+        }
         // Cheking for new speeches
         if (!speech.isNew) {
           let speechResponse = await API.put("speech", speech, {
@@ -338,6 +355,9 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   render() {
     const items = [...this.state.speeches];
 
+    console.log("items");
+    console.log(items);
+
     const itemsList = items.map((item, index) => (
       <AudioItem
         key={index}
@@ -351,6 +371,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         ref={this.child}
       />
     ));
+    console.log(itemsList);
 
     return (
       <div className="audio-upload-section">
