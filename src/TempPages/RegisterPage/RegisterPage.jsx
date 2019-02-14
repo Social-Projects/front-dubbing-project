@@ -5,6 +5,7 @@ import './Form.css'
 import Logo from '../../assets/images/theater-logo.png';
 import { userActions } from '../../LoginHelper/_actions';
 
+
 class RegisterPage extends React.Component {
     constructor(props) {
         super(props);

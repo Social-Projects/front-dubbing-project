@@ -1,4 +1,5 @@
 import config from 'react-global-configuration';
+import { promises } from 'fs';
 
 class apiManager {
     backendUrl = "";
@@ -46,6 +47,18 @@ class apiManager {
             });
         return response;
     }
+
+    //  async register(user:any):Promise<Response>{
+    //     const response = await fetch(`http://localhost:5000/users/register`,
+    //      {
+    //          method: 'POST',
+    //          headers: { 
+    //           'Content-Type': 'application/json',
+    //           'Access-Control-Allow-Origin': '*',
+    //           'Accept': 'application/json' },
+    //      });
+    //      return response;
+    //  }
 
     async getPerformanceById(index: number): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
