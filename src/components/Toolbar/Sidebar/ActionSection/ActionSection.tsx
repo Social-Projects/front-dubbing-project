@@ -118,7 +118,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                 playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     
                 if (this.props.isPlaying) {
-                    await this.apiManager.playSpeechById(prevSpeechId);
+                    await this.apiManager.playSpeechById(this.state.performanceId + "_" + prevSpeechId);
                     playbackManager.play(
                         this.props.onChangeCurrentPlaybackTime,
                         this.pause.bind(this),
@@ -129,7 +129,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     }
 
     playByIdHandler = async (id: number) => {
-        await this.apiManager.playSpeechById(id);
+        await this.apiManager.playSpeechById(this.state.performanceId + "_" + id);
     }
 
     checkKeys = (...keys: string[]) => {

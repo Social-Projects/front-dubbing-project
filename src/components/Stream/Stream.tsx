@@ -26,6 +26,7 @@ interface streamProps {
             number: number
         }
     },
+    performanceId: number,
     connectingStatus: boolean,
     isPlaying: boolean,
     currentSpeechId: number,
@@ -83,7 +84,7 @@ class Stream extends Component<streamProps, streamState> {
     playByIdHandler = async(id: number) => {
         if (this.props.connectingStatus) {
             if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
-                await this.apiManager.playSpeechById(id);
+                await this.apiManager.playSpeechById(this.props.performanceId + "_" + id);
                 this.props.onSaveCurrentSpeechId(id);
                 this.props.onChangeStreamingStatus(true);
     
@@ -99,7 +100,7 @@ class Stream extends Component<streamProps, streamState> {
                     });
                 }
             } else if (!this.props.isPlaying) {
-                await this.apiManager.playSpeechById(id);
+                await this.apiManager.playSpeechById(this.props.performanceId + "_" + id);
                 this.props.onSaveCurrentSpeechId(id);
                 this.props.onChangeStreamingStatus(true);
     
@@ -127,7 +128,7 @@ class Stream extends Component<streamProps, streamState> {
             event.preventDefault();
 
             if (!this.props.isPlaying) {
-                await this.apiManager.playSpeechById(this.props.currentSpeechId);
+                await this.apiManager.playSpeechById(this.props.performanceId + "_" + this.props.currentSpeechId);
                 this.props.onChangeStreamingStatus(true);
     
                 playbackManager.play(
@@ -217,6 +218,7 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const mapStateToProps = (state: StateType) => {
     return {
+        performanceId: state.stream.performanceId,
         speeches: state.stream.speeches,
         isPlaying: state.stream.isPlaying,
         currentSpeechId: state.stream.currentSpeechId,
