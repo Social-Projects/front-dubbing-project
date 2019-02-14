@@ -110,11 +110,11 @@ class apiManager {
     //     return response;
     // }
 
-    async playSpeechById(index: number) {
+    async playSpeechById(index: string) {
         // const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
         //     method: 'GET'
         // });
-        await signalRManager.sendCommand(index.toString());
+        await signalRManager.sendCommand(index);
     }
 
     async pauseSpeech() {
