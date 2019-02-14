@@ -35,15 +35,13 @@ class App extends Component {
         <Header />
         <main>
            <Sidebar /> 
-          <Switch >
-           
-            <PrivateRoute exact path="/" component={PerformancesPage} />
+          <Switch >          
+            <PrivateRoute exact path="/"  component={PerformancesPage} />
             <Route path="/login" component={Login} />
             <Route path="/performance" component={PerformancesPage} />
             <Route path="/event"
                    render={() => <h1 style={{textAlign: 'center'}}>This section in development mode!</h1>}/>
             <Route exact path="/stream/:number" component={Stream} />
-            {/* <Route path="/login" component={LoginPage} /> */}
             <Route path="/register" component={RegisterPage} />
             <Route path="/manage" component={HomePage} />
 

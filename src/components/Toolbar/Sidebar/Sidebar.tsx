@@ -30,7 +30,12 @@ class Sidebar extends React.Component<{}, SidebarState> {
 
         if (segments[1] === 'login') {
             updatedState.isVisible = false;
-        } else if (segments[1] === 'stream') {
+        } else if(segments[1]==='manage'){
+            updatedState.isVisible = false;
+        }else if(segments[1]==='register'){
+            updatedState.isVisible = false;
+        }
+        else if (segments[1] === 'stream') {
             updatedState.performanceId = parseInt(segments[2]);
         }
 

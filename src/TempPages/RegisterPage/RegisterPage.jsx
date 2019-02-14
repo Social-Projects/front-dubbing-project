@@ -55,25 +55,25 @@ class RegisterPage extends React.Component {
                 <h2>Реєстрація</h2>
                 <form name="form" onSubmit={this.handleSubmit}>
                     <div className={'form-group' + (submitted && !user.firstName ? ' has-error' : '')}>
-                        <input type="text" className="form-control" name="firstName" value={user.firstName} placeholder="Ім'я" onChange={this.handleChange} />
+                        <input type="text"  className="form-control" name="firstName" value={user.firstName} autoComplete="off" placeholder="Ім'я" onChange={this.handleChange} />
                         {submitted && !user.firstName &&
                             <div className="help-block">Заповніть поле "Ім'я"</div>
                         }
                     </div>
                     <div className={'form-group' + (submitted && !user.lastName ? ' has-error' : '')}>
-                        <input type="text" className="form-control" name="lastName" value={user.lastName} placeholder="Прізвище" onChange={this.handleChange} />
+                        <input type="text" className="form-control" name="lastName" value={user.lastName} autoComplete="off" placeholder="Прізвище" onChange={this.handleChange} />
                         {submitted && !user.lastName &&
                             <div className="help-block">Заповніть поле "Прізвище"</div>
                         }
                     </div>
                     <div className={'form-group' + (submitted && !user.username ? ' has-error' : '')}>
-                        <input type="text" className="form-control" name="username" value={user.username} placeholder="Логін" onChange={this.handleChange} />
+                        <input type="text" className="form-control" name="username" value={user.username} autoComplete="off" placeholder="Логін" onChange={this.handleChange} />
                         {submitted && !user.username &&
                             <div className="help-block">Заповніть поле "Логін"</div>
                         }
                     </div>
                     <div className={'form-group' + (submitted && !user.password ? ' has-error' : '')}>
-                        <input type="password" className="form-control" name="password" value={user.password} placeholder="Пароль" onChange={this.handleChange} />
+                        <input type="password" className="form-control" name="password" value={user.password} autoComplete="off" placeholder="Пароль" onChange={this.handleChange} />
                         {submitted && !user.password &&
                             <div className="help-block">Заповніть поле "Пароль"</div>
                         }

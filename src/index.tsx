@@ -27,7 +27,7 @@ config.set(configuration);
 //     thunk
 // )));
 
-configureFakeBackend();
+ configureFakeBackend();
 
 const app = (
     <Provider store={store}>

@@ -2,6 +2,7 @@ import { userConstants } from '../_constants/user.constants';
 import { userService } from '../_services/user.service';
 import { alertActions } from '../_actions/alert.actions';
 import { history } from '../_helpers';
+import { Redirect } from 'react-router';
 
 export const userActions = {
     login,
@@ -20,6 +21,7 @@ function login(username, password) {
                 user => { 
                     dispatch(success(user));
                     history.push('/');
+                    window.location.replace('/');
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -41,13 +43,16 @@ function logout() {
 function register(user) {
     return dispatch => {
         dispatch(request(user));
-
+    
         userService.register(user)
             .then(
-                user => { 
+             
+                user => {
                     dispatch(success());
                     history.push('/login');
+                    window.location.replace('/login');
                     dispatch(alertActions.success('Registration successful'));
+                    
                 },
                 error => {
                     dispatch(failure(error.toString()));
