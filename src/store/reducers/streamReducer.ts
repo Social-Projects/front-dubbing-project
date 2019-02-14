@@ -12,6 +12,7 @@ interface StateType {
         text: string,
         duration: number
     }[],
+    connectingStatus: boolean,
     isPlaying: boolean,
     currentSpeechId: number,
     currentSpeechIndex: number,
@@ -23,6 +24,7 @@ const initialState = {
     performanceId: -1,
     speeches: undefined,
     isPlaying: false,
+    connectingStatus: false,
     currentSpeechId: -1,
     currentSpeechIndex: -1,
     currentPlaybackTime: 0,
@@ -61,6 +63,9 @@ const reducer = (state: StateType = initialState, action: ActionType) => {
             break;
         case actionTypes.CHANGE_STREAM_STATE_TO_INITIAL:
             updatedState = initialState;
+            break;
+        case actionTypes.CHANGE_CONNECTING_STATUS:
+            updatedState.connectingStatus = action.payload.status;
             break;
         default:
             break;

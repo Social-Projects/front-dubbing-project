@@ -7,20 +7,19 @@ import Radium from 'radium';
 
 interface streamHeadProps {
     name: string;
-    isPlaybacking: boolean,
+    connectingStatus: boolean,
     clicked: Function
 }
 
 const streamHead = (props: streamHeadProps) => {
-
     const btnStyles = {
-        width: "263px",
+        width: "305px",
         height: "45px",
         fontSize: "18px",
         borderRadius: "25px",
         transitionDuration: "0.3s",
         className: classes.btn,
-        text: "Розпочати трансляцію",
+        text: "Приєднатись до сервера",
         backgroundColor: "#0057c6",
         hover: {
             backgroundColor: '#083d81',
@@ -29,10 +28,10 @@ const streamHead = (props: streamHeadProps) => {
     };
     let icon = <i className="fas fa-play-circle"></i>;
 
-    if (props.isPlaybacking)
+    if (props.connectingStatus)
     {
         btnStyles.backgroundColor = "#da4453";
-        btnStyles.text = "Зупинити трансляцію";
+        btnStyles.text = "Відключитись від сервера!";
         btnStyles.hover.backgroundColor = "#cf1225";
         icon = <i className="fas fa-stop-circle"></i>;
     }

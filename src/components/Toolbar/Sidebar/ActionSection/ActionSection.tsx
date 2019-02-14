@@ -22,6 +22,7 @@ interface ActionSectionProps {
     currentSpeechIndex: number,
     currentPlaybackTime: number,
     maxDuration: number,
+    connectingStatus: boolean,
     speeches: {
         id: number,
         text: string,
@@ -66,58 +67,63 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     playPauseHandler = async(event : Event) => {
         event.preventDefault();
 
-        if (!this.props.isPlaying) {
-            await this.playByIdHandler(this.props.currentSpeechId);
-            this.props.onChangeStreamingStatus(true);
+        if (this.props.connectingStatus) {
+            if (!this.props.isPlaying) {
+                await this.playByIdHandler(this.props.currentSpeechId);
+                this.props.onChangeStreamingStatus(true);
 
-            playbackManager.play(
-                this.props.onChangeCurrentPlaybackTime,
-                this.pause.bind(this),
-                this.props.maxDuration);
-        } else if(this.props.isPlaying) {
-            await this.pause();
+                playbackManager.play(
+                    this.props.onChangeCurrentPlaybackTime,
+                    this.pause.bind(this),
+                    this.props.maxDuration);
+            } else if(this.props.isPlaying) {
+                await this.pause();
+            }
         }
     }
 
     pause = async () => {
         await this.apiManager.pauseSpeech();
         this.props.onChangeStreamingStatus(false);
-
         playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     }
 
     nextSpeechHandler = async (event : Event) => {
         event.preventDefault();
 
-        if (this.props.currentSpeechIndex !== this.props.speeches.length - 1) {
-            const nextSpeechId = this.props.speeches[this.props.currentSpeechIndex + 1].id;
-            this.props.onChangeCurrentSpeechId(nextSpeechId);
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-
-            if (this.props.isPlaying) {
-                await this.playByIdHandler(nextSpeechId);
-                playbackManager.play(
-                    this.props.onChangeCurrentPlaybackTime,
-                    this.pause.bind(this),
-                    this.props.maxDuration);
-            }   
+        if (this.props.connectingStatus) {
+            if (this.props.currentSpeechIndex !== this.props.speeches.length - 1) {
+                const nextSpeechId = this.props.speeches[this.props.currentSpeechIndex + 1].id;
+                this.props.onChangeCurrentSpeechId(nextSpeechId);
+                playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+    
+                if (this.props.isPlaying) {
+                    await this.playByIdHandler(nextSpeechId);
+                    playbackManager.play(
+                        this.props.onChangeCurrentPlaybackTime,
+                        this.pause.bind(this),
+                        this.props.maxDuration);
+                }   
+            }
         }
     }
 
     prevSpeechHandler = async (event : Event) => {
         event.preventDefault();
 
-        if (this.props.currentSpeechIndex !== 0) {
-            const prevSpeechId = this.props.speeches[this.props.currentSpeechIndex - 1].id;
-            this.props.onChangeCurrentSpeechId(prevSpeechId);
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-
-            if (this.props.isPlaying) {
-                await this.apiManager.playSpeechById(prevSpeechId);
-                playbackManager.play(
-                    this.props.onChangeCurrentPlaybackTime,
-                    this.pause.bind(this),
-                    this.props.maxDuration);
+        if (this.props.connectingStatus) {
+            if (this.props.currentSpeechIndex !== 0) {
+                const prevSpeechId = this.props.speeches[this.props.currentSpeechIndex - 1].id;
+                this.props.onChangeCurrentSpeechId(prevSpeechId);
+                playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+    
+                if (this.props.isPlaying) {
+                    await this.apiManager.playSpeechById(prevSpeechId);
+                    playbackManager.play(
+                        this.props.onChangeCurrentPlaybackTime,
+                        this.pause.bind(this),
+                        this.props.maxDuration);
+                }
             }
         }
     }
@@ -169,6 +175,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                     playPauseHandler={this.playPauseHandler}
                     nextSpeechHandler={this.nextSpeechHandler}
                     prevSpeechHandler={this.prevSpeechHandler}
+                    connectingStatus={this.props.connectingStatus}
                     isPlaying={this.props.isPlaying}
                 />
                 <PlaySection
@@ -189,7 +196,8 @@ const mapStateToProps = (state: StateType) => {
         currentSpeechId: state.stream.currentSpeechId,
         currentSpeechIndex: state.stream.currentSpeechIndex,
         currentPlaybackTime: state.stream.currentPlaybackTime,
-        maxDuration: state.stream.maxDuration
+        maxDuration: state.stream.maxDuration,
+        connectingStatus: state.stream.connectingStatus
     };
 };
 

@@ -7,18 +7,20 @@ interface StreamAudioProps {
     audios: any,
     currentAudioId: number,
     playByIdHandler: any,
-    isPlaying: boolean
+    isPlaying: boolean,
+    connectingStatus: boolean
 }
 
 const streamAudios = (props: StreamAudioProps) => {
     const audios = props.audios.map((audio: any, index: number) => {
         return <StreamAudio
+                    key={index}
                     text={audio.text}
                     duration={audio.duration}
-                    key={index}
                     currentAudioId={audio.id}
                     isPlaying={props.currentAudioId === audio.id && props.isPlaying ? true : false}
-                    playByIdHandler={props.playByIdHandler} />
+                    playByIdHandler={props.playByIdHandler}
+                    connectingStatus={props.connectingStatus} />
     });
 
     return (
