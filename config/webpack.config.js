@@ -117,7 +117,7 @@ module.exports = function(webpackEnv) {
     
     externals: {
       'Config': JSON.stringify({
-        serverUrl: "https://localhost:5001"
+        serverUrl: "http://localhost:5000"
       })
     },
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
