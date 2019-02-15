@@ -36,9 +36,9 @@ class App extends Component {
         <main>
            <Sidebar /> 
           <Switch >          
-            <PrivateRoute exact path="/"  component={PerformancesPage} />
+            <Route exact path="/"  component={PerformancesPage} />
             <Route path="/login" component={Login} />
-            <Route path="/performance" component={PerformancesPage} />
+            <PrivateRoute path="/performance" component={PerformancesPage} />
             <Route path="/event"
                    render={() => <h1 style={{textAlign: 'center'}}>This section in development mode!</h1>}/>
             <Route exact path="/stream/:number" component={Stream} />

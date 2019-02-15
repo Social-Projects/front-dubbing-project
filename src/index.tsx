@@ -26,8 +26,7 @@ config.set(configuration);
 // const store = createStore(reducer, composeWithDevTools(applyMiddleware(
 //     thunk
 // )));
-
-//  configureFakeBackend();
+  configureFakeBackend();
 
 const app = (
     <Provider store={store}>

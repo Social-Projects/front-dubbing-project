@@ -1,6 +1,5 @@
-import config from 'react-global-configuration';
+import config from 'config';
 import { authHeader } from '../_helpers';
-
 
 export const userService = {
     login,
@@ -13,14 +12,13 @@ export const userService = {
 };
 
 function login(username, password) {
-    
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
     };
 
-    return fetch(`http://localhost:5000/admin/authenticate`, requestOptions)
+    return fetch(`${config.apiUrl}/users/authenticate`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -41,7 +39,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch(`http://localhost:5000/admins`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -54,15 +52,13 @@ function getById(id) {
 }
 
 function register(user) {
-
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                  },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
     };
 
-    return fetch(`http://localhost:5000/admin/register`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/users/register`, requestOptions).then(handleResponse);
 }
 
 function update(user) {
