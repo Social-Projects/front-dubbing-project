@@ -24,6 +24,9 @@ class Header extends React.Component<{}, HeaderState> {
         if (segments[1] === 'login') {
             newState.isAuthorized = false;  
         }
+         else if (segments[1] === 'register') {
+            newState.isAuthorized = false;  
+        }
         else {
             newState.isAuthorized = true;
         }

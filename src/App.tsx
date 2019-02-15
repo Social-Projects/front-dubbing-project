@@ -43,7 +43,7 @@ class App extends Component {
                    render={() => <h1 style={{textAlign: 'center'}}>This section in development mode!</h1>}/>
             <Route exact path="/stream/:number" component={Stream} />
             <Route path="/register" component={RegisterPage} />
-            <Route path="/manage" component={HomePage} />
+            <PrivateRoute path="/manage" component={HomePage} />
 
           </Switch>
         </main>
