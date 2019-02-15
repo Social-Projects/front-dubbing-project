@@ -15,7 +15,7 @@ import config from 'react-global-configuration';
 import configuration from './config';
 import {store} from './LoginHelper/_helpers';
 import { configureFakeBackend } from './LoginHelper/_helpers/fake-backend';
-
+import signalrManager from './util/signalrManager';
 
 const reducer = combineReducers({
     stream: streamReducer
@@ -36,6 +36,8 @@ const app = (
         </Router>
     </Provider>
 );
+
+export const signalRManager = new signalrManager();
 
 ReactDOM.render(app, document.getElementById('root'));
 serviceWorker.unregister();

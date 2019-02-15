@@ -1,3 +1,5 @@
+import signalrManager from "../../util/signalrManager";
+
 export default interface State {
     stream: {
         performanceId: number,
@@ -6,8 +8,11 @@ export default interface State {
             text: string,
             duration: number
         }[],
+        connectingStatus: boolean,
         isPlaying: boolean,
         currentSpeechId: number,
-        currentSpeechIndex: number
+        currentSpeechIndex: number,
+        currentPlaybackTime: number,
+        maxDuration: number
     }
 }

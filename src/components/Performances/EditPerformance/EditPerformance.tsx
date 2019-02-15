@@ -1,15 +1,18 @@
 import React, { Component, createRef } from 'react';
-import apiManager from "../../../util/apiManager";
 import { Link } from 'react-router-dom';
+
 import AudioUpload from '../AudioUpload/AudioUpload';
+import apiManager from "../../../util/apiManager";
+import history from '../../../util/history';
+import Spinner from '../../UI/Spinner/Spinner';
 import "./EditPerformance.css"; 
-import history from '../../../util/history'
 
 
 interface editPerformanceState {
     id: number,
     title: string,
-    description: string
+    description: string,
+    isShow: boolean
 }
 interface editPerformanceProps {
     match: {
@@ -30,7 +33,8 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
         this.state = {
             id: -1,
             title: '',
-            description: ''
+            description: '',
+            isShow: false
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -54,6 +58,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
         }
     }
     async handleSave() {
+        this.setState({
+            isShow: true
+        });
         if (this.state.id != -1) {
             const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
             if (resp.status == 200) {
@@ -61,9 +68,32 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                this.child.current.fileUploadHandler(this.state.id);
+                const result = await this.child.current.uploadHandler(this.state.id, true);
+                console.log(result);
+                if (result == -1)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                    alert('Завантажте всі аудіо!');
 
-                history.push("/performance");
+                    return;
+                }
+                if (result == -2)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                    alert('Введіть текст фрази!');
+
+                    return;
+                }
+                this.setState({
+                    isShow: false
+                });
+                history.push("/performance/" + this.state.id);
+                await this.loadData();
+            
             }
             else {
                 console.log(resp.status);
@@ -79,17 +109,39 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     return;
                 }
 
-                await this.child.current.fileUploadHandler(JSONObj["id"]);
-                
-                history.push("/performance");
+                const result = await this.child.current.uploadHandler(JSONObj["id"], false);
+                console.log(result);
+
+                if (result == -1)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                        alert('Завантажте всі аудіо!');
+                        return;
+                }
+                if (result == -2)
+                {
+                    this.setState({
+                        isShow: false
+                    });
+                    alert('Введіть текст фрази!');
+
+                    return;
+                }
+                history.push("/performance/" + JSONObj["id"]);
+                await this.loadData();
             }
             else {
                 console.log(resp.status);
             }
         }
+        this.setState({
+            isShow: false
+        });
     }
-
-    async componentDidMount() {
+    async loadData()
+    {
         if (this.props.match.params.number != 'new') {
             const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
             if (resp.status == 200) {
@@ -99,21 +151,35 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                     title: data.title,
                     description: data.description
                 })
+
+                if (!this.child.current) {
+                    return;
+                }
+
+                this.child.current.audioComponentDidMount(data.id);
+
             }
             else {
                 console.log(resp.status)
             }
+        } else {
+            if (!this.child.current) {
+                return;
+            }
+            
+            this.child.current.audioComponentDidMount(this.state.id);
         }
-
     }
-
-
-
+    componentDidMount() {
+      this.loadData();
+    }
 
     render() {
 
         return (
             <div className="editForm">
+                <Spinner isShow={this.state.isShow} />
+
                 <div className="formHeader">
                     <p>{this.props.match.params.number == "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">

@@ -1,5 +1,6 @@
 import config from 'react-global-configuration';
 import { promises } from 'fs';
+import { signalRManager } from '../index';
 
 class apiManager {
     backendUrl = "";
@@ -86,9 +87,21 @@ class apiManager {
         return response;
     }
 
+    //Using to connect to hub
+    async connectToHub() {
+        await signalRManager.connectToHub();
+    }
+
+    async disconnectToHub() {
+        await signalRManager.disconnectFromHub();
+    }
+
+    async endStream() {
+        await signalRManager.sendCommand('End');
+    }
+
     //Using for display list of speeches on stream page
     async getSpeechInfo(indexPerfomance: number): Promise<Response> {
-        console.log("try get speeches info");
         const response = await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`, {
             method: 'GET',
             headers: {
@@ -97,8 +110,31 @@ class apiManager {
                 'Access-Control-Allow-Origin': '*'
             }
         });
-        console.log("get speeches info");
         return response;
+    }
+
+    // Load required speeches to stream service
+    // async load(performanceId: number): Promise<Response> {
+    //     console.log("try load");
+    //     const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
+    //         method: 'GET'
+    //     });
+    //     console.log("load");
+    //     return response;
+    // }
+
+    async playSpeechById(index: string) {
+        // const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
+        //     method: 'GET'
+        // });
+        await signalRManager.sendCommand(index);
+    }
+
+    async pauseSpeech() {
+        // const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
+        //     method: 'GET'
+        // });
+        await signalRManager.sendCommand('Pause');
     }
 
     // async playSpeech(): Promise<Response> {
@@ -109,24 +145,6 @@ class apiManager {
     //     console.log("play");
     //     return response;
     // }
-
-    async playSpeechById(index: number): Promise<Response> {
-        console.log("try to play by id");
-        const response = await fetch(`${this.backendUrl}api/Streaming/Play/${index}`, {
-            method: 'GET'
-        });
-        console.log("play by id");
-        return response;
-    }
-
-    async pauseSpeech(): Promise<Response> {
-        console.log("try to pause");
-        const response = await fetch(`${this.backendUrl}api/Streaming/Pause`, {
-            method: 'GET'
-        });
-        console.log("pause");
-        return response;
-    }
 
     // async nextSpeech(): Promise<Response> {
     //     console.log("try play next speech");
@@ -146,29 +164,19 @@ class apiManager {
     //     return response;
     // }
 
-    async getCurrentSpeechId(): Promise<Response> {
-        console.log("try get current speech id");
-        const response = await fetch(`${this.backendUrl}api/Streaming/CurrentSpeechId`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        });
-        console.log("get current speech id");
-        return response;
-    }
-
-    // Load required speeches to stream service
-    async load(performanceId: number): Promise<Response> {
-        console.log("try load");
-        const response = await fetch(`${this.backendUrl}api/streaming/load/${performanceId}`, {
-            method: 'GET'
-        });
-        console.log("load");
-        return response;
-    }
+    // async getCurrentSpeechId(): Promise<Response> {
+    //     console.log("try get current speech id");
+    //     const response = await fetch(`${this.backendUrl}api/Streaming/CurrentSpeechId`, {
+    //         method: 'GET',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json',
+    //             'Access-Control-Allow-Origin': '*'
+    //         }
+    //     });
+    //     console.log("get current speech id");
+    //     return response;
+    // }
 }
 
 export default apiManager;

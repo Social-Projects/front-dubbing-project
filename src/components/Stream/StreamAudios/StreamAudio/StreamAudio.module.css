@@ -12,6 +12,16 @@
     left: 11px;
     font-size: 32px;
     cursor: pointer;
+    transition: 0.1s;
+}
+
+.audio .disable {
+    color: rgba(255, 255, 255, 0.8);
+    cursor: default !important;
+}
+
+.audio .disable:hover {
+    font-size: 32px !important;
 }
 
 .audio .icon:hover {
