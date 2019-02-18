@@ -20,11 +20,11 @@ const reducer = combineReducers({
     stream: streamReducer
 });
 
-config.set(configuration);
-
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(
     thunk
 )));
+
+config.set(configuration);
 
 const app = (
     <Provider store={store}>
