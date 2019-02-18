@@ -3,15 +3,18 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
 import KeyBinding from 'react-keybinding-component';
 
-import * as actions from '../../../../store/actions/index';
-import StateType from '../../../../store/state/state';
 import ButtonSection from './ButtonSection/ButtonSection';
 import PlaySection from './PlaySection/PlaySection';
 import Aux from '../../../../hoc/Auxiliary';
 import WithClass from '../../../../hoc/WithClass';
+
 import apiManager from '../../../../util/apiManager';
 import { KeyChars } from '../../../../util/keyChars';
 import { playbackManager } from '../../../../util/playbackManager';
+import { signalRManager } from '../../../../index';
+
+import * as actions from '../../../../store/actions/index';
+import StateType from '../../../../store/state/state';
 
 import classes from './ActionSection.module.css';
 
@@ -69,7 +72,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
 
         if (this.props.connectingStatus) {
             if (!this.props.isPlaying) {
-                await this.playByIdHandler(this.props.currentSpeechId);
+                await signalRManager.sendCommand(this.props.performanceId + '_' + this.props.currentSpeechId);
                 this.props.onChangeStreamingStatus(true);
 
                 playbackManager.play(
@@ -83,9 +86,12 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     }
 
     pause = async () => {
-        await this.apiManager.pauseSpeech();
-        this.props.onChangeStreamingStatus(false);
-        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+        return await signalRManager.sendCommand('Pause')
+                    .then(() => {
+                        this.props.onChangeStreamingStatus(false);
+                        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+                    })
+                    .catch(error => console.log(error));
     }
 
     nextSpeechHandler = async (event : Event) => {
@@ -98,7 +104,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                 playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     
                 if (this.props.isPlaying) {
-                    await this.playByIdHandler(nextSpeechId);
+                    await signalRManager.sendCommand(this.props.performanceId + '_' + nextSpeechId);
                     playbackManager.play(
                         this.props.onChangeCurrentPlaybackTime,
                         this.pause.bind(this),
@@ -118,7 +124,7 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                 playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
     
                 if (this.props.isPlaying) {
-                    await this.apiManager.playSpeechById(this.state.performanceId + "_" + prevSpeechId);
+                    await signalRManager.sendCommand(this.props.performanceId + '_' + prevSpeechId);
                     playbackManager.play(
                         this.props.onChangeCurrentPlaybackTime,
                         this.pause.bind(this),
@@ -126,10 +132,6 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
                 }
             }
         }
-    }
-
-    playByIdHandler = async (id: number) => {
-        await this.apiManager.playSpeechById(this.state.performanceId + "_" + id);
     }
 
     checkKeys = (...keys: string[]) => {
@@ -159,16 +161,6 @@ class ActionSection extends Component<ActionSectionProps, ActionSectionState> {
     };
 
     render() {
-        // Uncomment later
-
-        // const totalDuration = this.props.speeches !== undefined
-        //                         ? this.props.speeches[this.props.currentSpeechIndex].duration
-        //                         : 0;
-
-        // Delete later
-
-        //const totalDuration = 30;
-
         return (
             <Aux>
                 <ButtonSection

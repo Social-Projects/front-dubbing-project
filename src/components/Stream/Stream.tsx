@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import KeyBinding from 'react-keybinding-component';
+import { connect } from 'react-redux';
 
 import StreamHead from './StreamHead/StreamHead';
 import StreamAudios from './StreamAudios/StreamAudios';
 import Aux from '../../hoc/Auxiliary';
 import WithClass from '../../hoc/WithClass';
-import apiManager from '../../util/apiManager';
+
 import * as actionCreators from '../../store/actions/index'; 
 import StateType from '../../store/state/state';
+
+import apiManager from '../../util/apiManager';
 import { KeyChars } from '../../util/keyChars';
 import { playbackManager } from '../../util/playbackManager';
+import { signalRManager } from '../../index';
 
 import classes from './Stream.module.css';
 
 interface streamState {
     perfomanceId: number,
     performanceName: string,
-    isFirst: boolean
+    isFirst: boolean,
+    isWarning: boolean
 }
 
 interface streamProps {
@@ -62,7 +66,8 @@ class Stream extends Component<streamProps, streamState> {
         this.state = {
             perfomanceId: this.props.match.params.number,
             performanceName: '',
-            isFirst: true
+            isFirst: true,
+            isWarning: false
         };
     }
 
@@ -70,21 +75,30 @@ class Stream extends Component<streamProps, streamState> {
         event.preventDefault();
 
         if (!this.props.connectingStatus) {
-            await this.apiManager.connectToHub();
+            await signalRManager.connectToHub()
+                                .catch(error => console.log(error));
+            await signalRManager.sendCommand('Start')
+                                .catch(error => console.log(error));
+
             this.props.onChangeConnectingStatus(true);
         } else {
-            this.props.onChangeStreamingStatus(false);
-            playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+            if (this.props.isPlaying) {
+                await this.pause();
+            }
+            await signalRManager.sendCommand('End')
+                                .catch(error => console.log(error));
+            await signalRManager.disconnectFromHub()
+                                .catch(error => console.log(error));
 
             this.props.onChangeConnectingStatus(false);
-            await this.apiManager.disconnectToHub();
+            this.props.onSaveCurrentSpeechId(this.props.speeches[0].id);
         }
     };
 
     playByIdHandler = async(id: number) => {
         if (this.props.connectingStatus) {
             if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
-                await this.apiManager.playSpeechById(this.props.performanceId + "_" + id);
+                await signalRManager.sendCommand(this.props.performanceId + '_' + id);
                 this.props.onSaveCurrentSpeechId(id);
                 this.props.onChangeStreamingStatus(true);
     
@@ -100,7 +114,7 @@ class Stream extends Component<streamProps, streamState> {
                     });
                 }
             } else if (!this.props.isPlaying) {
-                await this.apiManager.playSpeechById(this.props.performanceId + "_" + id);
+                await signalRManager.sendCommand(this.props.performanceId + '_' + id);
                 this.props.onSaveCurrentSpeechId(id);
                 this.props.onChangeStreamingStatus(true);
     
@@ -109,18 +123,18 @@ class Stream extends Component<streamProps, streamState> {
                     this.pause.bind(this),
                     this.props.maxDuration);
             } else {
-                await this.apiManager.pauseSpeech();
-                this.props.onChangeStreamingStatus(false);
-    
-                playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+                await this.pause();
             }
         }
     }
     
-    pause = async () => {
-        await this.apiManager.pauseSpeech();
-        this.props.onChangeStreamingStatus(false);
-        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+    pause = async (): Promise<void> => {
+        return await signalRManager.sendCommand('Pause')
+                    .then(() => {
+                        this.props.onChangeStreamingStatus(false)
+                        playbackManager.reset(this.props.onChangeCurrentPlaybackTime) 
+                    })
+                    .catch(error => console.log(error));
     };
 
     playPauseHandler = async (event: Event) => {
@@ -128,7 +142,7 @@ class Stream extends Component<streamProps, streamState> {
             event.preventDefault();
 
             if (!this.props.isPlaying) {
-                await this.apiManager.playSpeechById(this.props.performanceId + "_" + this.props.currentSpeechId);
+                await signalRManager.sendCommand(this.props.performanceId + '_' + this.props.currentSpeechId);
                 this.props.onChangeStreamingStatus(true);
     
                 playbackManager.play(
@@ -185,7 +199,6 @@ class Stream extends Component<streamProps, streamState> {
 
     async componentDidMount() {
         console.log("state: " + this.state.perfomanceId);
-        //await this.apiManager.load(this.state.perfomanceId);
 
         if (this.state.performanceName === '') {
             const response = await this.apiManager.getPerformanceById(this.state.perfomanceId);
@@ -199,8 +212,19 @@ class Stream extends Component<streamProps, streamState> {
         this.props.onLoadSpeeches(this.state.perfomanceId);
     }
 
-    componentWillUnmount() {
-        this.props.onChangeStreamStateToInitial();
+    async componentWillUnmount() {
+        if (this.props.connectingStatus) {
+            if (this.props.isPlaying) {
+                await this.pause();
+            }
+    
+            await signalRManager.sendCommand('End')
+                                .catch(error => console.log(error));
+            await signalRManager.disconnectFromHub()
+                                .catch(error => console.log(error));
+    
+            this.props.onChangeStreamStateToInitial();
+        }
     }
 }
 
