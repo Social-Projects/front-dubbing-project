@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-// import thunk from 'redux-thunk';
+import thunk from 'redux-thunk';
 import App from './App';
 import streamReducer from './store/reducers/streamReducer';
 import history from './util/history';
@@ -17,23 +18,24 @@ import {store} from './LoginHelper/_helpers';
 import { configureFakeBackend } from './LoginHelper/_helpers/fake-backend';
 import signalrManager from './util/signalrManager';
 
+
+
 const reducer = combineReducers({
-    stream: streamReducer
+    stream:streamReducer,
 });
+
 config.set(configuration);
-
-
-// const store = createStore(reducer, composeWithDevTools(applyMiddleware(
+//   const store1 = createStore(reducer, composeWithDevTools(applyMiddleware(
 //     thunk
 // )));
   configureFakeBackend();
 
 const app = (
-    <Provider store={store}>
+    <Provider store={store}> 
         <Router history={history}>
             <App />
         </Router>
-    </Provider>
+        </Provider>
 );
 
 export const signalRManager = new signalrManager();
