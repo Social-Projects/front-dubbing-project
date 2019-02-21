@@ -14,16 +14,17 @@ export const userService = {
 function login(username, password) {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {    
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' },
         body: JSON.stringify({ username, password })
     };
-
-    return fetch(`${config.apiUrl}/users/authenticate`, requestOptions)
+    return fetch(`http://localhost:5000/admin/authenticate`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('user', JSON.stringify(user));
-
             return user;
         });
 }
@@ -39,7 +40,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
+    return fetch(`http://localhost:5000/admin`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -48,17 +49,22 @@ function getById(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`http://localhost:5000/admin/${id}`, requestOptions).then(handleResponse);
 }
 
 function register(user) {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+       
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' 
+        },
         body: JSON.stringify(user)
     };
 
-    return fetch(`${config.apiUrl}/users/register`, requestOptions).then(handleResponse);
+    return fetch(`http://localhost:5000/admin/register`, requestOptions).then(handleResponse);
 }
 
 function update(user) {
@@ -78,7 +84,7 @@ function _delete(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`http://localhost:5000/admin/${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

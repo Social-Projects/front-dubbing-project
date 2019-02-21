@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import './Form.css'
+import apiManager from '../../util/apiManager'
 import Logo from '../../assets/images/theater-logo.png';
 import { userActions } from '../../LoginHelper/_actions';
 
