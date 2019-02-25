@@ -90,7 +90,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     } else {
       if (isNullOrUndefined(this.state.speeches[index])) {
         let removeResponse = await API.delete("speech/" + index)
-        if (removeResponse.status == 200) {
+        if (removeResponse.status == 204) {
           let speeches = this.state.speeches.filter(obj => {
             return obj.id != index;
           });

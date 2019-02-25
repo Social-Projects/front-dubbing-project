@@ -34,7 +34,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   constructor(props: IAudioItemProps) {
     super(props);
 
-    this.handleBlur = this.handleBlur.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.deleteHandler = this.deleteHandler.bind(this);
     this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
     this.state = {
@@ -60,23 +60,15 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.props.onFileChange(audio.name, languageId, speechIndex);
   }
 
-  private handleBlur = (event: any) => {
-    console.log("blur");
-    let trimedString = event.target.value.trim();
-    let index = event.target.id;
-
-    if (trimedString !== "") {
-      this.props.onTextChange(trimedString, index);
-    } else {
-
-      event.target.value = '';
-    }
+  private handleChange = (event: any) => {
+    this.props.onTextChange(event.target.value, event.target.id);
   }
 
   private deleteHandler = (event: any) => {
     const deleteItemId = event.target.id;
     this.props.onDelete(deleteItemId);
   }
+  
   handleUploadClick(event: any) {
     let parent = event.target.parentElement.parentElement as HTMLElement;
     let ch = parent.getElementsByClassName('choose-audio-btn').namedItem(event.target.id.toString()) as HTMLElement;
@@ -114,7 +106,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
         {filesToUpload.map(file => {
           if (file.speechIndex == this.props.id && file.languageId == item.id) {
-            return <span>{file.fileName}</span>
+            return <span key={file.speechIndex}>{file.fileName}</span>
           }
         })}
       </div>
@@ -124,7 +116,6 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       <div className="container">
         <div className="row">
           <div className="col-sm-11">
-
             <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton" + this.props.id}>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
             </button>
@@ -135,7 +126,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
             <div className="col-sm-12">
               <textarea
                 id={this.props.id.toString()}
-                onChange={this.handleBlur}
+                onChange={this.handleChange}
                 className="audio-text"
                 placeholder="Введіть оригінал тексту до аудіо."
                 value={this.props.text}
