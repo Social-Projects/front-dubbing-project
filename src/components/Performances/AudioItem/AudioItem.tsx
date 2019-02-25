@@ -3,11 +3,12 @@ import "./AudioItem.css";
 import API from "../../../util/api";
 import reducer from "../../../store/reducers/streamReducer";
 import { fileURLToPath } from "url";
-import { Tooltip } from 'reactstrap';
+import { Tooltip, Button } from 'reactstrap';
 
 export interface IAudioItemProps {
   id: number,
   text?: string,
+  order: number,
 
   languages: {
     id: number,
@@ -28,6 +29,7 @@ export interface IAudioItemProps {
 
 interface IAudioItemState {
   tooltipRemoveOpen: boolean,
+  order:number
 }
 
 export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
@@ -38,7 +40,8 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.deleteHandler = this.deleteHandler.bind(this);
     this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
     this.state = {
-      tooltipRemoveOpen: false
+      tooltipRemoveOpen: false,
+      order: this.props.order
     };
   }
 
@@ -64,11 +67,21 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.props.onTextChange(event.target.value, event.target.id);
   }
 
+  private handleChangeOrder = (event: any) => {
+    this.setState({
+      order: event.target.value
+    })
+  }
+
+  private onClickChangeOrder = () => {
+    
+  }
+
   private deleteHandler = (event: any) => {
     const deleteItemId = event.target.id;
     this.props.onDelete(deleteItemId);
   }
-  
+
   handleUploadClick(event: any) {
     let parent = event.target.parentElement.parentElement as HTMLElement;
     let ch = parent.getElementsByClassName('choose-audio-btn').namedItem(event.target.id.toString()) as HTMLElement;
@@ -115,6 +128,11 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     return (
       <div className="container">
         <div className="row">
+          №-{this.props.order}
+          <Button color="primary" onClick={this.onClickChangeOrder}>Змістити в</Button>
+          <input type="text" pattern="[0-9]*" onInput={this.handleChangeOrder.bind(this)} value={this.state.order}/>
+          
+
           <div className="col-sm-11">
             <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton" + this.props.id}>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
