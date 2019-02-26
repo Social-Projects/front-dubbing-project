@@ -1,68 +1,64 @@
 import React, { Component } from "react";
-import Performance from "../Performance/Performance"
-import apiManager from "../../../util/apiManager";
-
 import { Link } from "react-router-dom";
-import "./PerformanceList.css"
+import apiManager from "../../../util/apiManager";
 import LanguageSelectionPopup from "../../LanguageSelectionPopup/LanguageSelectionPopup";
+import Performance from "../Performance/Performance";
+import "./PerformanceList.css";
 
-interface performanceState {
-    performances: {
+interface IPerformanceState {
+    performances: Array<{
         id: number,
         title: string,
-        description: string
-    }[]
+        description: string,
+    }>;
 }
 
-interface performanceProps {
-    performances: []
+interface IPerformanceProps {
+    performances: [];
 }
 
-class PerformanceList extends Component<performanceProps, performanceState>
-{
-    apimanager = new apiManager();
+class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
+    public apimanager = new apiManager();
 
     constructor(props: any) {
         super(props);
         this.state = {
-            performances: []
-        }
+            performances: [],
+        };
         this.removePerformance = this.removePerformance.bind(this);
     }
 
-    getPerformances = async () => {
+    public getPerformances = async () => {
         const resp = await this.apimanager.getPerformances();
         const data = await resp.json();
         this.setState(
             {
-                performances: data
+                performances: data,
             });
 
     }
-    async removePerformance(index: number) {
+    public async removePerformance(index: number) {
 
         const resp = await this.apimanager.removePerformance(index);
-        if (resp.status == 200) {
-            const arr = this.state.performances.filter(obj => {
+        if (resp.status === 200) {
+            const arr = this.state.performances.filter((obj) => {
                 return obj.id !== index;
-            })
+            });
 
             this.setState(
                 {
-                    performances: arr
+                    performances: arr,
                 });
-        }
-        else {
+        } else {
             this.getPerformances();
             console.log(resp.status);
         }
 
-
     }
-    componentDidMount() {
+    public componentDidMount() {
         this.getPerformances();
     }
-    render() {
+    public render() {
 
         return (
             <div className="perfomanceList">
@@ -78,10 +74,10 @@ class PerformanceList extends Component<performanceProps, performanceState>
                 {
                     this.state.performances.map((item) => {
                         return <Performance deleteMethod={this.removePerformance} index={item.id} key={item.id} title={item.title} description={item.description} />;
-                    }
+                    },
                     )}
             </div>
         );
     }
 }
-export default PerformanceList
+export default PerformanceList;

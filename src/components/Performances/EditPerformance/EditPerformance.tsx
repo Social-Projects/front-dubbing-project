@@ -1,156 +1,144 @@
-import React, { Component, createRef } from 'react';
-import { Link } from 'react-router-dom';
-
-import AudioUpload from '../AudioUpload/AudioUpload';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import apiManager from "../../../util/apiManager";
-import history from '../../../util/history';
-import Spinner from '../../UI/Spinner/Spinner';
-import "./EditPerformance.css"; 
+import history from "../../../util/history";
+import Spinner from "../../UI/Spinner/Spinner";
+import AudioUpload from "../AudioUpload/AudioUpload";
+import "./EditPerformance.css";
 
-
-interface editPerformanceState {
-    id: number,
-    title: string,
-    description: string,
-    isShow: boolean
+interface IEditPerformanceState {
+    id: number;
+    title: string;
+    description: string;
+    isShow: boolean;
 }
-interface editPerformanceProps {
+interface IEditPerformanceProps {
     match: {
         params: {
-            number: any
-        }
-    },
+            number: any,
+        },
+    };
 
-    upload: any
+    upload: any;
 }
-class editPerformance extends Component<editPerformanceProps, editPerformanceState>
-{
-    child = React.createRef<AudioUpload>();
+class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceState> {
+    public child = React.createRef<AudioUpload>();
 
-    apimanager = new apiManager();
-    constructor(props: editPerformanceProps) {
+    public apimanager = new apiManager();
+    constructor(props: IEditPerformanceProps) {
         super(props);
         this.state = {
             id: -1,
-            title: '',
-            description: '',
-            isShow: false
-        }
+            title: "",
+            description: "",
+            isShow: false,
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSave = this.handleSave.bind(this);
 
     }
-    handleChange(e: any) {
-        var val = e.target.value;
-        if (e.target.name == "title") {
+    public handleChange(e: any) {
+        const val = e.target.value;
+        if (e.target.name === "title") {
 
             this.setState(
                 {
-                    title: val
+                    title: val,
                 });
-        }
-        else if (e.target.name == "description") {
+        } else if (e.target.name === "description") {
             this.setState(
                 {
-                    description: val
+                    description: val,
                 });
         }
     }
-    async handleSave() {
+    public async handleSave() {
         this.setState({
-            isShow: true
+            isShow: true,
         });
-        if (this.state.id != -1) {
+        if (this.state.id !== -1) {
             const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
-            if (resp.status == 200) {
+            if (resp.status === 200) {
                 if (!this.child.current) {
                     return;
                 }
 
                 const result = await this.child.current.uploadHandler(this.state.id, true);
                 console.log(result);
-                if (result == -1)
-                {
+                if (result === -1) {
                     this.setState({
-                        isShow: false
+                        isShow: false,
                     });
-                    alert('Завантажте всі аудіо!');
+                    alert("Завантажте всі аудіо!");
 
                     return;
                 }
-                if (result == -2)
-                {
+                if (result === -2) {
                     this.setState({
-                        isShow: false
+                        isShow: false,
                     });
-                    alert('Введіть текст фрази!');
+                    alert("Введіть текст фрази!");
 
                     return;
                 }
                 this.setState({
-                    isShow: false
+                    isShow: false,
                 });
                 history.push("/performance/" + this.state.id);
                 await this.loadData();
-            
-            }
-            else {
+
+            } else {
                 console.log(resp.status);
             }
-        }
-        else {
+        } else {
             const resp = await this.apimanager.createPerformance(JSON.stringify(this.state));
-            if (resp.status == 201) {
+            if (resp.status === 201) {
 
-                let JSONObj = await resp.json();
+                const JSONObj = await resp.json();
 
                 if (!this.child.current) {
                     return;
                 }
 
-                const result = await this.child.current.uploadHandler(JSONObj["id"], false);
+                const result = await this.child.current.uploadHandler(JSONObj.id, false);
                 console.log(result);
 
-                if (result == -1)
-                {
+                if (result === -1) {
                     this.setState({
-                        isShow: false
+                        isShow: false,
                     });
-                        alert('Завантажте всі аудіо!');
-                        return;
+                    alert("Завантажте всі аудіо!");
+                    return;
                 }
-                if (result == -2)
-                {
+                if (result === -2) {
                     this.setState({
-                        isShow: false
+                        isShow: false,
                     });
-                    alert('Введіть текст фрази!');
+                    alert("Введіть текст фрази!");
 
                     return;
                 }
-                history.push("/performance/" + JSONObj["id"]);
+                history.push("/performance/" + JSONObj.id);
                 await this.loadData();
-            }
-            else {
+            } else {
                 console.log(resp.status);
             }
         }
         this.setState({
-            isShow: false
+            isShow: false,
         });
     }
-    async loadData()
-    {
-        if (this.props.match.params.number != 'new') {
+    public async loadData() {
+        if (this.props.match.params.number !== "new") {
             const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
-            if (resp.status == 200) {
+            if (resp.status === 200) {
                 const data = await resp.json();
                 this.setState({
                     id: data.id,
                     title: data.title,
-                    description: data.description
-                })
+                    description: data.description,
+                });
 
                 if (!this.child.current) {
                     return;
@@ -158,30 +146,29 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
 
                 this.child.current.audioComponentDidMount(data.id);
 
-            }
-            else {
-                console.log(resp.status)
+            } else {
+                console.log(resp.status);
             }
         } else {
             if (!this.child.current) {
                 return;
             }
-            
+
             this.child.current.audioComponentDidMount(this.state.id);
         }
     }
-    componentDidMount() {
-      this.loadData();
+    public componentDidMount() {
+        this.loadData();
     }
 
-    render() {
+    public render() {
 
         return (
             <div className="editForm">
                 <Spinner isShow={this.state.isShow} />
 
                 <div className="formHeader">
-                    <p>{this.props.match.params.number == "new" ? "Створення вистави" : "Редагування вистави"}</p>
+                    <p>{this.props.match.params.number === "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">
                         <button className="saveButton" onClick={this.handleSave} ><i className="fas fa-check-circle saveIcon"></i>Зберегти</button>
                         <Link to="/performance/">
@@ -199,10 +186,10 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 <textarea className="descrField" name="description" onChange={this.handleChange} value={this.state.description} />
 
                 <AudioUpload ref={this.child}></AudioUpload>
-                
+
             </div>
-        )
+        );
     }
 }
 
-export default editPerformance
+export default EditPerformance;

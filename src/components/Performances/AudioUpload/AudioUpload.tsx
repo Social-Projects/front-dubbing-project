@@ -1,52 +1,51 @@
 import * as React from "react";
-import "./AudioUpload.css";
+import { Tooltip } from "reactstrap";
+import { isNullOrUndefined } from "util";
 import API from "../../../util/api";
 import AudioItem from "../AudioItem/AudioItem";
-import { isNullOrUndefined } from "util";
-import { Tooltip } from 'reactstrap';
+import "./AudioUpload.css";
 
 export interface IAudioUploadProps { }
 
 export interface IAudioUploadState {
-  performanceId: number,
+  performanceId: number;
 
-  languages: {
+  languages: Array<{
     id: number,
-    name: string
-  }[],
+    name: string,
+  }>;
 
-  speeches: {
+  speeches: Array<{
     id: number,
     text?: string,
     isNew?: boolean,
     onDelete: (index: number) => void,
-    onTextChange: (string: string, index: number) => void
-    onFileChange: (string: string, index: number, speechIndex: number) => void
-  }[],
+    onTextChange: (str: string, index: number) => void
+    onFileChange: (str: string, index: number, speechIndex: number) => void,
+  }>;
 
-  fileToBeUploadData: {
+  fileToBeUploadData: Array<{
     audioId?: number,
     fileName: any,
     languageId: number,
-    speechIndex: number
-  }[],
-  tooltipAddOpen: boolean,
+    speechIndex: number,
+  }>;
+  tooltipAddOpen: boolean;
 }
 
 export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
-  child = React.createRef<AudioItem>();
+  public child = React.createRef<AudioItem>();
 
   constructor(props: IAudioUploadProps) {
     super(props);
-
 
     this.state = {
       performanceId: -1,
       languages: [],
       speeches: [],
       fileToBeUploadData: [],
-      tooltipAddOpen: false
-    }
+      tooltipAddOpen: false,
+    };
 
     this.addItemHandler = this.addItemHandler.bind(this);
     this.deleteItemHandler = this.deleteItemHandler.bind(this);
@@ -56,66 +55,8 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   }
 
-  private addItemHandler = () => {
-    let speeches = this.state.speeches;
-
-    let speechItem = {
-      id: this.state.speeches.length,
-      languages: this.state.languages,
-      isNew: true,
-      onDelete: this.deleteItemHandler,
-      onTextChange: this.textChangeHandler,
-      onFileChange: this.onFileChange
-    };
-
-    speeches.push(speechItem);
-
-    this.setState({
-      speeches: speeches
-    });
-  }
-
-  private deleteItemHandler = async (index: number) => {
-    if (this.state.performanceId == -1) {
-      let speeches = this.state.speeches.filter(obj => {
-        return obj.id != index;
-      });
-      let audios = this.state.fileToBeUploadData.filter(obj => {
-        return obj.speechIndex != index;
-      });
-      this.setState({
-        speeches: speeches,
-        fileToBeUploadData : audios
-      });
-    } else {
-      if (isNullOrUndefined(this.state.speeches[index])) {
-        let removeResponse = await API.delete("speech/" + index)
-        if (removeResponse.status == 204) {
-          let speeches = this.state.speeches.filter(obj => {
-            return obj.id != index;
-          });
-          let audios = this.state.fileToBeUploadData.filter(obj => {
-            return obj.speechIndex != index;
-          });
-          this.setState({
-            speeches: speeches,
-            fileToBeUploadData : audios
-          });
-        }
-      } else {
-        let speeches = this.state.speeches.filter(obj => {
-          return obj.id != index;
-        });
-
-        this.setState({
-          speeches: speeches
-        });
-      }
-    }
-  }
-
-  onFileChange = (fileName: string, languageId: number, speechIndex: number) => {
-    let filesToBeUploadData = [...this.state.fileToBeUploadData];
+  public onFileChange = (fileName: string, languageId: number, speechIndex: number) => {
+    const filesToBeUploadData = [...this.state.fileToBeUploadData];
     console.log("filesToBeUploadData");
     console.log(filesToBeUploadData);
     console.log("fileName, languageId, speechIndex");
@@ -123,12 +64,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
     if (this.state.fileToBeUploadData.length > 0) {
       for (let i = 0; i < filesToBeUploadData.length; i++) {
-        if (filesToBeUploadData[i].speechIndex == speechIndex && filesToBeUploadData[i].languageId == languageId) {
+        if (filesToBeUploadData[i].speechIndex === speechIndex && filesToBeUploadData[i].languageId === languageId) {
           console.log("in update if");
           filesToBeUploadData[i].fileName = fileName;
 
           this.setState({
-            fileToBeUploadData: filesToBeUploadData
+            fileToBeUploadData: filesToBeUploadData,
           });
 
           console.log(filesToBeUploadData);
@@ -136,11 +77,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         }
       }
     }
-    let item = {
-      fileName: fileName,
-      languageId: languageId,
-      speechIndex: speechIndex
-    }
+    const item = {
+      fileName,
+      languageId,
+      speechIndex,
+    };
 
     filesToBeUploadData.push(item);
 
@@ -148,104 +89,88 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     console.log(filesToBeUploadData);
 
     this.setState({
-      fileToBeUploadData: filesToBeUploadData
-    });
-  }
-
-  private textChangeHandler = (string: string, index: number) => {
-    let speeches = [...this.state.speeches];
-
-    for (let i = 0; i < speeches.length; i++) {
-      if (speeches[i].id == index) {
-        speeches[i].text = string;
-      }
-    }
-
-    this.setState({
-      speeches: speeches
+      fileToBeUploadData: filesToBeUploadData,
     });
   }
 
   // Uploading speeches and file data. Very massive and probably needs
-  uploadHandler = async (performanceId: number, update: boolean) => {
+  public uploadHandler = async (performanceId: number, update: boolean) => {
     const reqCount = this.state.speeches.length * this.state.languages.length;
     const actualCount = this.state.fileToBeUploadData.length;
     console.log("req + " + reqCount);
     console.log("act " + actualCount);
-    if (reqCount != actualCount)
-    {
+    if (reqCount !== actualCount) {
       return -1;
     }
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
-        let speech = {
+        const speech = {
           id: this.state.speeches[i].id,
           text: this.state.speeches[i].text,
           isNew: this.state.speeches[i].isNew,
-          performanceId: performanceId
-        }
-        if (isNullOrUndefined(this.state.speeches[i].text))
-        {
+          performanceId,
+        };
+        if (isNullOrUndefined(this.state.speeches[i].text)) {
           return -2;
         }
         // Cheking for new speeches
         if (!speech.isNew) {
-          let speechResponse = await API.put("speech", speech, {
+          const speechResponse = await API.put("speech", speech, {
             headers: {
-              Accept: "application/json",
+              "Accept": "application/json",
               "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            }
+              "Access-Control-Allow-Origin": "*",
+            },
           });
 
           // Uploading audio file data
           if (this.state.fileToBeUploadData.length > 0) {
             for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
               // Cheking old file data to update
-              if (this.state.fileToBeUploadData[j].speechIndex == this.state.speeches[i].id) {
-                let item = {
+              if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[i].id) {
+                const item = {
                   fileName: this.state.fileToBeUploadData[j].fileName,
                   languageId: this.state.fileToBeUploadData[j].languageId,
                   speechId: speechResponse.data.id,
-                  id: this.state.fileToBeUploadData[j].audioId
-                }
+                  id: this.state.fileToBeUploadData[j].audioId,
+                };
 
                 await API.put("audio", item, {
                   headers: {
-                    Accept: "application/json",
+                    "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                  }
+                    "Access-Control-Allow-Origin": "*",
+                  },
                 });
               }
             }
           }
         } else { // if speeches is new just uploading them
-          let speechResponse = await API.post("speech", speech, {
+          const speechResponse = await API.post("speech", speech, {
             headers: {
-              Accept: "application/json",
+              "Accept": "application/json",
               "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            }
+              "Access-Control-Allow-Origin": "*",
+            },
           });
 
           // Uploading audio file data to speeches
           console.log(this.state.fileToBeUploadData);
           for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
             // Checking the audio file data is the same index that speechId
-            if (this.state.fileToBeUploadData[j].speechIndex == i) {
-              let item = {
+            if (this.state.fileToBeUploadData[j].speechIndex === i) {
+              const item = {
                 fileName: this.state.fileToBeUploadData[j].fileName,
                 languageId: this.state.fileToBeUploadData[j].languageId,
-                speechId: speechResponse.data.id
-              }
+                speechId: speechResponse.data.id,
+              };
 
               await API.post("audio", item, {
                 headers: {
-                  Accept: "application/json",
+                  "Accept": "application/json",
                   "Content-Type": "application/json",
-                  "Access-Control-Allow-Origin": "*"
-                }
+                  "Access-Control-Allow-Origin": "*",
+                },
               });
             }
           }
@@ -253,36 +178,36 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       }
     } else { // if it's not an update just uploading the speeches
       for (let i = 0; i < this.state.speeches.length; i++) {
-        let speech = {
+        const speech = {
           id: 0,
           text: this.state.speeches[i].text,
-          performanceId: performanceId
-        }
+          performanceId,
+        };
 
-        let speechResponse = await API.post("speech", speech, {
+        const speechResponse = await API.post("speech", speech, {
           headers: {
-            Accept: "application/json",
+            "Accept": "application/json",
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          }
+            "Access-Control-Allow-Origin": "*",
+          },
         });
 
         console.log(this.state.fileToBeUploadData);
         // Uploading audio files data. This uploads need move to another method
         for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
-          if (this.state.fileToBeUploadData[j].speechIndex == i) {
-            let item = {
+          if (this.state.fileToBeUploadData[j].speechIndex === i) {
+            const item = {
               fileName: this.state.fileToBeUploadData[j].fileName,
               languageId: this.state.fileToBeUploadData[j].languageId,
-              speechId: speechResponse.data.id
-            }
+              speechId: speechResponse.data.id,
+            };
 
             await API.post("audio", item, {
               headers: {
-                Accept: "application/json",
+                "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-              }
+                "Access-Control-Allow-Origin": "*",
+              },
             });
           }
         }
@@ -291,49 +216,48 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   }
 
   // Getting all data. (languages, speeches to performance and audios to speeches)
-  async audioComponentDidMount(performanceId: number) {
+  public async audioComponentDidMount(performanceId: number) {
     const languagesResponse = await API.get("language");
-    if (languagesResponse.status == 200) {
+    if (languagesResponse.status === 200) {
       this.setState({
-        languages: languagesResponse.data
+        languages: languagesResponse.data,
       });
     }
-    if (performanceId != -1){
+    if (performanceId !== -1) {
 
     const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
-    if (performanceSpeechesResponse.status == 200) {
-      let speeches = [];
+    if (performanceSpeechesResponse.status === 200) {
+      const speeches = [];
       for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
-        let speechItem = {
+        const speechItem = {
           id: performanceSpeechesResponse.data[i].id,
           text: performanceSpeechesResponse.data[i].text,
           languages: this.state.languages,
           onDelete: this.deleteItemHandler,
           onTextChange: this.textChangeHandler,
-          onFileChange: this.onFileChange
-        }
+          onFileChange: this.onFileChange,
+        };
 
         speeches.push(speechItem);
       }
 
       this.setState({
         performanceId: performanceSpeechesResponse.data.performanceId,
-        speeches: speeches
+        speeches,
       });
     }
-    
 
-    let files = [];
+    const files = [];
     for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
       const audiosToSpeech = await API.get("speech/" + performanceSpeechesResponse.data[i].id + "/audios");
       console.log(audiosToSpeech);
 
       for (let j = 0; j < audiosToSpeech.data.length; j++) {
-        let item = {
+        const item = {
           audioId: audiosToSpeech.data[j].id,
           fileName: audiosToSpeech.data[j].fileName,
           languageId: audiosToSpeech.data[j].languageId,
-          speechIndex: audiosToSpeech.data[j].speechId
+          speechIndex: audiosToSpeech.data[j].speechId,
         };
 
         files.push(item);
@@ -341,18 +265,18 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     }
     console.log(files);
     this.setState({
-      fileToBeUploadData: files
+      fileToBeUploadData: files,
     });
   }
   }
 
-   tooltipAddToggle() {
+   public tooltipAddToggle() {
         this.setState({
-            tooltipAddOpen: !this.state.tooltipAddOpen
+            tooltipAddOpen: !this.state.tooltipAddOpen,
         });
     }
 
-  render() {
+  public render() {
     const items = [...this.state.speeches];
 
     console.log("items");
@@ -387,5 +311,77 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         </div>
       </div>
     );
+  }
+
+  private addItemHandler = () => {
+    const speeches = this.state.speeches;
+
+    const speechItem = {
+      id: this.state.speeches.length,
+      languages: this.state.languages,
+      isNew: true,
+      onDelete: this.deleteItemHandler,
+      onTextChange: this.textChangeHandler,
+      onFileChange: this.onFileChange,
+    };
+
+    speeches.push(speechItem);
+
+    this.setState({
+      speeches,
+    });
+  }
+
+  private deleteItemHandler = async (index: number) => {
+    if (this.state.performanceId === -1) {
+      const speeches = this.state.speeches.filter((obj) => {
+        return obj.id !== index;
+      });
+      const audios = this.state.fileToBeUploadData.filter((obj) => {
+        return obj.speechIndex !== index;
+      });
+      this.setState({
+        speeches,
+        fileToBeUploadData : audios,
+      });
+    } else {
+      if (isNullOrUndefined(this.state.speeches[index])) {
+        const removeResponse = await API.delete("speech/" + index);
+        if (removeResponse.status === 204) {
+          const speeches = this.state.speeches.filter((obj) => {
+            return obj.id !== index;
+          });
+          const audios = this.state.fileToBeUploadData.filter((obj) => {
+            return obj.speechIndex !== index;
+          });
+          this.setState({
+            speeches,
+            fileToBeUploadData : audios,
+          });
+        }
+      } else {
+        const speeches = this.state.speeches.filter((obj) => {
+          return obj.id !== index;
+        });
+
+        this.setState({
+          speeches,
+        });
+      }
+    }
+  }
+
+  private textChangeHandler = (str: string, index: number) => {
+    const speeches = [...this.state.speeches];
+
+    for (let i = 0; i < speeches.length; i++) {
+      if (speeches[i].id === index) {
+        speeches[i].text = str;
+      }
+    }
+
+    this.setState({
+      speeches,
+    });
   }
 }

@@ -1,55 +1,47 @@
-import React, { Dispatch } from 'react';
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Tooltip
-} from 'reactstrap';
-import './PopupConfirmationDialog.css';
-import '../Performances/Performance/Performance.css';
+import React from "react";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import "../Performances/Performance/Performance.css";
+import "./PopupConfirmationDialog.css";
 
-interface props {
-  removeMethod: any,
-  message: string,
-  labelDangerButton: string,
-  labelPrimaryButton: string
+interface IPopupConfirmationDialogProps {
+  removeMethod: any;
+  message: string;
+  labelDangerButton: string;
+  labelPrimaryButton: string;
 }
 
-interface state {
-  tooltipOpen: boolean
+interface IPopupConfirmationDialogState {
+  tooltipOpen: boolean;
   modal: boolean;
 }
 
-export default class PopupConfirmationDialog extends React.Component<props, state> {
+export default class PopupConfirmationDialog extends React.Component<IPopupConfirmationDialogProps, IPopupConfirmationDialogState> {
   constructor(props: any) {
     super(props);
     this.state = {
       tooltipOpen: false,
-      modal: false
+      modal: false,
     };
 
     this.toggle = this.toggle.bind(this);
     this.tooltipToggle = this.tooltipToggle.bind(this);
   }
 
-
-  toggle() {
+  public toggle() {
     this.setState({
       tooltipOpen: false,
-      modal: !this.state.modal
+      modal: !this.state.modal,
     });
     console.log("toggle");
   }
 
-  tooltipToggle() {
+  public tooltipToggle() {
     this.setState({
-      tooltipOpen: !this.state.tooltipOpen
+      tooltipOpen: !this.state.tooltipOpen,
     });
   }
 
-  render() {
+  public render() {
     return (
       <div>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className="removePerformancePopup">
