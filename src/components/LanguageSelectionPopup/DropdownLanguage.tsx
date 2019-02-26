@@ -1,63 +1,65 @@
-import React from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import React from "react";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 
-interface stateDropdownLanguage {
-    dropdownOpen: boolean,
+interface IDropdownLanguageState {
+    dropdownOpen: boolean;
     currentLanguage: {
         id: number,
-        name: string
-    }
+        name: string,
+    };
 }
-interface propsDropdownLanguage {
-    updateCurrentLang: any,
-    languages: {
+interface IDropdownLanguageProps {
+    updateCurrentLang: any;
+    languages: Array<{
         id: number,
-        name: string
-    }[]
+        name: string,
+    }>;
 }
 
-export default class DropdownLanguage extends React.Component<propsDropdownLanguage, stateDropdownLanguage> {
+export default class DropdownLanguage extends React.Component<IDropdownLanguageProps, IDropdownLanguageState> {
     constructor(props: any) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
         this.state = {
+            currentLanguage: { id: 0, name: "Мова" },
             dropdownOpen: false,
-            currentLanguage: { id: 0, name: 'Мова' }
         };
     }
 
-    toggle() {
-        this.setState(prevState => ({
-            dropdownOpen: !prevState.dropdownOpen
+    public toggle() {
+        this.setState((prevState) => ({
+            dropdownOpen: !prevState.dropdownOpen,
         }));
     }
 
-    changeCurrentLanguageHandler = (lang: any) => {
+    public changeCurrentLanguageHandler = (lang: any) => {
         const curLang = lang;
         this.props.updateCurrentLang(curLang);
-        this.setState(state => ({
-            currentLanguage: curLang
+        this.setState((state) => ({
+            currentLanguage: curLang,
         }));
     }
 
-    compare(a : any,b : any) {
-        if (a.name < b.name)
+    public compare(a: any, b: any) {
+        if (a.name < b.name) {
           return -1;
-        if (a.name > b.name)
+        }
+        if (a.name > b.name) {
           return 1;
+        }
         return 0;
       }
 
     public render() {
         let language = null;
-        var sortable = this.props.languages.sort(this.compare);
+        const sortable = this.props.languages.sort(this.compare);
 
         language = (
             <div>
                 {sortable.map((lang, index) => {
                     index = lang.id;
-                    return <DropdownItem key={index} onClick={() => this.changeCurrentLanguageHandler(lang)}>{lang.name}</DropdownItem>
+                    return <DropdownItem key={index} onClick={() => this.changeCurrentLanguageHandler(lang)}>{lang.name}</DropdownItem>;
                 })}
             </div>
         );
@@ -72,7 +74,6 @@ export default class DropdownLanguage extends React.Component<propsDropdownLangu
                 </DropdownMenu>
             </Dropdown>
         );
-
 
     }
 }

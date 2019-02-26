@@ -1,19 +1,18 @@
-import React, { Component, createRef } from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
-
-import ApiManager from "../../../util/apiManager";
+import apiManager from "../../../util/apiManager";
 import history from "../../../util/history";
 import Spinner from "../../UI/Spinner/Spinner";
 import AudioUpload from "../AudioUpload/AudioUpload";
 import "./EditPerformance.css";
 
-interface editPerformanceState {
+interface IEditPerformanceState {
     id: number;
     title: string;
     description: string;
     isShow: boolean;
 }
-interface editPerformanceProps {
+interface IEditPerformanceProps {
     match: {
         params: {
             number: any,
@@ -22,11 +21,11 @@ interface editPerformanceProps {
 
     upload: any;
 }
-class editPerformance extends Component<editPerformanceProps, editPerformanceState> {
+class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceState> {
     public child = React.createRef<AudioUpload>();
 
-    public apimanager = new ApiManager();
-    constructor(props: editPerformanceProps) {
+    public apimanager = new apiManager();
+    constructor(props: IEditPerformanceProps) {
         super(props);
         this.state = {
             id: -1,
@@ -41,13 +40,13 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
     }
     public handleChange(e: any) {
         const val = e.target.value;
-        if (e.target.name == "title") {
+        if (e.target.name === "title") {
 
             this.setState(
                 {
                     title: val,
                 });
-        } else if (e.target.name == "description") {
+        } else if (e.target.name === "description") {
             this.setState(
                 {
                     description: val,
@@ -58,16 +57,16 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
         this.setState({
             isShow: true,
         });
-        if (this.state.id != -1) {
+        if (this.state.id !== -1) {
             const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
-            if (resp.status == 200) {
+            if (resp.status === 200) {
                 if (!this.child.current) {
                     return;
                 }
 
                 const result = await this.child.current.uploadHandler(this.state.id, true);
                 console.log(result);
-                if (result == -1) {
+                if (result === -1) {
                     this.setState({
                         isShow: false,
                     });
@@ -75,7 +74,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
 
                     return;
                 }
-                if (result == -2) {
+                if (result === -2) {
                     this.setState({
                         isShow: false,
                     });
@@ -94,7 +93,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
             }
         } else {
             const resp = await this.apimanager.createPerformance(JSON.stringify(this.state));
-            if (resp.status == 201) {
+            if (resp.status === 201) {
 
                 const JSONObj = await resp.json();
 
@@ -105,14 +104,14 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 const result = await this.child.current.uploadHandler(JSONObj.id, false);
                 console.log(result);
 
-                if (result == -1) {
+                if (result === -1) {
                     this.setState({
                         isShow: false,
                     });
                     alert("Завантажте всі аудіо!");
                     return;
                 }
-                if (result == -2) {
+                if (result === -2) {
                     this.setState({
                         isShow: false,
                     });
@@ -131,9 +130,9 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
         });
     }
     public async loadData() {
-        if (this.props.match.params.number != "new") {
+        if (this.props.match.params.number !== "new") {
             const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
-            if (resp.status == 200) {
+            if (resp.status === 200) {
                 const data = await resp.json();
                 this.setState({
                     id: data.id,
@@ -169,7 +168,7 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
                 <Spinner isShow={this.state.isShow} />
 
                 <div className="formHeader">
-                    <p>{this.props.match.params.number == "new" ? "Створення вистави" : "Редагування вистави"}</p>
+                    <p>{this.props.match.params.number === "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">
                         <button className="saveButton" onClick={this.handleSave} ><i className="fas fa-check-circle saveIcon"></i>Зберегти</button>
                         <Link to="/performance/">
@@ -193,4 +192,4 @@ class editPerformance extends Component<editPerformanceProps, editPerformanceSta
     }
 }
 
-export default editPerformance;
+export default EditPerformance;

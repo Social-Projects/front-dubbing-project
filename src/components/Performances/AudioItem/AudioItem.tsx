@@ -1,33 +1,31 @@
 import * as React from "react";
-import "./AudioItem.css";
+import { Tooltip } from "reactstrap";
 import API from "../../../util/api";
-import reducer from "../../../store/reducers/streamReducer";
-import { fileURLToPath } from "url";
-import { Tooltip } from 'reactstrap';
+import "./AudioItem.css";
 
 export interface IAudioItemProps {
-  id: number,
-  text?: string,
+  id: number;
+  text?: string;
 
-  languages: {
+  languages: Array<{
     id: number,
-    name: string
-  }[],
+    name: string,
+  }>;
 
-  fileToBeUploadData: {
+  fileToBeUploadData: Array<{
     audioId?: number,
     fileName: any,
     languageId: number,
-    speechIndex: number
-  }[]
+    speechIndex: number,
+  }>;
 
-  onDelete: (index: number) => void,
-  onTextChange: (string: string, index: number) => void
-  onFileChange: (fileName: string, languageId: number, speechIndex: number) => void
+  onDelete: (index: number) => void;
+  onTextChange: (str: string, index: number) => void;
+  onFileChange: (fileName: string, languageId: number, speechIndex: number) => void;
 }
 
 interface IAudioItemState {
-  tooltipRemoveOpen: boolean,
+  tooltipRemoveOpen: boolean;
 }
 
 export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
@@ -38,40 +36,13 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.deleteHandler = this.deleteHandler.bind(this);
     this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
     this.state = {
-      tooltipRemoveOpen: false
+      tooltipRemoveOpen: false,
     };
   }
 
-  private onChange = async (event: any) => {
-    const audio = event.target.files[0];
-    const languageId = event.target.id;
-    const speechIndex = event.target.parentNode.parentNode.id;
-
-    let formData = new FormData();
-
-    formData = new FormData();
-
-    formData.append("AudioFile", audio);
-
-    await API.post("audio/upload", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
-    console.log("SI:" + speechIndex);
-    this.props.onFileChange(audio.name, languageId, speechIndex);
-  }
-
-  private handleChange = (event: any) => {
-    this.props.onTextChange(event.target.value, event.target.id);
-  }
-
-  private deleteHandler = (event: any) => {
-    const deleteItemId = event.target.id;
-    this.props.onDelete(deleteItemId);
-  }
-  
-  handleUploadClick(event: any) {
-    let parent = event.target.parentElement.parentElement as HTMLElement;
-    let ch = parent.getElementsByClassName('choose-audio-btn').namedItem(event.target.id.toString()) as HTMLElement;
+  public handleUploadClick(event: any) {
+    const parent = event.target.parentElement.parentElement as HTMLElement;
+    const ch = parent.getElementsByClassName("choose-audio-btn").namedItem(event.target.id.toString()) as HTMLElement;
 
     console.log(ch);
 
@@ -79,13 +50,13 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
   }
 
-  tooltipRemoveToggle() {
+  public tooltipRemoveToggle() {
     this.setState({
-      tooltipRemoveOpen: !this.state.tooltipRemoveOpen
+      tooltipRemoveOpen: !this.state.tooltipRemoveOpen,
     });
   }
 
-  render() {
+  public render() {
     const languages = [...this.props.languages];
     const filesToUpload = [...this.props.fileToBeUploadData];
 
@@ -104,9 +75,9 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
         <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>Завантажити</button>
 
-        {filesToUpload.map(file => {
-          if (file.speechIndex == this.props.id && file.languageId == item.id) {
-            return <span key={file.speechIndex}>{file.fileName}</span>
+        {filesToUpload.map((file) => {
+          if (file.speechIndex === this.props.id && file.languageId === item.id) {
+            return <span key={file.speechIndex}>{file.fileName}</span>;
           }
         })}
       </div>
@@ -141,5 +112,32 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
         </div>
       </div>
     );
+  }
+
+  private onChange = async (event: any) => {
+    const audio = event.target.files[0];
+    const languageId = event.target.id;
+    const speechIndex = event.target.parentNode.parentNode.id;
+
+    let formData = new FormData();
+
+    formData = new FormData();
+
+    formData.append("AudioFile", audio);
+
+    await API.post("audio/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log("SI:" + speechIndex);
+    this.props.onFileChange(audio.name, languageId, speechIndex);
+  }
+
+  private handleChange = (event: any) => {
+    this.props.onTextChange(event.target.value, event.target.id);
+  }
+
+  private deleteHandler = (event: any) => {
+    const deleteItemId = event.target.id;
+    this.props.onDelete(deleteItemId);
   }
 }

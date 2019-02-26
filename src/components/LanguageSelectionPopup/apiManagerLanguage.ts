@@ -1,68 +1,61 @@
-import config from 'react-global-configuration';
-class apiManagerLanguage
-{    
-    backendUrl = "";
-    constructor()
-    {
-        this.backendUrl = config.get('urlApi');
+import config from "react-global-configuration";
+class ApiManagerLanguage {
+    public backendUrl = "";
+    constructor() {
+        this.backendUrl = config.get("urlApi");
     }
-    async createLang(json: string): Promise<Response> {
+    public async createLang(json: string): Promise<Response> {
         console.log("createLang");
-        const response = await fetch(`${this.backendUrl}api/Language`,{
-            
-            method: 'POST',
+        const response = await fetch(`${this.backendUrl}api/Language`, {
+            method: "POST",
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }, 
-            body:json
-        });
-            return response;
-    }
-    
-    async updateLang(json:string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Language`,{
-            
-            method: 'PUT',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }, 
-            body:json
-        });
-            return response;
-    }
-    async getLang(): Promise<Response>
-    {
-        const response = await fetch(`${this.backendUrl}api/Language`,{
-            
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
-            }
+              "Accept": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+            },
+            body: json,
         });
         return response;
     }
-    async getLangById(index:number): Promise<Response>
-    {
+
+    public async updateLang(json: string): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Language`, {
+            method: "PUT",
+            headers: {
+              "Accept": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+            },
+            body: json,
+        });
+        return response;
+    }
+    public async getLang(): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Language`, {
+
+            method: "GET",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+        });
+        return response;
+    }
+    public async getLangById(index: number): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Language/${index}`);
         return response;
     }
-    async removeLang(index:number): Promise<Response>
-    {
-        const response = await fetch(`${this.backendUrl}api/Language/${index}`,{
-            
-            method: 'DELETE',
+    public async removeLang(index: number): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Language/${index}`, {
+
+            method: "DELETE",
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin':'*'
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
             }});
-            return response;
+        return response;
     }
 }
-export default apiManagerLanguage;
+export default ApiManagerLanguage;
