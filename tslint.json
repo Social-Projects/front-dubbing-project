@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "ban-types": false,
         "max-line-length": {
             "options": [
                 1200
