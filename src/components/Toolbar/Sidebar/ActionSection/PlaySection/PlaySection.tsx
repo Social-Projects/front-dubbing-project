@@ -1,23 +1,21 @@
-import React from 'react';
-import Aux from '../../../../../hoc/Auxiliary';
-import WithClass from '../../../../../hoc/WithClass';
-import classes from './PlaySection.module.css';
+import React from "react";
+import Aux from "../../../../../hoc/Auxiliary";
+import WithClass from "../../../../../hoc/WithClass";
+import classes from "./PlaySection.module.css";
 
-interface PlaySectionProps {
-    numAudio: number,
-    totalTime: number,
-    currentTime: number
-};
+interface IPlaySectionProps {
+    numAudio: number;
+    totalTime: number;
+    currentTime: number;
+}
 
-const playSection = (props: PlaySectionProps) => {
+const playSection = (props: IPlaySectionProps) => {
 
-    const getViewNumber = (number: number): string => {
-        if (number < 10)
-        {
-            return `0${number}`;
-        }
-        else {
-            return number.toString();
+    const getViewNumber = (num: number): string => {
+        if (num < 10) {
+            return `0${num}`;
+        } else {
+            return num.toString();
         }
     };
 
@@ -39,9 +37,9 @@ const playSection = (props: PlaySectionProps) => {
                 className={classes.playbackScale}
                 value={props.currentTime}
                 max={props.totalTime}
-                onChange={() => {}}/>
+                onChange={undefined}/>
         </Aux>
-    )
-}
+    );
+};
 
 export default WithClass(playSection, classes.playSection);

@@ -3,5 +3,5 @@ export enum KeyChars {
     ArrowRight = "ArrowRight",
     ArrowLeft = "ArrowLeft",
     Space = " ",
-    Tab = "Tab"
-};
+    Tab = "Tab",
+}

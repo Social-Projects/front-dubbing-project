@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Performance from "../Performance/Performance"
-import apiManager from "../../../util/apiManager";
+import ApiManager from "../../../util/apiManager";
 
 import { Link } from "react-router-dom";
 import "./PerformanceList.css"
@@ -20,7 +20,7 @@ interface performanceProps {
 
 class PerformanceList extends Component<performanceProps, performanceState>
 {
-    apimanager = new apiManager();
+    apimanager = new ApiManager();
 
     constructor(props: any) {
         super(props);

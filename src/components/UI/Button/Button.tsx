@@ -1,7 +1,7 @@
-import React from 'react';
-import Radium from 'radium';
+import Radium from "radium";
+import React from "react";
 
-interface ButtonProps {
+interface IButtonProps {
     width: string;
     height: string;
     backgroundColor: string;
@@ -10,23 +10,23 @@ interface ButtonProps {
     transitionDuration: string;
     className: string;
     text: string;
-    hover?: Object,
-    clicked?: any
+    hover?: object;
+    clicked?: any;
 }
 
-class Button extends React.Component<ButtonProps> {
-    
-    render() {
+class Button extends React.Component<IButtonProps> {
+
+    public render() {
         const style = {
-            width: this.props.width,
-            height: this.props.height,
-            backgroundColor: this.props.backgroundColor,
-            borderRadius: this.props.borderRadius,
-            fontSize: this.props.fontSize,
-            transition: 'all ' + this.props.transitionDuration,
-            ':hover': {
-                ...this.props.hover
-            }
+            ":hover": {
+                ...this.props.hover,
+            },
+            "backgroundColor": this.props.backgroundColor,
+            "borderRadius": this.props.borderRadius,
+            "fontSize": this.props.fontSize,
+            "height": this.props.height,
+            "transition": "all " + this.props.transitionDuration,
+            "width": this.props.width,
         };
 
         return (
@@ -34,7 +34,7 @@ class Button extends React.Component<ButtonProps> {
                 {this.props.children}
                 <span>{this.props.text}</span>
             </button>
-        )
+        );
     }
 }
 

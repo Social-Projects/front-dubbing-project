@@ -1,66 +1,67 @@
-import React from 'react';
+import React from "react";
 
-import SidebarItem from './SidebarItem/SidebarItem';
-import ActionSection from './ActionSection/ActionSection';
-import './Sidebar.css';
+import ActionSection from "./ActionSection/ActionSection";
+import SidebarItem from "./SidebarItem/SidebarItem";
 
-import perfomanceLogo from '../../../assets/images/perfomance-logo.png';
-import eventLogo from '../../../assets/images/event-logo.png';
-import streamLogo from '../../../assets/images/stream-logo.png';
+import eventLogo from "../../../assets/images/event-logo.png";
+import perfomanceLogo from "../../../assets/images/perfomance-logo.png";
+import streamLogo from "../../../assets/images/stream-logo.png";
 
-interface SidebarState {
-    performanceId: number,
-    isVisible: boolean
+import "./Sidebar.css";
+
+interface ISidebarState {
+    performanceId: number;
+    isVisible: boolean;
 }
 
-class Sidebar extends React.Component<{}, SidebarState> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            performanceId: -1,
-            isVisible: true
-        };
-    }
+class Sidebar extends React.Component<{}, ISidebarState> {
 
-    static getDerivedStateFromProps(props: {}, state: SidebarState) {
+    public static getDerivedStateFromProps(props: {}, state: ISidebarState) {
         const updatedState = {
-            ...state
+            ...state,
         };
-        const segments = location.pathname.split('/');
+        const segments = location.pathname.split("/");
 
-        if (segments[1] === 'login') {
+        if (segments[1] === "login") {
             updatedState.isVisible = false;
-        } else if (segments[1] === 'stream') {
-            updatedState.performanceId = parseInt(segments[2]);
+        } else if (segments[1] === "stream") {
+            updatedState.performanceId = parseInt(segments[2], undefined);
         }
 
-        if (segments[1] !== 'stream' && updatedState.performanceId !== -1) {
+        if (segments[1] !== "stream" && updatedState.performanceId !== -1) {
             updatedState.performanceId = -1;
         }
 
         return updatedState;
     }
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            isVisible: true,
+            performanceId: -1,
+        };
+    }
 
-    render() {
+    public render() {
         let actionSection = null;
         if (this.state.performanceId !== -1) {
             actionSection = <ActionSection performanceId={this.state.performanceId} />;
         }
 
         return (
-            this.state.isVisible ? 
+            this.state.isVisible ?
                 <div className="sidebar">
                     <nav className="nav">
                         <SidebarItem
                             name="Вистави"
                             imgSrc={perfomanceLogo}
                             path="/performance"
-                            clicked={() => {}} />
+                            clicked={null} />
                         <SidebarItem
                             name="Події"
                             imgSrc={eventLogo}
-                            path="/event" 
-                            clicked={() => {}}/>
+                            path="/event"
+                            clicked={null}/>
                         <SidebarItem
                             name="Трансляції"
                             imgSrc={streamLogo}
@@ -69,9 +70,8 @@ class Sidebar extends React.Component<{}, SidebarState> {
                     </nav>
                     {actionSection}
                 </div> : null
-        )
+        );
     }
 }
-
 
 export default Sidebar;

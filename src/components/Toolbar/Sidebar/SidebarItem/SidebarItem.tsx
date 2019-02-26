@@ -1,21 +1,21 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { NavLink } from "react-router-dom";
 
-import classes from './SidebarItem.module.css';
+import classes from "./SidebarItem.module.css";
 
-interface SidebarItemProps {
+interface ISidebarItemProps {
     imgSrc: string;
     name: string;
-    clicked: any,
-    path: string
+    clicked: any;
+    path: string;
 }
 
-class SidebarItem extends React.Component<SidebarItemProps> {
-    constructor(props: SidebarItemProps) {
+class SidebarItem extends React.Component<ISidebarItemProps> {
+    constructor(props: ISidebarItemProps) {
         super(props);
     }
 
-    render() {
+    public render() {
         return (
             <NavLink
                 to={this.props.path}
@@ -25,7 +25,7 @@ class SidebarItem extends React.Component<SidebarItemProps> {
                     <img src={this.props.imgSrc} alt=""/>
                     <span>{this.props.name}</span>
             </NavLink>
-        )
+        );
     }
 }
 

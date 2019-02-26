@@ -1,25 +1,24 @@
-import React from 'react';
-import Aux from '../../../../hoc/Auxiliary';
-import WithClass from '../../../../hoc/WithClass';
-import classes from './StreamAudio.module.css';
+import React from "react";
+import Aux from "../../../../hoc/Auxiliary";
+import WithClass from "../../../../hoc/WithClass";
+import classes from "./StreamAudio.module.css";
 
-interface AudioProps {
-    text: string,
-    duration: number,
-    isPlaying: boolean,
-    playByIdHandler: any,
-    currentAudioId: number,
-    connectingStatus: boolean
+interface IAudioProps {
+    text: string;
+    duration: number;
+    isPlaying: boolean;
+    playByIdHandler: any;
+    currentAudioId: number;
+    connectingStatus: boolean;
 }
 
-const audio = (props: AudioProps) => {
+const audio = (props: IAudioProps) => {
 
-    const getViewNumber = (number: number): string => {
-        if (number < 10) {
-            return `0${number}`;
-        }
-        else {
-            return number.toString();
+    const getViewNumber = (num: number): string => {
+        if (num < 10) {
+            return `0${num}`;
+        } else {
+            return num.toString();
         }
     };
 
@@ -33,10 +32,10 @@ const audio = (props: AudioProps) => {
     const iconActionsClasses = ["fas", classes.icon, "fa-play-circle"];
     if (props.isPlaying) {
         iconActionsClasses.pop();
-        iconActionsClasses.push('fa-pause-circle');
+        iconActionsClasses.push("fa-pause-circle");
     } else {
         iconActionsClasses.pop();
-        iconActionsClasses.push('fa-play-circle');
+        iconActionsClasses.push("fa-play-circle");
     }
 
     if (!props.connectingStatus) {
@@ -45,7 +44,7 @@ const audio = (props: AudioProps) => {
 
     function playHandler() {
         console.log(props.currentAudioId);
-        props.playByIdHandler(props.currentAudioId)
+        props.playByIdHandler(props.currentAudioId);
     }
 
     return (
@@ -56,7 +55,7 @@ const audio = (props: AudioProps) => {
             </span>
             <span className={classes.time}>{convSecondsToMinutes(props.duration)}</span>
         </Aux>
-    )
+    );
 };
 
 export default WithClass(audio, classes.audio);

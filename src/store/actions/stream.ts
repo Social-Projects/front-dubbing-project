@@ -1,29 +1,29 @@
-import * as actionTypes from './actionTypes'
-import apiManager from '../../util/apiManager';
+import ApiManager from "../../util/apiManager";
+import * as actionTypes from "./actionTypes";
 
 // Save performance Id in central Store
 export const savePerformanceId = (id: number) => {
     return {
-        type: actionTypes.SAVE_PERFORMANCE_ID,
         payload: {
-            id: id
-        }
-    }
+            id,
+        },
+        type: actionTypes.SAVE_PERFORMANCE_ID,
+    };
 };
 
 // Load Speeches and store them in central store
 const storeSpeeches = (data: any) => {
     return {
-        type: actionTypes.LOAD_SPEECHES,
         payload: {
-            speeches: data
-        }
+            speeches: data,
+        },
+        type: actionTypes.LOAD_SPEECHES,
     };
 };
 
 export const loadSpeeches = (id: number) => {
     return async (dispatch: any) => {
-        const apiManage = new apiManager();
+        const apiManage = new ApiManager();
 
         const resp = await apiManage.getSpeechInfo(id);
         const data = await resp.json();
@@ -35,46 +35,46 @@ export const loadSpeeches = (id: number) => {
 // Save new current speech id in central store
 export const saveCurrentSpeechId = (id: number) => {
     return {
-        type: actionTypes.SAVE_CURRENT_SPEECH_ID,
         payload: {
-            currentSpeechId: id
-        }
+            currentSpeechId: id,
+        },
+        type: actionTypes.SAVE_CURRENT_SPEECH_ID,
     };
 };
 
 // Change streaming status to the opposite previous
 export const changeStreamingStatus = (status: boolean) => {
     return {
-        type: actionTypes.CHANGE_STREAMING_STATUS,
         payload: {
-            isPlaying: status
-        }
-    }
+            isPlaying: status,
+        },
+        type: actionTypes.CHANGE_STREAMING_STATUS,
+    };
 };
 
 // Change stream state to initial
 export const changeStreamStateToInitial = () => {
     return {
-        type: actionTypes.CHANGE_STREAM_STATE_TO_INITIAL
+        type: actionTypes.CHANGE_STREAM_STATE_TO_INITIAL,
     };
 };
 
 // Change current playback time
 export const changeCurrentPlaybackTime = (currentPlaybackTime: number) => {
     return {
-        type: actionTypes.CHANGE_CURRENT_PLAYBACK_TIME,
         payload: {
-            currentPlaybackTime: currentPlaybackTime
-        }
+            currentPlaybackTime,
+        },
+        type: actionTypes.CHANGE_CURRENT_PLAYBACK_TIME,
     };
 };
 
 // Change connecting status
 export const changeConnectingStatus = (status: boolean) => {
     return {
-        type: actionTypes.CHANGE_CONNECTING_STATUS,
         payload: {
-            status: status
-        }
+            status,
+        },
+        type: actionTypes.CHANGE_CONNECTING_STATUS,
     };
 };

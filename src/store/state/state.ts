@@ -1,18 +1,16 @@
-import signalrManager from "../../util/signalrManager";
-
-export default interface State {
+export default interface IState {
     stream: {
         performanceId: number,
-        speeches: {
+        speeches: Array<{
             id: number,
             text: string,
-            duration: number
-        }[],
+            duration: number,
+        }>,
         connectingStatus: boolean,
         isPlaying: boolean,
         currentSpeechId: number,
         currentSpeechIndex: number,
         currentPlaybackTime: number,
-        maxDuration: number
-    }
+        maxDuration: number,
+    };
 }

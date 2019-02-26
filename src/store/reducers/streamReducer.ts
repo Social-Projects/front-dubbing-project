@@ -1,42 +1,42 @@
-import * as actionTypes from '../actions/actionTypes';
+import * as actionTypes from "../actions/actionTypes";
 
-interface ActionType {
-    type: string,
-    payload: any
-};
+interface IActionType {
+    type: string;
+    payload: any;
+}
 
-interface StateType {
-    performanceId: number,
-    speeches?: {
+interface IStateType {
+    performanceId: number;
+    speeches?: Array<{
         id: number,
         text: string,
-        duration: number
-    }[],
-    connectingStatus: boolean,
-    isPlaying: boolean,
-    currentSpeechId: number,
-    currentSpeechIndex: number,
-    currentPlaybackTime: number,
-    maxDuration: number
-};
+        duration: number,
+    }>;
+    connectingStatus: boolean;
+    isPlaying: boolean;
+    currentSpeechId: number;
+    currentSpeechIndex: number;
+    currentPlaybackTime: number;
+    maxDuration: number;
+}
 
 const initialState = {
-    performanceId: -1,
-    speeches: undefined,
-    isPlaying: false,
     connectingStatus: false,
+    currentPlaybackTime: 0,
     currentSpeechId: -1,
     currentSpeechIndex: -1,
-    currentPlaybackTime: 0,
-    maxDuration: 0
+    isPlaying: false,
+    maxDuration: 0,
+    performanceId: -1,
+    speeches: undefined,
 };
 
-const reducer = (state: StateType = initialState, action: ActionType) => {
+const reducer = (state: IStateType = initialState, action: IActionType) => {
     let updatedState = {
-        ...state
+        ...state,
     };
 
-    switch(action.type) {
+    switch (action.type) {
         case actionTypes.SAVE_PERFORMANCE_ID:
             updatedState.performanceId = action.payload.id;
             break;
@@ -50,9 +50,10 @@ const reducer = (state: StateType = initialState, action: ActionType) => {
         case actionTypes.SAVE_CURRENT_SPEECH_ID:
             updatedState.currentSpeechId = action.payload.currentSpeechId;
             updatedState.currentSpeechIndex = state.speeches !== undefined ?
-                                                state.speeches.findIndex(speech => speech.id === action.payload.currentSpeechId) : -1;
-                                                
-            const currentSpeech = state.speeches !== undefined ? state.speeches.find(s => s.id === action.payload.currentSpeechId) : undefined;
+                state.speeches.findIndex((speech) => speech.id === action.payload.currentSpeechId) : -1;
+
+            const currentSpeech = state.speeches !== undefined ?
+                state.speeches.find((s) => s.id === action.payload.currentSpeechId) : undefined;
             updatedState.maxDuration = currentSpeech !== undefined ? currentSpeech.duration : 0;
             break;
         case actionTypes.CHANGE_STREAMING_STATUS:

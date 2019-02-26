@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import Aux from '../../../hoc/Auxiliary';
-import classes from './Spinner.module.css';
+import Aux from "../../../hoc/Auxiliary";
+import classes from "./Spinner.module.css";
 
-interface SpinnerProps {
-    isShow: boolean
-};
+interface ISpinnerProps {
+    isShow: boolean;
+}
 
-const spinner = (props: SpinnerProps) => {
+const spinner = (props: ISpinnerProps) => {
     return (
         props.isShow ? (
             <Aux>
                 <div className={classes.Backdrop}></div>
                 <div className={classes.Spinner}>Loading...</div>
-            </Aux> 
+            </Aux>
         ) : null
     );
 };

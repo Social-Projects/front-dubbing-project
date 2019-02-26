@@ -1,90 +1,89 @@
-import config from 'react-global-configuration';
+import config from "react-global-configuration";
 
-class apiManager {
-    backendUrl = "";
+class ApiManager {
+    public backendUrl = "";
 
     constructor() {
         this.backendUrl = config.get("urlApi");
     }
 
-    async createPerformance(json: string): Promise<Response> {
+    public async createPerformance(json: string): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance`, {
-            method: 'POST',
+            body: json,
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
             },
-            body: json
+            method: "POST",
         });
         return response;
     }
 
-    async updatePerformance(json: string): Promise<Response> {
+    public async updatePerformance(json: string): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance`, {
-
-            method: 'PUT',
+            body: json,
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
             },
-            body: json
+            method: "PUT",
         });
         return response;
     }
 
-    async getPerformances(): Promise<Response> {
+    public async getPerformances(): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance`,
             {
-                method: 'GET',
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                }
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Content-Type": "application/json",
+                },
+                method: "GET",
             });
         return response;
     }
 
-    async getPerformanceById(index: number): Promise<Response> {
+    public async getPerformanceById(index: number): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
-            method: 'GET',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+            },
+            method: "GET",
         });
         return response;
     }
 
-    async removePerformance(index: number): Promise<Response> {
+    public async removePerformance(index: number): Promise<Response> {
         console.log("here");
         const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
-            method: 'DELETE',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+            },
+            method: "DELETE",
         });
 
         return response;
     }
 
-    //Using for display list of speeches on stream page
-    async getSpeechInfo(indexPerfomance: number): Promise<Response> {
+    // Using for display list of speeches on stream page
+    public async getSpeechInfo(indexPerfomance: number): Promise<Response> {
         const response = await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`, {
-            method: 'GET',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+            },
+            method: "GET",
         });
         return response;
     }
 }
 
-export default apiManager;
+export default ApiManager;

@@ -1,37 +1,36 @@
-import React from 'react';
-import Logo from './Logo/Logo';
-import Logout from './Logout/Logout';
-import './Header.css';
+import React from "react";
+import "./Header.css";
+import Logo from "./Logo/Logo";
+import Logout from "./Logout/Logout";
 
-interface HeaderState {
+interface IHeaderState {
     isAuthorized: boolean;
 }
 
-class Header extends React.Component<{}, HeaderState> {
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            isAuthorized: false
-        };
-    }
+class Header extends React.Component<{}, IHeaderState> {
 
-    static getDerivedStateFromProps (props: {}, state: HeaderState) {
-        const segments = location.pathname.split('/');
+    public static getDerivedStateFromProps(props: {}, state: IHeaderState) {
+        const segments = location.pathname.split("/");
         const newState = {
-            ...state
+            ...state,
         };
 
-        if (segments[1] === 'login') {
-            newState.isAuthorized = false;  
-        }
-        else {
+        if (segments[1] === "login") {
+            newState.isAuthorized = false;
+        } else {
             newState.isAuthorized = true;
         }
 
         return newState;
     }
+    constructor(props: {}) {
+        super(props);
+        this.state = {
+            isAuthorized: false,
+        };
+    }
 
-    render() {
+    public render() {
         const logout = this.state.isAuthorized ? <Logout /> : null;
 
         return (
@@ -39,7 +38,7 @@ class Header extends React.Component<{}, HeaderState> {
                 <Logo text="Театр ляльок" />
                 {logout}
             </header>
-        )
+        );
     }
 }
 

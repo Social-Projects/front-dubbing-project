@@ -5,5 +5,5 @@ export {
     changeStreamingStatus,
     changeStreamStateToInitial,
     changeCurrentPlaybackTime,
-    changeConnectingStatus
-} from './stream';
+    changeConnectingStatus,
+} from "./stream";

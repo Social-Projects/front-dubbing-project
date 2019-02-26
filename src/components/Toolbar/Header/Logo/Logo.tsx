@@ -1,17 +1,17 @@
-import React from 'react';
-import './Logo.css';
+import React from "react";
+import "./Logo.css";
 
-interface LogoProps {
-    text: string
+interface ILogoProps {
+    text: string;
 }
 
-class Logo extends React.PureComponent<LogoProps> {
-    render() {
+class Logo extends React.PureComponent<ILogoProps> {
+    public render() {
         return (
             <button className="header-logo">
                 {this.props.text}
             </button>
-        )
+        );
     }
 }
 
