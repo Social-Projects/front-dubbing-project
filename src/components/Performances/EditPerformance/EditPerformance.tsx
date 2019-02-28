@@ -36,55 +36,50 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSave = this.handleSave.bind(this);
-
     }
+
     public handleChange(e: any) {
         const val = e.target.value;
-        if (e.target.name === "title") {
 
-            this.setState(
-                {
-                    title: val,
-                });
+        if (e.target.name === "title") {
+            this.setState({
+                title: val,
+            });
         } else if (e.target.name === "description") {
-            this.setState(
-                {
-                    description: val,
-                });
+            this.setState({
+                description: val,
+            });
         }
     }
+
     public async handleSave() {
         this.setState({
             isShow: true,
         });
+
         if (this.state.id !== -1) {
             const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
-            if (resp.status === 200) {
+
+            if (resp.status === 204) {
                 if (!this.child.current) {
                     return;
                 }
 
                 const result = await this.child.current.uploadHandler(this.state.id, true);
-                console.log(result);
-                if (result === -1) {
+
+                if (result === -1 || result === -2) {
                     this.setState({
                         isShow: false,
                     });
-                    alert("Завантажте всі аудіо!");
 
+                    result === -1 ? alert("Завантажте всі аудіо!") : alert("Введіть текст фрази!");
                     return;
                 }
-                if (result === -2) {
-                    this.setState({
-                        isShow: false,
-                    });
-                    alert("Введіть текст фрази!");
 
-                    return;
-                }
                 this.setState({
                     isShow: false,
                 });
+
                 history.push("/performance/" + this.state.id);
                 await this.loadData();
 
@@ -93,8 +88,8 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
             }
         } else {
             const resp = await this.apimanager.createPerformance(JSON.stringify(this.state));
-            if (resp.status === 201) {
 
+            if (resp.status === 201) {
                 const JSONObj = await resp.json();
 
                 if (!this.child.current) {
@@ -102,36 +97,32 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 }
 
                 const result = await this.child.current.uploadHandler(JSONObj.id, false);
-                console.log(result);
 
-                if (result === -1) {
+                if (result === -1 || result === -2) {
                     this.setState({
                         isShow: false,
                     });
-                    alert("Завантажте всі аудіо!");
-                    return;
-                }
-                if (result === -2) {
-                    this.setState({
-                        isShow: false,
-                    });
-                    alert("Введіть текст фрази!");
 
+                    result === -1 ? alert("Завантажте всі аудіо!") : alert("Введіть текст фрази!");
                     return;
                 }
+
                 history.push("/performance/" + JSONObj.id);
                 await this.loadData();
             } else {
                 console.log(resp.status);
             }
         }
+
         this.setState({
             isShow: false,
         });
     }
+
     public async loadData() {
         if (this.props.match.params.number !== "new") {
             const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
+
             if (resp.status === 200) {
                 const data = await resp.json();
                 this.setState({
@@ -145,7 +136,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 }
 
                 this.child.current.audioComponentDidMount(data.id);
-
             } else {
                 console.log(resp.status);
             }
@@ -157,6 +147,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
             this.child.current.audioComponentDidMount(this.state.id);
         }
     }
+
     public componentDidMount() {
       this.loadData();
     }
@@ -186,7 +177,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 <textarea className="descrField" name="description" onChange={this.handleChange} value={this.state.description} />
 
                 <AudioUpload ref={this.child}></AudioUpload>
-
             </div>
         );
     }

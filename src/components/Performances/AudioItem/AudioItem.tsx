@@ -116,8 +116,8 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
   private onChange = async (event: any) => {
     const audio = event.target.files[0];
-    const languageId = event.target.id;
-    const speechIndex = event.target.parentNode.parentNode.id;
+    const languageId = parseInt(event.target.id, undefined);
+    const speechIndex = parseInt(event.target.parentNode.parentNode.id, undefined);
 
     let formData = new FormData();
 
@@ -133,11 +133,11 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   }
 
   private handleChange = (event: any) => {
-    this.props.onTextChange(event.target.value, event.target.id);
+    this.props.onTextChange(event.target.value, parseInt(event.target.id, undefined));
   }
 
   private deleteHandler = (event: any) => {
-    const deleteItemId = event.target.id;
+    const deleteItemId = parseInt(event.target.id, undefined);
     this.props.onDelete(deleteItemId);
   }
 }
