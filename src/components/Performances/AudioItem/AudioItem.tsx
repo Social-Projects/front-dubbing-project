@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Tooltip } from "reactstrap";
+import { Tooltip, Button } from "reactstrap";
 import API from "../../../util/api";
 import "./AudioItem.css";
 
 export interface IAudioItemProps {
   id: number;
+  order: number;
   text?: string;
 
   languages: Array<{
@@ -95,6 +96,9 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           </div>
           <div className="col-sm-11 audio-item">
             <div className="col-sm-12">
+              №-{this.props.order}
+              <Button color="primary" onClick={this.onClickChangeOrder}>Змістити в</Button>
+              <input type="text" pattern="[0-9]*" onInput={this.handleChangeOrder.bind(this)} value={this.state.order} />
               <textarea
                 id={this.props.id.toString()}
                 onChange={this.handleChange}
