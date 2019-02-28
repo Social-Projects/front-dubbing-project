@@ -20,8 +20,8 @@ class ApiManager {
         return response;
     }
 
-    public async updatePerformance(json: string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`, {
+    public async updatePerformance(index: number,json: string): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/performance/${index}`, {
             body: json,
             headers: {
                 "Accept": "application/json",

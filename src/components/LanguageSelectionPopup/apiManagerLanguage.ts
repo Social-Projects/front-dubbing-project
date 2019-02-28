@@ -18,8 +18,8 @@ class ApiManagerLanguage {
         return response;
     }
 
-    public async updateLang(json: string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Language`, {
+    public async updateLang(index: number, json: string): Promise<Response> {
+        const response = await fetch(`${this.backendUrl}api/Language/${index}`, {
             method: "PUT",
             headers: {
               "Accept": "application/json",

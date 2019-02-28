@@ -23,10 +23,12 @@ export interface IAudioItemProps {
   onDelete: (index: number) => void;
   onTextChange: (str: string, index: number) => void;
   onFileChange: (fileName: string, languageId: number, speechIndex: number) => void;
+  handleChangeOrder: (newOrder: number, oldOrder: number) => void;
 }
 
 interface IAudioItemState {
   tooltipRemoveOpen: boolean;
+  order: number;
 }
 
 export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
@@ -38,6 +40,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
     this.state = {
       tooltipRemoveOpen: false,
+      order: this.props.order,
     };
   }
 
@@ -96,9 +99,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           </div>
           <div className="col-sm-11 audio-item">
             <div className="col-sm-12">
-              №-{this.props.order}
-              <Button color="primary" onClick={this.onClickChangeOrder}>Змістити в</Button>
-              <input type="text" pattern="[0-9]*" onInput={this.handleChangeOrder.bind(this)} value={this.state.order} />
+              <div className="spanOrder">№ - {this.props.order}</div>
               <textarea
                 id={this.props.id.toString()}
                 onChange={this.handleChange}
@@ -110,12 +111,23 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
             <div className="col-sm-7" id={this.props.id.toString()}>
 
               {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
+              <Button outline color="primary" size="sm" onClick={() => this.props.handleChangeOrder.bind(1, this.props.order)}>Змістити в</Button>
+              <input className="inputOrder" type="text" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)} value={this.state.order} />
 
             </div>
+
           </div>
         </div>
       </div>
     );
+  }
+
+  private onChangeOrderState = (event: any) => {
+    this.setState({
+      order: event.target.value,
+    }
+    );
+
   }
 
   private onChange = async (event: any) => {
@@ -127,7 +139,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
     formData = new FormData();
 
-    formData.append("AudioFile", audio);
+    formData.append("File", audio);
 
     await API.post("audio/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },

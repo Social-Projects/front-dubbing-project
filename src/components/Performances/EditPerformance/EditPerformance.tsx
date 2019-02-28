@@ -58,7 +58,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
         });
 
         if (this.state.id !== -1) {
-            const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
+            const resp = await this.apimanager.updatePerformance(this.state.id,JSON.stringify(this.state));
 
             if (resp.status === 204) {
                 if (!this.child.current) {
