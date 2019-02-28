@@ -57,22 +57,16 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   public onFileChange = (fileName: string, languageId: number, speechIndex: number) => {
     const filesToBeUploadData = [...this.state.fileToBeUploadData];
-    console.log("filesToBeUploadData");
-    console.log(filesToBeUploadData);
-    console.log("fileName, languageId, speechIndex");
-    console.log(fileName, languageId, speechIndex);
 
     if (this.state.fileToBeUploadData.length > 0) {
       for (let i = 0; i < filesToBeUploadData.length; i++) {
         if (filesToBeUploadData[i].speechIndex === speechIndex && filesToBeUploadData[i].languageId === languageId) {
-          console.log("in update if");
           filesToBeUploadData[i].fileName = fileName;
 
           this.setState({
             fileToBeUploadData: filesToBeUploadData,
           });
 
-          console.log(filesToBeUploadData);
           return;
         }
       }
@@ -85,9 +79,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
     filesToBeUploadData.push(item);
 
-    console.log("after for");
-    console.log(filesToBeUploadData);
-
     this.setState({
       fileToBeUploadData: filesToBeUploadData,
     });
@@ -97,11 +88,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   public uploadHandler = async (performanceId: number, update: boolean) => {
     const reqCount = this.state.speeches.length * this.state.languages.length;
     const actualCount = this.state.fileToBeUploadData.length;
-    console.log("req + " + reqCount);
-    console.log("act " + actualCount);
+
     if (reqCount !== actualCount) {
       return -1;
     }
+
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
         const speech = {
@@ -110,12 +101,14 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           isNew: this.state.speeches[i].isNew,
           performanceId,
         };
-        if (isNullOrUndefined(this.state.speeches[i].text)) {
+
+        if (isNullOrUndefined(this.state.speeches[i].text) || this.state.speeches[i].text === "") {
           return -2;
         }
+
         // Cheking for new speeches
         if (!speech.isNew) {
-          const speechResponse = await API.put("speech", speech, {
+          await API.put("speech", speech, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
@@ -131,7 +124,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                 const item = {
                   fileName: this.state.fileToBeUploadData[j].fileName,
                   languageId: this.state.fileToBeUploadData[j].languageId,
-                  speechId: speechResponse.data.id,
+                  speechId: speech.id,
                   id: this.state.fileToBeUploadData[j].audioId,
                 };
 
@@ -155,7 +148,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           });
 
           // Uploading audio file data to speeches
-          console.log(this.state.fileToBeUploadData);
           for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
             // Checking the audio file data is the same index that speechId
             if (this.state.fileToBeUploadData[j].speechIndex === i) {
@@ -184,6 +176,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           performanceId,
         };
 
+        if (isNullOrUndefined(this.state.speeches[i].text)) {
+          return -2;
+        }
+
         const speechResponse = await API.post("speech", speech, {
           headers: {
             "Accept": "application/json",
@@ -192,7 +188,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           },
         });
 
-        console.log(this.state.fileToBeUploadData);
         // Uploading audio files data. This uploads need move to another method
         for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
           if (this.state.fileToBeUploadData[j].speechIndex === i) {
@@ -278,9 +273,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   public render() {
     const items = [...this.state.speeches];
-
-    console.log("items");
-    console.log(items);
 
     const itemsList = items.map((item, index) => (
       <AudioItem

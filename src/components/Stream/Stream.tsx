@@ -74,24 +74,30 @@ class Stream extends Component<IStreamProps, IStreamState> {
     public changeConnectingStatus = async (event: Event) => {
         event.preventDefault();
 
-        if (!this.props.connectingStatus) {
-            await signalRManager.connectToHub()
-                                .catch((error) => console.log(error));
-            await signalRManager.sendCommand("Start")
-                                .catch((error) => console.log(error));
+        if (this.props.speeches !== undefined) {
+            if (!this.props.connectingStatus) {
+                await signalRManager.connectToHub()
+                                    .catch((error) => console.log(error));
+                await signalRManager.sendCommand("Start")
+                                    .catch((error) => console.log(error));
 
-            this.props.onChangeConnectingStatus(true);
-        } else {
-            if (this.props.isPlaying) {
-                await this.pause();
+                this.props.onChangeConnectingStatus(true);
+            } else {
+                if (this.props.isPlaying) {
+                    await this.pause();
+                }
+                await signalRManager.sendCommand("End")
+                                    .catch((error) => console.log(error));
+                await signalRManager.disconnectFromHub()
+                                    .catch((error) => console.log(error));
+
+                this.props.onChangeConnectingStatus(false);
+                if (this.props.speeches !== undefined && this.props.speeches.length !== 0) {
+                    this.props.onSaveCurrentSpeechId(this.props.speeches[0].id);
+                }
             }
-            await signalRManager.sendCommand("End")
-                                .catch((error) => console.log(error));
-            await signalRManager.disconnectFromHub()
-                                .catch((error) => console.log(error));
-
-            this.props.onChangeConnectingStatus(false);
-            this.props.onSaveCurrentSpeechId(this.props.speeches[0].id);
+        } else {
+            alert("Здається ця вистава не містить фрагментів для програвання...");
         }
     }
 
@@ -220,9 +226,9 @@ class Stream extends Component<IStreamProps, IStreamState> {
                                 .catch((error) => console.log(error));
             await signalRManager.disconnectFromHub()
                                 .catch((error) => console.log(error));
-
-            this.props.onChangeStreamStateToInitial();
         }
+
+        this.props.onChangeStreamStateToInitial();
     }
 }
 

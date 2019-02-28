@@ -41,11 +41,13 @@ const reducer = (state: IStateType = initialState, action: IActionType) => {
             updatedState.performanceId = action.payload.id;
             break;
         case actionTypes.LOAD_SPEECHES:
-            updatedState.speeches = action.payload.speeches;
-            updatedState.currentSpeechId = action.payload.speeches[0].id;
+            if (action.payload.speeches.length !== 0) {
+                updatedState.speeches = action.payload.speeches;
+                updatedState.currentSpeechId = action.payload.speeches[0].id;
 
-            updatedState.currentSpeechIndex = 0;
-            updatedState.maxDuration = action.payload.speeches[0].duration;
+                updatedState.currentSpeechIndex = 0;
+                updatedState.maxDuration = action.payload.speeches[0].duration;
+            }
             break;
         case actionTypes.SAVE_CURRENT_SPEECH_ID:
             updatedState.currentSpeechId = action.payload.currentSpeechId;
