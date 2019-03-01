@@ -24,6 +24,7 @@ export interface IAudioItemProps {
   onTextChange: (str: string, index: number) => void;
   onFileChange: (fileName: string, languageId: number, speechIndex: number) => void;
   handleChangeOrder: (newOrder: number, oldOrder: number) => void;
+
 }
 
 interface IAudioItemState {
@@ -87,6 +88,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       </div>
     ));
 
+
     return (
       <div className="container">
         <div className="row">
@@ -111,8 +113,16 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
             <div className="col-sm-7" id={this.props.id.toString()}>
 
               {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
-              <Button outline color="primary" size="sm" onClick={() => this.props.handleChangeOrder.bind(1, this.props.order)}>Змістити в</Button>
-              <input className="inputOrder" type="text" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)} value={this.state.order} />
+              <Button outline color="primary" size="sm" onClick={() => {
+                this.props.handleChangeOrder(this.state.order, this.props.order);
+                // console.log(this.props.order)
+                // this.setState({
+                //   order: this.props.order,
+                // });
+                // console.log(this.props.order)
+
+              }}>Змістити в</Button>
+              <input className="inputOrder" type="number" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)}  />
 
             </div>
 
@@ -123,11 +133,20 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   }
 
   private onChangeOrderState = (event: any) => {
+
+    // if(event.target.value =""){
+    //   this.setState({
+    //     order: -1,
+    //   }
+    //   );
+
+    // }
+    // else{
     this.setState({
-      order: event.target.value,
+      order: parseInt(event.target.value, 10)
     }
     );
-
+    console.log(this.state.order);
   }
 
   private onChange = async (event: any) => {

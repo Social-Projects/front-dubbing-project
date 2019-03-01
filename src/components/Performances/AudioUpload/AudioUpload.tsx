@@ -129,8 +129,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                   speechId: speech.id,
                   id: this.state.fileToBeUploadData[j].audioId,
                 };
-                
-                console.log(item);
+                //console.log(item);
                 await API.put(`audio/${item.id}`, item, {
                   headers: {
                     "Accept": "application/json",
@@ -249,7 +248,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       const files = [];
       for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
         const audiosToSpeech = await API.get("speech/" + performanceSpeechesResponse.data[i].id + "/audios");
-        console.log(audiosToSpeech);
+        //console.log(audiosToSpeech);
 
         for (let j = 0; j < audiosToSpeech.data.length; j++) {
           const item = {
@@ -262,7 +261,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           files.push(item);
         }
       }
-      console.log(files);
+      //console.log(files);
       this.setState({
         fileToBeUploadData: files,
       });
@@ -277,24 +276,44 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   public handleChangeOrder = (newOrder: number, oldOrder: number) => {
     const speeches = this.state.speeches;
-
-    speeches.filter((s) => s.order === oldOrder)[0].order = newOrder;
-
+    const oldSpeech = speeches.filter((s) => s.order === oldOrder)[0];
     if (newOrder < oldOrder) {
       const requiredSpeeches = speeches.filter((s) => s.order >= newOrder && s.order < oldOrder);
       for (const requiredSpeech of requiredSpeeches) {
         requiredSpeech.order = requiredSpeech.order + 1;
+        requiredSpeech.isNew = true;
       }
+      oldSpeech.order = newOrder;
+      requiredSpeeches.push(oldSpeech);
     } else if (newOrder > oldOrder) {
       const requiredSpeeches = speeches.filter((s) => s.order > oldOrder && s.order <= newOrder);
       for (const requiredSpeech of requiredSpeeches) {
         requiredSpeech.order = requiredSpeech.order - 1;
+        requiredSpeech.isNew = true;
       }
+      oldSpeech.order = newOrder;
+      requiredSpeeches.push(oldSpeech);
     }
+    this.setState(
+      {
+        speeches: speeches
+      }
+    )
   }
 
+  public compare(a: any, b: any) {
+    if (a.order < b.order) {
+      return -1;
+    }
+    if (a.order > b.order) {
+      return 1;
+    }
+    return 0;
+  }
+
+
   public render() {
-    const items = [...this.state.speeches];
+    const items = [...this.state.speeches].sort(this.compare);
 
     const itemsList = items.map((item, index) => (
       <AudioItem
@@ -311,7 +330,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         ref={this.child}
       />
     ));
-    console.log(itemsList);
+    //console.log(itemsList);
 
     return (
       <div className="audio-upload-section">
