@@ -44,10 +44,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     const parent = event.target.parentElement.parentElement as HTMLElement;
     const ch = parent.getElementsByClassName("choose-audio-btn").namedItem(event.target.id.toString()) as HTMLElement;
 
-    console.log(ch);
-
     ch.click();
-
   }
 
   public tooltipRemoveToggle() {
@@ -119,16 +116,12 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     const languageId = parseInt(event.target.id, undefined);
     const speechIndex = parseInt(event.target.parentNode.parentNode.id, undefined);
 
-    let formData = new FormData();
-
-    formData = new FormData();
-
-    formData.append("AudioFile", audio);
+    const formData = new FormData();
+    formData.append("File", audio);
 
     await API.post("audio/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    console.log("SI:" + speechIndex);
     this.props.onFileChange(audio.name, languageId, speechIndex);
   }
 

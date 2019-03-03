@@ -1,5 +1,7 @@
 import * as React from "react";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 import { Tooltip } from "reactstrap";
+
 import { isNullOrUndefined } from "util";
 import API from "../../../util/api";
 import AudioItem from "../AudioItem/AudioItem";
@@ -9,12 +11,10 @@ export interface IAudioUploadProps { }
 
 export interface IAudioUploadState {
   performanceId: number;
-
   languages: Array<{
     id: number,
     name: string,
   }>;
-
   speeches: Array<{
     id: number,
     text?: string,
@@ -23,7 +23,6 @@ export interface IAudioUploadState {
     onTextChange: (str: string, index: number) => void
     onFileChange: (str: string, index: number, speechIndex: number) => void,
   }>;
-
   fileToBeUploadData: Array<{
     audioId?: number,
     fileName: any,
@@ -31,10 +30,18 @@ export interface IAudioUploadState {
     speechIndex: number,
   }>;
   tooltipAddOpen: boolean;
+  dropdownOpen: boolean;
+  selectedLanguage?: {
+    id: number,
+    name: string,
+  };
+  tooltipUploadBatch: boolean;
 }
 
 export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
   public child = React.createRef<AudioItem>();
+  private usedLanguages: Array<{id: number, name: string}> = [];
+  private isFirstLanguage: boolean = true;
 
   constructor(props: IAudioUploadProps) {
     super(props);
@@ -45,6 +52,9 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       speeches: [],
       fileToBeUploadData: [],
       tooltipAddOpen: false,
+      dropdownOpen: false,
+      selectedLanguage: undefined,
+      tooltipUploadBatch: false,
     };
 
     this.addItemHandler = this.addItemHandler.bind(this);
@@ -52,7 +62,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     this.uploadHandler = this.uploadHandler.bind(this);
     this.textChangeHandler = this.textChangeHandler.bind(this);
     this.tooltipAddToggle = this.tooltipAddToggle.bind(this);
-
   }
 
   public onFileChange = (fileName: string, languageId: number, speechIndex: number) => {
@@ -108,7 +117,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
         // Cheking for new speeches
         if (!speech.isNew) {
-          await API.put("speech", speech, {
+          await API.put("speech/" + speech.id, speech, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
@@ -128,7 +137,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                   id: this.state.fileToBeUploadData[j].audioId,
                 };
 
-                await API.put("audio", item, {
+                await API.put("audio/" + item.id, item, {
                   headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
@@ -218,58 +227,111 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         languages: languagesResponse.data,
       });
     }
+
     if (performanceId !== -1) {
+      const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
+      if (performanceSpeechesResponse.status === 200) {
+        const speeches = [];
+        for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
+          const speechItem = {
+            id: performanceSpeechesResponse.data[i].id,
+            text: performanceSpeechesResponse.data[i].text,
+            languages: this.state.languages,
+            onDelete: this.deleteItemHandler,
+            onTextChange: this.textChangeHandler,
+            onFileChange: this.onFileChange,
+          };
 
-    const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
-    if (performanceSpeechesResponse.status === 200) {
-      const speeches = [];
-      for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
-        const speechItem = {
-          id: performanceSpeechesResponse.data[i].id,
-          text: performanceSpeechesResponse.data[i].text,
-          languages: this.state.languages,
-          onDelete: this.deleteItemHandler,
-          onTextChange: this.textChangeHandler,
-          onFileChange: this.onFileChange,
-        };
+          speeches.push(speechItem);
+        }
 
-        speeches.push(speechItem);
+        this.setState({
+          performanceId: performanceSpeechesResponse.data.performanceId,
+          speeches,
+        });
       }
 
+      const files = [];
+      for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
+        const audiosToSpeech = await API.get("speech/" + performanceSpeechesResponse.data[i].id + "/audios");
+        console.log(audiosToSpeech);
+
+        for (let j = 0; j < audiosToSpeech.data.length; j++) {
+          const item = {
+            audioId: audiosToSpeech.data[j].id,
+            fileName: audiosToSpeech.data[j].fileName,
+            languageId: audiosToSpeech.data[j].languageId,
+            speechIndex: audiosToSpeech.data[j].speechId,
+          };
+
+          files.push(item);
+        }
+      }
+      console.log(files);
       this.setState({
-        performanceId: performanceSpeechesResponse.data.performanceId,
-        speeches,
+        fileToBeUploadData: files,
       });
     }
+  }
 
-    const files = [];
-    for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
-      const audiosToSpeech = await API.get("speech/" + performanceSpeechesResponse.data[i].id + "/audios");
-      console.log(audiosToSpeech);
+  public tooltipAddToggle() {
+      this.setState({
+          tooltipAddOpen: !this.state.tooltipAddOpen,
+      });
+  }
 
-      for (let j = 0; j < audiosToSpeech.data.length; j++) {
-        const item = {
-          audioId: audiosToSpeech.data[j].id,
-          fileName: audiosToSpeech.data[j].fileName,
-          languageId: audiosToSpeech.data[j].languageId,
-          speechIndex: audiosToSpeech.data[j].speechId,
-        };
-
-        files.push(item);
-      }
-    }
-    console.log(files);
+  // For batch uploading
+  public toggleDropdown = () => {
     this.setState({
-      fileToBeUploadData: files,
+      dropdownOpen: !this.state.dropdownOpen,
     });
   }
+
+  public toggleSelectedLanguage = (id: number) => {
+    if (this.state.selectedLanguage === undefined || this.state.selectedLanguage.id !== id) {
+      const language = this.state.languages.find((l) => l.id === id);
+
+      this.setState({
+        selectedLanguage: language,
+      });
+    }
   }
 
-   public tooltipAddToggle() {
-        this.setState({
-            tooltipAddOpen: !this.state.tooltipAddOpen,
-        });
+  public tooltipUploadBatchOpen = () => {
+    this.setState({
+      tooltipUploadBatch: !this.state.tooltipUploadBatch,
+    });
+  }
+
+  // triggered when click on fake upload button
+  public onBatchUpload = (event: any) => {
+    event.preventDefault();
+    if (this.state.selectedLanguage !== undefined) {
+      const input = document.querySelector("#batchUpload") as HTMLInputElement;
+      if (input !== null) {
+        input.click();
+      }
+    } else {
+      alert("Будь ласка виберіть мову, а тоді вже завантажте файли!");
     }
+  }
+
+  public batchUpload = async (event: any) => {
+    const files = event.target.files as FileList;
+    const curLengthOfSpeeches = this.state.speeches.length;
+
+    // @ts-ignore
+    if (this.isFirstLanguage || this.state.selectedLanguage.id === this.usedLanguages[0].id) {
+      for (let i = 0; i < files.length; i++) {
+        this.onBatchAddItem(files[i]);
+      }
+
+      this.isFirstLanguage = false;
+      this.usedLanguages.push(this.state.selectedLanguage as {id: number, name: string});
+    } else {
+        this.onBatchUpdateItems(files);
+    }
+  }
 
   public render() {
     const items = [...this.state.speeches];
@@ -287,22 +349,110 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         ref={this.child}
       />
     ));
-    console.log(itemsList);
+
+    let batchUploading = null;
+    if (this.state.performanceId === -1) {
+      const languages = this.state.languages.map((lang) => {
+        return (
+          <DropdownItem
+            key={lang.id}
+            onClick={() => this.toggleSelectedLanguage(lang.id)}>{lang.name}</DropdownItem>
+        );
+      });
+
+      const selectedLanguage = this.state.selectedLanguage === undefined
+                                ? "Виберіть мову..." : this.state.selectedLanguage.name;
+      const isDisabledBatchUpload = this.state.selectedLanguage === undefined ? true : false;
+      batchUploading = (
+        <div>
+            <label>Пакетом: </label>
+
+            <Dropdown
+              className="dropdown-toggle-language"
+              isOpen={this.state.dropdownOpen}
+              toggle={() => this.toggleDropdown()}
+              size="sm">
+              <DropdownToggle caret>
+                {selectedLanguage}
+              </DropdownToggle>
+              <DropdownMenu>
+                {languages}
+              </DropdownMenu>
+            </Dropdown>
+            <input multiple id="batchUpload" className="inputFile" type="file" onChange={this.batchUpload}/>
+            <button
+              id={"batchUploadBtn"}
+              className={"fas fa-plus-circle btn-audio-add " + (isDisabledBatchUpload ? "disabled-btn-audio-add" : "")}
+              onClick={this.onBatchUpload}/>
+            <Tooltip placement="right" isOpen={this.state.tooltipUploadBatch} autohide={false} target={"batchUploadBtn"} toggle={this.tooltipUploadBatchOpen}>
+              Завантажити аудіо</Tooltip>
+          </div>
+      );
+    }
 
     return (
       <div className="audio-upload-section">
         <div className="col-sm-12 audio-header">
-          <label>Фраза</label>
+          <div>
+            <label>Вручну: </label>
 
-          <button className="fas fa-plus-circle btn-audio-add" onClick={this.addItemHandler} id={"addBtn"}/>
-          <Tooltip placement="right" isOpen={this.state.tooltipAddOpen} autohide={false} target={"addBtn"} toggle={this.tooltipAddToggle}>
-            Додати фразу </Tooltip>
+            <button className="fas fa-plus-circle btn-audio-add" onClick={this.addItemHandler} id={"addBtn"} />
+            <Tooltip placement="right" isOpen={this.state.tooltipAddOpen} autohide={false} target={"addBtn"} toggle={this.tooltipAddToggle}>
+              Додати фразу </Tooltip>
+          </div>
+
+          {batchUploading}
         </div>
         <div id="audio-container" className="row">
           {itemsList}
         </div>
       </div>
     );
+  }
+
+  private onBatchAddItem = async (file: File) => {
+    const speechItem = this.addItemHandler();
+    const audio = file;
+
+    const formData = new FormData();
+    formData.append("File", audio);
+    await API.post("audio/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then(() => {
+      // @ts-ignore
+      this.onFileChange(audio.name, this.state.selectedLanguage.id, speechItem.id);
+    }).catch(() => {
+      alert("Sorry! Some error was occured!");
+      return;
+    });
+  }
+
+  private onBatchUpdateItems = async (files: FileList) => {
+    const neededFiles = this.state.fileToBeUploadData
+    // @ts-ignore
+                                  .filter((f) => f.languageId === this.state.selectedLanguage.id)
+                                  .map((f) => f.speechIndex);
+    const neededSpeeches = this.state.speeches.filter((s) => {
+      return !neededFiles.includes(s.id);
+    });
+
+    for (let i = 0; i < files.length; i++) {
+      const audio = files[i];
+
+      const formData = new FormData();
+      formData.append("File", audio);
+
+      await API.post("audio/upload", formData, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      })
+      // @ts-ignore
+      .then(() => this.onFileChange(audio.name, this.state.selectedLanguage.id, neededSpeeches[i].id))
+      .catch(() => alert("Sorry, some error occured..."));
+    }
   }
 
   private addItemHandler = () => {
@@ -322,6 +472,8 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     this.setState({
       speeches,
     });
+
+    return speechItem;
   }
 
   private deleteItemHandler = async (index: number) => {

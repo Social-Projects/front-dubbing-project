@@ -1,4 +1,6 @@
 .audio-header {
+    display: flex;
+    justify-content: space-between;
     margin-top: 10px;
     color: #fff;
     font-size: 18px;
@@ -12,7 +14,12 @@
     color: #8cc152;
     cursor: pointer;
 }
-  
+
+.disabled-btn-audio-add {
+    color: gray !important;
+    cursor: default;
+}
+
 .btn-audio-upload {
     width: 140px;
     font-size: 14px;
@@ -36,4 +43,21 @@
     display: none;
     font-size: 12px;
     margin: 3px;
+}
+
+.btn-upload-batch {
+    margin-left: 10px;
+    padding: 2px 13px;
+    border-radius: 25px;
+    background-color: #8cc152;
+    color: #ffffff;
+}
+
+.dropdown-toggle-language {
+    display: inline-block !important;
+    margin-left: 10px;
+}
+
+.inputFile {
+    display: none;
 }

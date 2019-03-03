@@ -12,6 +12,7 @@ interface IEditPerformanceState {
     description: string;
     isShow: boolean;
 }
+
 interface IEditPerformanceProps {
     match: {
         params: {
@@ -21,6 +22,7 @@ interface IEditPerformanceProps {
 
     upload: any;
 }
+
 class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceState> {
     public child = React.createRef<AudioUpload>();
 
@@ -58,7 +60,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
         });
 
         if (this.state.id !== -1) {
-            const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state));
+            const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
 
             if (resp.status === 204) {
                 if (!this.child.current) {
@@ -87,7 +89,11 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 console.log(resp.status);
             }
         } else {
-            const resp = await this.apimanager.createPerformance(JSON.stringify(this.state));
+            const performance = {
+                title: this.state.title,
+                description: this.state.description,
+            };
+            const resp = await this.apimanager.createPerformance(JSON.stringify(performance));
 
             if (resp.status === 201) {
                 const JSONObj = await resp.json();
