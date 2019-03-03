@@ -438,20 +438,24 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       return !neededFiles.includes(s.id);
     });
 
-    for (let i = 0; i < files.length; i++) {
-      const audio = files[i];
+    if (files.length <= neededSpeeches.length) {
+      for (let i = 0; i < files.length; i++) {
+        const audio = files[i];
 
-      const formData = new FormData();
-      formData.append("File", audio);
+        const formData = new FormData();
+        formData.append("File", audio);
 
-      await API.post("audio/upload", formData, {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-      })
-      // @ts-ignore
-      .then(() => this.onFileChange(audio.name, this.state.selectedLanguage.id, neededSpeeches[i].id))
-      .catch(() => alert("Sorry, some error occured..."));
+        await API.post("audio/upload", formData, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        // @ts-ignore
+        .then(() => this.onFileChange(audio.name, this.state.selectedLanguage.id, neededSpeeches[i].id))
+        .catch(() => alert("Sorry, some error occured..."));
+      }
+    } else {
+      alert("Некоретна вибрана кількість файлів.");
     }
   }
 
