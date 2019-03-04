@@ -148,6 +148,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             }
           }
         } else { // if speeches is new just uploading them
+          speech.id = 0;
           const speechResponse = await API.post("speech", speech, {
             headers: {
               "Accept": "application/json",
@@ -482,19 +483,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   private deleteItemHandler = async (index: number) => {
     if (this.state.performanceId === -1) {
-      const speeches = this.state.speeches.filter((obj) => {
-        return obj.id !== index;
-      });
-      const audios = this.state.fileToBeUploadData.filter((obj) => {
-        return obj.speechIndex !== index;
-      });
-      this.setState({
-        speeches,
-        fileToBeUploadData : audios,
-      });
+      await this.removeLocalSpeechesAndUnloadAudioAsync(index);
     } else {
       if (isNullOrUndefined(this.state.speeches[index])) {
         const removeResponse = await API.delete("speech/" + index);
+
         if (removeResponse.status === 204) {
           const speeches = this.state.speeches.filter((obj) => {
             return obj.id !== index;
@@ -502,21 +495,40 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           const audios = this.state.fileToBeUploadData.filter((obj) => {
             return obj.speechIndex !== index;
           });
+
           this.setState({
             speeches,
             fileToBeUploadData : audios,
           });
         }
       } else {
-        const speeches = this.state.speeches.filter((obj) => {
-          return obj.id !== index;
-        });
-
-        this.setState({
-          speeches,
-        });
+        await this.removeLocalSpeechesAndUnloadAudioAsync(index);
       }
     }
+  }
+
+  private removeLocalSpeechesAndUnloadAudioAsync = async (index: number): Promise<void> => {
+    const speeches = this.state.speeches.filter((obj) => {
+      return obj.id !== index;
+    });
+
+    const mustToBeDeletedAudios: string[] = [];
+    const audios = this.state.fileToBeUploadData.filter((obj) => {
+      if (obj.speechIndex !== index) {
+        return obj;
+      } else {
+        mustToBeDeletedAudios.push(obj.fileName);
+      }
+    });
+
+    for (const fileName of mustToBeDeletedAudios) {
+      await API.delete(`/audio/${fileName}`);
+    }
+
+    this.setState({
+      speeches,
+      fileToBeUploadData : audios,
+    });
   }
 
   private textChangeHandler = (str: string, index: number) => {
