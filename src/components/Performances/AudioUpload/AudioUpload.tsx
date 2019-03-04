@@ -129,7 +129,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                   speechId: speech.id,
                   id: this.state.fileToBeUploadData[j].audioId,
                 };
-                //console.log(item);
                 await API.put(`audio/${item.id}`, item, {
                   headers: {
                     "Accept": "application/json",
@@ -176,6 +175,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           id: 0,
           text: this.state.speeches[i].text,
           performanceId,
+          order: this.state.speeches[i].order,
         };
 
         if (isNullOrUndefined(this.state.speeches[i].text)) {
@@ -192,7 +192,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
         // Uploading audio files data. This uploads need move to another method
         for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
-          if (this.state.fileToBeUploadData[j].speechIndex === i) {
+          if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[i].id) {
             const item = {
               fileName: this.state.fileToBeUploadData[j].fileName,
               languageId: this.state.fileToBeUploadData[j].languageId,
@@ -248,7 +248,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       const files = [];
       for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
         const audiosToSpeech = await API.get("speech/" + performanceSpeechesResponse.data[i].id + "/audios");
-        //console.log(audiosToSpeech);
 
         for (let j = 0; j < audiosToSpeech.data.length; j++) {
           const item = {
@@ -261,7 +260,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           files.push(item);
         }
       }
-      //console.log(files);
       this.setState({
         fileToBeUploadData: files,
       });
@@ -275,30 +273,33 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   }
 
   public handleChangeOrder = (newOrder: number, oldOrder: number) => {
-    const speeches = this.state.speeches;
-    const oldSpeech = speeches.filter((s) => s.order === oldOrder)[0];
-    if (newOrder < oldOrder) {
-      const requiredSpeeches = speeches.filter((s) => s.order >= newOrder && s.order < oldOrder);
-      for (const requiredSpeech of requiredSpeeches) {
-        requiredSpeech.order = requiredSpeech.order + 1;
-        requiredSpeech.isNew = true;
+    const speechesCount = this.state.speeches.length;
+    if (newOrder <= speechesCount && newOrder > 0) {
+      const speeches = this.state.speeches;
+      const oldSpeech = speeches.filter((s) => s.order === oldOrder)[0];
+      if (newOrder < oldOrder) {
+        const requiredSpeeches = speeches.filter((s) => s.order >= newOrder && s.order < oldOrder);
+        for (const requiredSpeech of requiredSpeeches) {
+          requiredSpeech.order = requiredSpeech.order + 1;
+        }
+        oldSpeech.order = newOrder;
+        requiredSpeeches.push(oldSpeech);
+      } else if (newOrder > oldOrder) {
+        const requiredSpeeches = speeches.filter((s) => s.order > oldOrder && s.order <= newOrder);
+        for (const requiredSpeech of requiredSpeeches) {
+          requiredSpeech.order = requiredSpeech.order - 1;
+        }
+        oldSpeech.order = newOrder;
+        requiredSpeeches.push(oldSpeech);
       }
-      oldSpeech.order = newOrder;
-      requiredSpeeches.push(oldSpeech);
-    } else if (newOrder > oldOrder) {
-      const requiredSpeeches = speeches.filter((s) => s.order > oldOrder && s.order <= newOrder);
-      for (const requiredSpeech of requiredSpeeches) {
-        requiredSpeech.order = requiredSpeech.order - 1;
-        requiredSpeech.isNew = true;
-      }
-      oldSpeech.order = newOrder;
-      requiredSpeeches.push(oldSpeech);
+      this.setState(
+        {
+          speeches: speeches,
+        },
+      )
+    } else {
+      alert("Неіснуючий номер фрази!");
     }
-    this.setState(
-      {
-        speeches: speeches
-      }
-    )
   }
 
   public compare(a: any, b: any) {
@@ -330,7 +331,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         ref={this.child}
       />
     ));
-    //console.log(itemsList);
 
     return (
       <div className="audio-upload-section">
@@ -350,9 +350,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   private addItemHandler = () => {
     const speeches = this.state.speeches;
-
+    const maxSpeechId = this.state.speeches.length !== 0 ? Math.max.apply(null, this.state.speeches.map((obj) => obj.id)) +1 : 0;
+    console.log(maxSpeechId);
     const speechItem = {
-      id: this.state.speeches.length,
+      id: maxSpeechId,
       order: 1,
       languages: this.state.languages,
       isNew: true,
@@ -371,10 +372,17 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   }
 
   private deleteItemHandler = async (index: number) => {
+    const deletedSpeech = this.state.speeches.filter((obj) => obj.id === index)[0];
     if (this.state.performanceId === -1) {
       const speeches = this.state.speeches.filter((obj) => {
         return obj.id !== index;
       });
+
+      const requiredSpeeches = speeches.filter((s) => s.order > deletedSpeech.order);
+      for (const requiredSpeech of requiredSpeeches) {
+        requiredSpeech.order = requiredSpeech.order - 1;
+      }
+
       const audios = this.state.fileToBeUploadData.filter((obj) => {
         return obj.speechIndex !== index;
       });
@@ -389,6 +397,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           const speeches = this.state.speeches.filter((obj) => {
             return obj.id !== index;
           });
+          const requiredSpeeches = speeches.filter((s) => s.order > deletedSpeech.order);
+          for (const requiredSpeech of requiredSpeeches) {
+            requiredSpeech.order = requiredSpeech.order - 1;
+          }
           const audios = this.state.fileToBeUploadData.filter((obj) => {
             return obj.speechIndex !== index;
           });
@@ -401,6 +413,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         const speeches = this.state.speeches.filter((obj) => {
           return obj.id !== index;
         });
+        const requiredSpeeches = speeches.filter((s) => s.order > deletedSpeech.order);
+        for (const requiredSpeech of requiredSpeeches) {
+          requiredSpeech.order = requiredSpeech.order - 1;
+        }
 
         this.setState({
           speeches,

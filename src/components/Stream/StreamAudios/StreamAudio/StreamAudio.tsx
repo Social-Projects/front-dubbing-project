@@ -43,7 +43,6 @@ const audio = (props: IAudioProps) => {
     }
 
     function playHandler() {
-        console.log(props.currentAudioId);
         props.playByIdHandler(props.currentAudioId);
     }
 

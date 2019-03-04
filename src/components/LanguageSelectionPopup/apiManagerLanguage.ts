@@ -5,7 +5,6 @@ class ApiManagerLanguage {
         this.backendUrl = config.get("urlApi");
     }
     public async createLang(json: string): Promise<Response> {
-        console.log("createLang");
         const response = await fetch(`${this.backendUrl}api/Language`, {
             method: "POST",
             headers: {

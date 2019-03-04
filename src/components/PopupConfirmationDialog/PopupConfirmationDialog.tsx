@@ -32,7 +32,6 @@ export default class PopupConfirmationDialog extends React.Component<IPopupConfi
       tooltipOpen: false,
       modal: !this.state.modal,
     });
-    console.log("toggle");
   }
 
   public tooltipToggle() {

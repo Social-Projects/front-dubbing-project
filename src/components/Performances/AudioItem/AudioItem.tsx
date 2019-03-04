@@ -48,11 +48,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   public handleUploadClick(event: any) {
     const parent = event.target.parentElement.parentElement as HTMLElement;
     const ch = parent.getElementsByClassName("choose-audio-btn").namedItem(event.target.id.toString()) as HTMLElement;
-
-    console.log(ch);
-
     ch.click();
-
   }
 
   public tooltipRemoveToggle() {
@@ -115,12 +111,6 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
               {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
               <Button outline color="primary" size="sm" onClick={() => {
                 this.props.handleChangeOrder(this.state.order, this.props.order);
-                // console.log(this.props.order)
-                // this.setState({
-                //   order: this.props.order,
-                // });
-                // console.log(this.props.order)
-
               }}>Змістити в</Button>
               <input className="inputOrder" type="number" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)}  />
 
@@ -133,20 +123,10 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   }
 
   private onChangeOrderState = (event: any) => {
-
-    // if(event.target.value =""){
-    //   this.setState({
-    //     order: -1,
-    //   }
-    //   );
-
-    // }
-    // else{
     this.setState({
       order: parseInt(event.target.value, 10)
     }
     );
-    console.log(this.state.order);
   }
 
   private onChange = async (event: any) => {
@@ -163,7 +143,6 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     await API.post("audio/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    console.log("SI:" + speechIndex);
     this.props.onFileChange(audio.name, languageId, speechIndex);
   }
 
