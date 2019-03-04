@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
 import { userActions } from '../../LoginHelper/_actions';
+import './Manage.css'
 
 class HomePage extends React.Component {
     componentDidMount() {
@@ -16,30 +16,34 @@ class HomePage extends React.Component {
     render() {
         const { user, users } = this.props;
         return (
-            <div className="col-md-6 col-md-offset-3">
-                <h1>Вітаємо {user.firstName}!</h1>
-                <p>Ви увійшли в систему</p>
-                <h3>Усі зареєстровані працівники:</h3>
-                {users.loading && <em>Loading users...</em>}
+            <div className="login-form">
+             <div className="mainmenu">
+          
+                <h1>Вітаємо, {user.firstName}!</h1>
+                <p id="sub">Ви увійшли в систему</p>
+
+                <p id="all">Усі зареєстровані працівники:</p>
+                {users.loading && <em>Завантаження користувачів</em>}
                 {users.error && <span className="text-danger">ERROR: {users.error}</span>}
                 {users.items &&
                     <ul>
                         {users.items.map((user, index) =>
-                            <li key={user.id}>
+                            <li className="listOfAdmins" key={user.id}>
                                 {user.firstName + ' ' + user.lastName}
                                 {
-                                    user.deleting ? <em> - Deleting...</em>
+                                    user.deleting ? <em> - Видалення ...</em>
                                     : user.deleteError ? <span className="text-danger"> - ERROR: {user.deleteError}</span>
-                                    : <span> - <a onClick={this.handleDeleteUser(user.id)}>Delete</a></span>
+                                    : <span  > &mdash; <a onClick={this.handleDeleteUser(user.id)}><span  className="del">Видалити користувача</span></a></span>
                                 }
                             </li>
                         )}
                     </ul>
                 }
                 <p>
-                    <Link to="/login">Logout</Link>
                 </p>
             </div>
+            </div>
+        
         );
     }
 }
