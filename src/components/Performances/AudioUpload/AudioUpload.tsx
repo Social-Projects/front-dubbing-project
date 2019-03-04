@@ -151,7 +151,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           // Uploading audio file data to speeches
           for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
             // Checking the audio file data is the same index that speechId
-            if (this.state.fileToBeUploadData[j].speechIndex === i) {
+            if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[i].id) {
               const item = {
                 fileName: this.state.fileToBeUploadData[j].fileName,
                 languageId: this.state.fileToBeUploadData[j].languageId,
@@ -350,10 +350,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   private addItemHandler = () => {
     const speeches = this.state.speeches;
-    const maxSpeechId = this.state.speeches.length !== 0 ? Math.max.apply(null, this.state.speeches.map((obj) => obj.id)) +1 : 0;
-    console.log(maxSpeechId);
+    const maxSpeechId = this.state.speeches.length !== 0 ? Math.max.apply(null, this.state.speeches.map((obj) => obj.id)) + 1 : 0;
+    
     const speechItem = {
       id: maxSpeechId,
+      text: "",
       order: 1,
       languages: this.state.languages,
       isNew: true,
@@ -362,8 +363,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       onFileChange: this.onFileChange,
     };
     if (speeches.length !== 0)
-      speechItem.order = this.state.speeches[this.state.speeches.length - 1].order + 1;
-
+      speechItem.order = this.state.speeches.length !== 0 ? Math.max.apply(null, this.state.speeches.map((obj) => obj.order)) + 1 : 1;
     speeches.push(speechItem);
 
     this.setState({
@@ -373,12 +373,16 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   private deleteItemHandler = async (index: number) => {
     const deletedSpeech = this.state.speeches.filter((obj) => obj.id === index)[0];
+    if(!deletedSpeech)
+      return;
     if (this.state.performanceId === -1) {
       const speeches = this.state.speeches.filter((obj) => {
         return obj.id !== index;
       });
-
+      
       const requiredSpeeches = speeches.filter((s) => s.order > deletedSpeech.order);
+      
+
       for (const requiredSpeech of requiredSpeeches) {
         requiredSpeech.order = requiredSpeech.order - 1;
       }
@@ -390,6 +394,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         speeches,
         fileToBeUploadData: audios,
       });
+
     } else {
       if (isNullOrUndefined(this.state.speeches[index])) {
         const removeResponse = await API.delete("speech/" + index);
