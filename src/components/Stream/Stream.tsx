@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import Aux from "../../hoc/Auxiliary";
 import WithClass from "../../hoc/WithClass";
+import Spinner from "../UI/Spinner/Spinner";
 import StreamAudios from "./StreamAudios/StreamAudios";
 import StreamHead from "./StreamHead/StreamHead";
 
@@ -22,6 +23,7 @@ interface IStreamState {
     performanceName: string;
     isFirst: boolean;
     isWarning: boolean;
+    isLoading: boolean;
 }
 
 interface IStreamProps {
@@ -68,6 +70,7 @@ class Stream extends Component<IStreamProps, IStreamState> {
             isWarning: false,
             perfomanceId: this.props.match.params.number,
             performanceName: "",
+            isLoading: true,
         };
     }
 
@@ -77,11 +80,12 @@ class Stream extends Component<IStreamProps, IStreamState> {
         if (this.props.speeches !== undefined) {
             if (!this.props.connectingStatus) {
                 await signalRManager.connectToHub()
-                                    .catch((error) => console.log(error));
-                await signalRManager.sendCommand("Start")
-                                    .catch((error) => console.log(error));
-
-                this.props.onChangeConnectingStatus(true);
+                    .then(async () => {
+                        await signalRManager.sendCommand("Start")
+                            .then(() => this.props.onChangeConnectingStatus(true))
+                            .catch((error) => console.log(error));
+                    })
+                    .catch((error) => console.log(error));
             } else {
                 if (this.props.isPlaying) {
                     await this.pause();
@@ -185,6 +189,7 @@ class Stream extends Component<IStreamProps, IStreamState> {
     public render() {
         return (
             <Aux>
+                <Spinner isShow={this.state.isLoading} />
                 <StreamHead
                     name={this.state.performanceName}
                     connectingStatus={this.props.connectingStatus}
@@ -213,7 +218,10 @@ class Stream extends Component<IStreamProps, IStreamState> {
         }
 
         this.props.onSavePerformanceId(this.state.perfomanceId);
-        this.props.onLoadSpeeches(this.state.perfomanceId);
+        await this.props.onLoadSpeeches(this.state.perfomanceId);
+        this.setState({
+            isLoading: false,
+        });
     }
 
     public async componentWillUnmount() {
@@ -238,7 +246,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onChangeCurrentPlaybackTime: (time: number) => dispatch(actionCreators.changeCurrentPlaybackTime(time)),
         onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial()),
         onChangeStreamingStatus: (status: boolean) => dispatch(actionCreators.changeStreamingStatus(status)),
-        onLoadSpeeches: (id: number) => dispatch(actionCreators.loadSpeeches(id)),
+        onLoadSpeeches: async (id: number) => await dispatch(actionCreators.loadSpeeches(id)),
         onSaveCurrentSpeechId: (id: number) => dispatch(actionCreators.saveCurrentSpeechId(id)),
         onSavePerformanceId: (id: number) => dispatch(actionCreators.savePerformanceId(id)),
     };

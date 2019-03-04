@@ -68,22 +68,20 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 }
 
                 const result = await this.child.current.uploadHandler(this.state.id, true);
-
                 if (result === -1 || result === -2) {
+                    result === -1 ? alert("Завантажте всі аудіо!") : alert("Введіть текст фрази!");
                     this.setState({
                         isShow: false,
                     });
-
-                    result === -1 ? alert("Завантажте всі аудіо!") : alert("Введіть текст фрази!");
+                    history.push("/performance/" + this.state.id);
                     return;
                 }
 
+                history.push("/performance/" + this.state.id);
+                await this.loadData();
                 this.setState({
                     isShow: false,
                 });
-
-                history.push("/performance/" + this.state.id);
-                await this.loadData();
 
             } else {
                 console.log(resp.status);
@@ -159,7 +157,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
     }
 
     public render() {
-
         return (
             <div className="editForm">
                 <Spinner isShow={this.state.isShow} />

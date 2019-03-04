@@ -34,16 +34,17 @@ class ApiManager {
     }
 
     public async getPerformances(): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`,
-            {
-                headers: {
-                    "Accept": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                    "Content-Type": "application/json",
-                },
-                method: "GET",
-            });
-        return response;
+        return await fetch(`${this.backendUrl}api/Performance`, {
+            headers: {
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+            },
+            method: "GET",
+        })
+        .then((data) => {
+            return data;
+        });
     }
 
     public async getPerformanceById(index: number): Promise<Response> {
