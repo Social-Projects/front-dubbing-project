@@ -21,6 +21,7 @@ export interface IAudioUploadState {
   languages: Array<{
     id: number,
     name: string,
+    isChoised: boolean,
   }>;
   speeches: Array<{
     id: number,
@@ -72,6 +73,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     this.uploadHandler = this.uploadHandler.bind(this);
     this.textChangeHandler = this.textChangeHandler.bind(this);
     this.tooltipAddToggle = this.tooltipAddToggle.bind(this);
+    //this.handleLangCheckboxChange = this.handleLangCheckboxChange.bind(this);
   }
 
   public onFileChange = (fileName: string, languageId: number, speechIndex: number) => {
@@ -168,8 +170,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         } else { // if speeches is new just uploading them
           // creating speech and relative to him audios
 
-          console.log(speech);
-
           await API.post("speech", speech, {
             headers: {
               "Accept": "application/json",
@@ -237,6 +237,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   // Getting all data. (languages, speeches to performance and audios to speeches)
   public async audioComponentDidMount(performanceId: number) {
     const languagesResponse = await API.get("language");
+    //const lang = [...languagesResponse.data].map((item) => item.isChoised = true);
+    for (const lang of languagesResponse.data) {
+      lang.isChoised = true;
+    }
     if (languagesResponse.status === 200) {
       this.setState({
         languages: languagesResponse.data,
@@ -399,6 +403,20 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   public render() {
     const items = [...this.state.speeches].sort(this.compare);
+    const langItems = [...this.state.languages].sort((a: any, b: any) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
+
+    const langList = langItems.map((item, index) => (
+      <label key={item.id}>
+        <a>{item.name}: </a>
+        <input
+          className="langCheckbox"
+          name="isGoi"
+          type="checkbox"
+          checked={item.isChoised}
+          onChange={this.handleLangCheckboxChange(item.id)}
+        />
+      </label>
+    ));
 
     const itemsList = items.map((item, index) => (
       <AudioItem
@@ -455,6 +473,9 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     return (
       <div className="audio-upload-section">
         <Spinner isShow={this.state.isLoading} />
+        <div className="langCheckboxList">
+          {langList}
+        </div>
         <div className="col-sm-12 audio-header">
           <div>
             <label>Вручну: </label>
@@ -471,6 +492,28 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         </div>
       </div>
     );
+  }
+
+  handleLangCheckboxChange = (id: number) => (e: any) => {
+    // const target = event.target;
+    const langs : any[] = [];
+    console.log(id);
+
+    const hui = [...this.state.languages];
+
+    for (const lang of hui) {
+      if(lang.id === id){
+        lang.isChoised = !lang.isChoised
+        langs.push(lang);
+      }else{
+        langs.push(lang);
+      }
+    }
+    console.log(langs);
+
+    this.setState({
+      languages: langs,
+    });
   }
 
   // Uploading audio files and creating records in database which contain data about them
@@ -607,7 +650,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             for (const requiredSpeech of requiredSpeeches) {
               requiredSpeech.order = requiredSpeech.order - 1;
             }
-            console.log(requiredSpeeches)
 
             const audios = this.state.fileToBeUploadData.filter((obj) => {
               return obj.speechIndex !== index;
