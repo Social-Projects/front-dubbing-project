@@ -7,6 +7,13 @@ import Spinner from "../../UI/Spinner/Spinner";
 import AudioItem from "../AudioItem/AudioItem";
 import "./AudioUpload.css";
 
+enum HttpMethods {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+}
+
 export interface IAudioUploadProps { }
 
 export interface IAudioUploadState {
@@ -97,26 +104,33 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   // Uploading speeches and file data. Very massive and probably needs
   public uploadHandler = async (performanceId: number, update: boolean) => {
-
     // checking if number of real loaded audios equals expected loaded audios
     const reqCount = this.state.speeches.length * this.state.languages.length;
     const actualCount = this.state.fileToBeUploadData.length;
     if (reqCount !== actualCount) {
-      return -1;
+      return {
+        errorCode: -1,
+        errorMessage: "Завантажте аудіо до всіх мов!",
+      };
     }
 
     // checking if text any speech is empty
     let isSomeSpeechNullOrEmpty = false;
     this.state.speeches.filter((s) => {
-      if (s === null || s === undefined || s.text === "") {
+      if (s.text === undefined || s.text === null || s.text === "") {
         isSomeSpeechNullOrEmpty = true;
       }
     });
 
     if (isSomeSpeechNullOrEmpty) {
-      return -2;
+      return {
+        errorCode: -2,
+        errorMessage: "Введіть текст до всіх фраз!",
+      };
     }
 
+    // @ts-ignore
+    let isError: Error = null;
     // if evertything is OK then upload
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
@@ -129,64 +143,51 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
         // Cheking for new speeches
         if (!speech.isNew) {
+          // updating speech and relative to him audios
           await API.put("speech/" + speech.id, speech, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
             },
+          }).then(async (response) => {
+            await this.uploadAndSaveAudioAsync(speech.id, i, HttpMethods.PUT)
+                      .catch((error) => {
+                        console.log(`[uploadAndSaveAudioAsync]: ${error}`);
+                        isError = error;
+                      });
+          })
+          .catch((error) => {
+            console.log(`[uploadHandler] ${error}`);
+            isError = error;
           });
 
-          // Uploading audio file data
-          if (this.state.fileToBeUploadData.length > 0) {
-            for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
-              // Cheking old file data to update
-              if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[i].id) {
-                const item = {
-                  fileName: this.state.fileToBeUploadData[j].fileName,
-                  languageId: this.state.fileToBeUploadData[j].languageId,
-                  speechId: speech.id,
-                  id: this.state.fileToBeUploadData[j].audioId,
-                };
-
-                await API.put("audio/" + item.id, item, {
-                  headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                  },
-                });
-              }
-            }
-          }
         } else { // if speeches is new just uploading them
-          const speechResponse = await API.post("speech", speech, {
+          // creating speech and relative to him audios
+          await API.post("speech", speech, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
             },
+          }).then(async (response) => {
+            await this.uploadAndSaveAudioAsync(response.data.id, this.state.speeches[i].id, HttpMethods.POST)
+                      .catch((error) => {
+                        console.log(`[uploadAndSaveAudioAsync]: ${error}`);
+                        isError = error;
+                      });
+          }).catch((error) => {
+            console.log(`[uploadHandler] ${error}`);
+            isError = error;
           });
 
-          // Uploading audio file data to speeches
-          for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
-            // Checking the audio file data is the same index that speechId
-            if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[i].id) {
-              const item = {
-                fileName: this.state.fileToBeUploadData[j].fileName,
-                languageId: this.state.fileToBeUploadData[j].languageId,
-                speechId: speechResponse.data.id,
-              };
+        }
 
-              await API.post("audio", item, {
-                headers: {
-                  "Accept": "application/json",
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Origin": "*",
-                },
-              });
-            }
-          }
+        if (isError !== null) {
+          return {
+            errorCode: -3,
+            errorMessage: isError.message,
+          };
         }
       }
     } else { // if it's not an update just uploading the speeches
@@ -197,31 +198,29 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           performanceId,
         };
 
-        const speechResponse = await API.post("speech", speech, {
+        // creating speech and relative to him audios
+        await API.post("speech", speech, {
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
           },
+        }).then(async (response) => {
+          await this.uploadAndSaveAudioAsync(response.data.id, i, HttpMethods.POST)
+                    .catch((error) => {
+                      console.log(`[uploadAndSaveAudioAsync]: ${error}`);
+                      isError = error;
+                    });
+        }).catch((error) => {
+          console.log(`[uploadHandler] ${error}`);
+          isError = error;
         });
 
-        // Uploading audio files data. This uploads need move to another method
-        for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
-          if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[i].id) {
-            const item = {
-              fileName: this.state.fileToBeUploadData[j].fileName,
-              languageId: this.state.fileToBeUploadData[j].languageId,
-              speechId: speechResponse.data.id,
-            };
-
-            await API.post("audio", item, {
-              headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-              },
-            });
-          }
+        if (isError !== null) {
+          return {
+            errorCode: -3,
+            errorMessage: isError.message,
+          };
         }
       }
     }
@@ -427,6 +426,44 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     );
   }
 
+  // Uploading audio files and creating records in database which contain data about them
+  private uploadAndSaveAudioAsync = async (speechIdentifier: number, speechIndex: number, method: HttpMethods) => {
+    for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
+      if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[speechIndex].id) {
+        if (method === HttpMethods.POST) {
+          const item = {
+            fileName: this.state.fileToBeUploadData[j].fileName,
+            languageId: this.state.fileToBeUploadData[j].languageId,
+            speechId: speechIdentifier,
+          };
+
+          await API.post("audio", item, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          });
+        } else if (method === HttpMethods.PUT) {
+          const item = {
+            fileName: this.state.fileToBeUploadData[j].fileName,
+            languageId: this.state.fileToBeUploadData[j].languageId,
+            speechId: speechIdentifier,
+            id: this.state.fileToBeUploadData[j].audioId,
+          };
+
+          await API.put("audio/" + item.id, item, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          });
+        }
+      }
+    }
+  }
+
   private onBatchAddItem = async (file: File) => {
     const speechItem = this.addItemHandler();
     const audio = file;
@@ -503,10 +540,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     });
 
     const neededSpeech = this.state.speeches.find((s) => s.id === index);
-    if (neededSpeech) {
-      console.log(`Needed speech id: ${neededSpeech.id}`);
-    }
-    console.log(`Actual Id: ${index}`);
+    // if (neededSpeech) {
+    //   console.log(`Needed speech id: ${neededSpeech.id}`);
+    // }
+    // console.log(`Actual Id: ${index}`);
 
     if (neededSpeech !== undefined) {
       if (this.state.performanceId === -1) {
@@ -532,8 +569,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           await this.removeLocalSpeechesAsync(index);
         }
       }
-    } else {
-      alert("Incorrect passed speech Id that needed to be deleted!");
     }
 
     this.setState({

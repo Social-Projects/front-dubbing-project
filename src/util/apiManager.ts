@@ -16,6 +16,8 @@ class ApiManager {
                 "Content-Type": "application/json",
             },
             method: "POST",
+        }).catch((error) => {
+            return error;
         });
         return response;
     }
@@ -29,6 +31,8 @@ class ApiManager {
                 "Content-Type": "application/json",
             },
             method: "PUT",
+        }).catch((error) => {
+            return error;
         });
         return response;
     }

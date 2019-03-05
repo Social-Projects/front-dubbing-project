@@ -60,61 +60,80 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
         });
 
         if (this.state.id !== -1) {
-            const resp = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
+            const response = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
 
-            if (resp.status === 204) {
+            if (response.status === 204) {
                 if (!this.child.current) {
                     return;
                 }
 
                 const result = await this.child.current.uploadHandler(this.state.id, true);
-                if (result === -1 || result === -2) {
-                    result === -1 ? alert("Завантажте всі аудіо!") : alert("Введіть текст фрази!");
+                if (result !== undefined) {
+                    switch (result.errorCode) {
+                        case -1:
+                            alert(result.errorMessage);
+                            break;
+                        case -2:
+                            alert(result.errorMessage);
+                            break;
+                        case -3:
+                            alert(result.errorMessage);
+                            break;
+                    }
                     this.setState({
                         isShow: false,
                     });
-                    history.push("/performance/" + this.state.id);
                     return;
                 }
 
                 history.push("/performance/" + this.state.id);
                 await this.loadData();
-                this.setState({
-                    isShow: false,
-                });
-
+            } else if (response.status === 500) {
+                console.log(response);
+                alert("Sorry, some error occured...");
             } else {
-                console.log(resp.status);
+                console.log(response);
+                alert("Network error. Check your connection...");
             }
         } else {
             const performance = {
                 title: this.state.title,
                 description: this.state.description,
             };
-            const resp = await this.apimanager.createPerformance(JSON.stringify(performance));
+            const response = await this.apimanager.createPerformance(JSON.stringify(performance));
 
-            if (resp.status === 201) {
-                const JSONObj = await resp.json();
-
+            if (response.status === 201) {
                 if (!this.child.current) {
                     return;
                 }
 
+                const JSONObj = await response.json();
                 const result = await this.child.current.uploadHandler(JSONObj.id, false);
-
-                if (result === -1 || result === -2) {
+                if (result !== undefined) {
+                    switch (result.errorCode) {
+                        case -1:
+                            alert(result.errorMessage);
+                            break;
+                        case -2:
+                            alert(result.errorMessage);
+                            break;
+                        case -3:
+                            alert(result.errorMessage);
+                            break;
+                    }
                     this.setState({
                         isShow: false,
                     });
-
-                    result === -1 ? alert("Завантажте всі аудіо!") : alert("Введіть текст фрази!");
                     return;
                 }
-
                 history.push("/performance/" + JSONObj.id);
                 await this.loadData();
+            } else if (response.status === 500) {
+                console.log(response);
+                alert("Sorry, some error occured...");
             } else {
-                console.log(resp.status);
+                console.log(response);
+                alert("Network error. Check your connection...");
             }
         }
 
