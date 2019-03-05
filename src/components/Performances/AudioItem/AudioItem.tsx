@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Tooltip } from "reactstrap";
+import { Tooltip, Button } from "reactstrap";
 import API from "../../../util/api";
 import "./AudioItem.css";
 
 export interface IAudioItemProps {
   id: number;
+  order: number;
   text?: string;
 
   languages: Array<{
@@ -22,10 +23,13 @@ export interface IAudioItemProps {
   onDelete: (index: number) => void;
   onTextChange: (str: string, index: number) => void;
   onFileChange: (fileName: string, languageId: number, speechIndex: number) => void;
+  handleChangeOrder: (newOrder: number, oldOrder: number) => void;
+
 }
 
 interface IAudioItemState {
   tooltipRemoveOpen: boolean;
+  order: number;
 }
 
 export default class AudioItem extends React.Component<IAudioItemProps, IAudioItemState> {
@@ -37,13 +41,13 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     this.tooltipRemoveToggle = this.tooltipRemoveToggle.bind(this);
     this.state = {
       tooltipRemoveOpen: false,
+      order: this.props.order,
     };
   }
 
   public handleUploadClick(event: any) {
     const parent = event.target.parentElement.parentElement as HTMLElement;
     const ch = parent.getElementsByClassName("choose-audio-btn").namedItem(event.target.id.toString()) as HTMLElement;
-
     ch.click();
   }
 
@@ -80,6 +84,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       </div>
     ));
 
+
     return (
       <div className="container">
         <div className="row">
@@ -92,6 +97,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           </div>
           <div className="col-sm-11 audio-item">
             <div className="col-sm-12">
+              <div className="spanOrder">№ - {this.props.order}</div>
               <textarea
                 id={this.props.id.toString()}
                 onChange={this.handleChange}
@@ -103,11 +109,23 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
             <div className="col-sm-7" id={this.props.id.toString()}>
 
               {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
+              <Button outline color="primary" size="sm" onClick={() => {
+                this.props.handleChangeOrder(this.state.order, this.props.order);
+              }}>Змістити в</Button>
+              <input className="inputOrder" type="number" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)}  />
 
             </div>
+
           </div>
         </div>
       </div>
+    );
+  }
+
+  private onChangeOrderState = (event: any) => {
+    this.setState({
+      order: parseInt(event.target.value, 10)
+    }
     );
   }
 

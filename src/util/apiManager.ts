@@ -64,7 +64,6 @@ class ApiManager {
     }
 
     public async removePerformance(index: number): Promise<Response> {
-        console.log("here");
         const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
             headers: {
                 "Accept": "application/json",

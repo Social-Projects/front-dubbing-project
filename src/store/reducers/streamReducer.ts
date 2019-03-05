@@ -11,6 +11,7 @@ interface IStateType {
         id: number,
         text: string,
         duration: number,
+        order: number,
     }>;
     connectingStatus: boolean;
     isPlaying: boolean;
@@ -42,7 +43,7 @@ const reducer = (state: IStateType = initialState, action: IActionType) => {
             break;
         case actionTypes.LOAD_SPEECHES:
             if (action.payload.speeches.length !== 0) {
-                updatedState.speeches = action.payload.speeches;
+                updatedState.speeches = action.payload.speeches.sort((s1: any, s2: any) => s1.order > s2.order ? 1 : -1);
                 updatedState.currentSpeechId = action.payload.speeches[0].id;
 
                 updatedState.currentSpeechIndex = 0;

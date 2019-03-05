@@ -63,7 +63,6 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
                 });
         } else {
             this.getPerformances();
-            console.log(resp.status);
         }
 
     }

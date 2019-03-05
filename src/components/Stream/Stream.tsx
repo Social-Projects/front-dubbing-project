@@ -207,8 +207,6 @@ class Stream extends Component<IStreamProps, IStreamState> {
     }
 
     public async componentDidMount() {
-        console.log("state: " + this.state.perfomanceId);
-
         if (this.state.performanceName === "") {
             const response = await this.apiManager.getPerformanceById(this.state.perfomanceId);
             const performance = await response.json();

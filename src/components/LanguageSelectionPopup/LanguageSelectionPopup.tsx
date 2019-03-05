@@ -56,7 +56,7 @@ export default class LanguageSelectionPopup extends React.Component<ILanguagePro
     }
 
     public onUpdateLang = async (lang: any) => {
-        const resp = await this.apiManager.updateLang(JSON.stringify(lang));
+        const resp = await this.apiManager.updateLang(lang.id ,JSON.stringify(lang));
         this.getLang();
     }
 

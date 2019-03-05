@@ -59,82 +59,83 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
             isShow: true,
         });
 
-        if (this.state.id !== -1) {
-            const response = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
+        const title = this.state.title;
+        const description = this.state.description;
 
-            if (response.status === 204) {
-                if (!this.child.current) {
-                    return;
-                }
+        if (title !== "" && description !== "") {
+            if (this.state.id !== -1) {
+                // @ts-ignore
+                const isError = this.child.current.isSpeechesCorrect();
+                if (!isError) {
+                    const response = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
 
-                const result = await this.child.current.uploadHandler(this.state.id, true);
-                if (result !== undefined) {
-                    switch (result.errorCode) {
-                        case -1:
+                    if (response.status === 204) {
+                        if (!this.child.current) {
+                            return;
+                        }
+
+                        const result = await this.child.current.uploadHandler(this.state.id, true);
+                        if (result !== undefined) {
                             alert(result.errorMessage);
-                            break;
-                        case -2:
-                            alert(result.errorMessage);
-                            break;
-                        case -3:
-                            alert(result.errorMessage);
-                            break;
+
+                            this.setState({
+                                isShow: false,
+                            });
+                            return;
+                        }
+
+                        history.push("/performance/" + this.state.id);
+                        await this.loadData();
+                    } else if (response.status === 500) {
+                        console.log(response);
+                        alert("Sorry, some error occured...");
+                    } else {
+                        console.log(response);
+                        alert("Network error. Check your connection...");
                     }
-                    this.setState({
-                        isShow: false,
-                    });
-                    return;
+                } else {
+                    alert(isError.errorMessage);
                 }
-
-                history.push("/performance/" + this.state.id);
-                await this.loadData();
-            } else if (response.status === 500) {
-                console.log(response);
-                alert("Sorry, some error occured...");
             } else {
-                console.log(response);
-                alert("Network error. Check your connection...");
+                // @ts-ignore
+                const isError = this.child.current.isSpeechesCorrect();
+                if (!isError) {
+                    const performance = {
+                        title: this.state.title,
+                        description: this.state.description,
+                    };
+                    const response = await this.apimanager.createPerformance(JSON.stringify(performance));
+
+                    if (response.status === 201) {
+                        if (!this.child.current) {
+                            return;
+                        }
+
+                        const JSONObj = await response.json();
+                        const result = await this.child.current.uploadHandler(JSONObj.id, false);
+                        if (result !== undefined) {
+                            alert(result.errorMessage);
+
+                            this.setState({
+                                isShow: false,
+                            });
+                            return;
+                        }
+                        history.push("/performance/" + JSONObj.id);
+                        await this.loadData();
+                    } else if (response.status === 500) {
+                        console.log(response);
+                        alert("Sorry, some error occured...");
+                    } else {
+                        console.log(response);
+                        alert("Network error. Check your connection...");
+                    }
+                } else {
+                    alert(isError.errorMessage);
+                }
             }
         } else {
-            const performance = {
-                title: this.state.title,
-                description: this.state.description,
-            };
-            const response = await this.apimanager.createPerformance(JSON.stringify(performance));
-
-            if (response.status === 201) {
-                if (!this.child.current) {
-                    return;
-                }
-
-                const JSONObj = await response.json();
-                const result = await this.child.current.uploadHandler(JSONObj.id, false);
-                if (result !== undefined) {
-                    switch (result.errorCode) {
-                        case -1:
-                            alert(result.errorMessage);
-                            break;
-                        case -2:
-                            alert(result.errorMessage);
-                            break;
-                        case -3:
-                            alert(result.errorMessage);
-                            break;
-                    }
-                    this.setState({
-                        isShow: false,
-                    });
-                    return;
-                }
-                history.push("/performance/" + JSONObj.id);
-                await this.loadData();
-            } else if (response.status === 500) {
-                console.log(response);
-                alert("Sorry, some error occured...");
-            } else {
-                console.log(response);
-                alert("Network error. Check your connection...");
-            }
+            alert("Введіть назву та опис вистави...");
         }
 
         this.setState({

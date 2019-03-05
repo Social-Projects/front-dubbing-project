@@ -36,3 +36,12 @@
     margin: 5px;
     border-radius: 5px;
 }
+
+.inputOrder {
+    width: 50px !important;
+    margin: 10px
+}
+
+.spanOrder {
+    margin-top: 10px
+}
