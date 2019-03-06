@@ -4,6 +4,7 @@
     border: none;
     border-radius: 3px;
     margin-bottom: 5px;
+    width: 100%;
 }
 .audio-item label {
   margin-top: 5%;
@@ -44,4 +45,8 @@
 
 .spanOrder {
     margin-top: 10px
+}
+
+.delete-item{
+    width: 100%;
 }

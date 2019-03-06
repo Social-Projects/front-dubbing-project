@@ -35,8 +35,13 @@
     background-color: #17212b;
     border-radius: 3px;
     padding-left: 4%;
+    padding-right: 4%;
     color: #fff;
     margin-bottom: 25px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 10px;
+    padding-bottom: 20px;
 }
 
 .choose-audio-btn {

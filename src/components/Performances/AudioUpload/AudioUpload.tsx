@@ -523,13 +523,13 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       if (lang.id === id) {
         lang.isChoosed = !lang.isChoosed
         //@ts-ignore
-        if (this.state.selectedLanguage !== undefined && lang.isChoosed==false && lang.id == this.state.selectedLanguage.id){
+        if (this.state.selectedLanguage !== undefined && lang.isChoosed == false && lang.id == this.state.selectedLanguage.id) {
           this.setState({
             selectedLanguage: undefined,
           });
         }
 
-          langs.push(lang);
+        langs.push(lang);
       } else {
         langs.push(lang);
       }

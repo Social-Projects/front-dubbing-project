@@ -89,14 +89,14 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     return (
       <div className="container">
         <div className="row">
-          <div className="col-sm-11">
+          <div className="delete-item">
             <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton" + this.props.id}>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
             </button>
             <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"removeButton" + this.props.id} toggle={this.tooltipRemoveToggle}>
               Видалити фразу </Tooltip>
           </div>
-          <div className="col-sm-11 audio-item">
+          <div className="audio-item">
             <div className="col-sm-12">
               <div className="spanOrder">№ - {this.props.order}</div>
               <textarea
