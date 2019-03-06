@@ -11,6 +11,7 @@ export interface IAudioItemProps {
   languages: Array<{
     id: number,
     name: string,
+    isChoised: boolean,
   }>;
 
   fileToBeUploadData: Array<{

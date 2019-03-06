@@ -6,6 +6,7 @@ import API from "../../../util/api";
 import Spinner from "../../UI/Spinner/Spinner";
 import AudioItem from "../AudioItem/AudioItem";
 import "./AudioUpload.css";
+import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from "constants";
 
 enum HttpMethods {
   GET = "GET",
@@ -108,8 +109,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   // checking if text any speech is empty
   public isSpeechesCorrect = () => {
     // checking if number of real loaded audios equals expected loaded audios
-    const reqCount = this.state.speeches.length * this.state.languages.length;
-    const actualCount = this.state.fileToBeUploadData.length;
+    const reqCount = this.state.speeches.length * this.state.languages.filter((item) => item.isChoised).length;
+    const langs = [...this.state.languages.filter((i) => i.isChoised === true).map(item => item.id)];
+    const actualCount = this.state.fileToBeUploadData.filter((item) => langs.find((i) => i === item.languageId)).length;
+    console.log(langs);
+    console.log(this.state.fileToBeUploadData);
+    console.log(reqCount, actualCount);
     if (reqCount !== actualCount) {
       return {
         errorCode: -1,
@@ -236,16 +241,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   // Getting all data. (languages, speeches to performance and audios to speeches)
   public async audioComponentDidMount(performanceId: number) {
-    const languagesResponse = await API.get("language");
-    //const lang = [...languagesResponse.data].map((item) => item.isChoised = true);
-    for (const lang of languagesResponse.data) {
-      lang.isChoised = true;
-    }
-    if (languagesResponse.status === 200) {
-      this.setState({
-        languages: languagesResponse.data,
-      });
-    }
+
 
     if (performanceId !== -1) {
       const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
@@ -286,12 +282,36 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           files.push(item);
         }
       }
+      const languagesResponse = await API.get("language");
+      // console.log(languagesResponse);
+      // //const lang = [...languagesResponse.data].map((item) => item.isChoised = true);
+      // if (this.state.speeches.length === 0) {
+      //   for (const lang of languagesResponse.data) {
+      //     lang.isChoised = true;
+      //   }
+      // }
+      // else {
+      //   for (const lang of languagesResponse.data) {
+      //     for (const iterator of files) {
+      //       if (iterator.languageId === lang.id) {
+      //         lang.isChoised = true;
+      //         break;
+      //       }
+      //     }
+
+      //   }
+      // }
+      if (languagesResponse.status === 200) {
+        this.setState({
+          languages: languagesResponse.data,
+        });
+      }
 
       this.setState({
         fileToBeUploadData: files,
       });
-    }
 
+    }
     this.setState({
       isLoading: false,
     });
@@ -424,7 +444,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         id={item.id}
         order={item.order}
         text={item.text}
-        languages={this.state.languages}
+        languages={this.state.languages.filter((item) => item.isChoised)}
         onDelete={item.onDelete}
         fileToBeUploadData={this.state.fileToBeUploadData}
         onTextChange={item.onTextChange}
@@ -496,16 +516,16 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   handleLangCheckboxChange = (id: number) => (e: any) => {
     // const target = event.target;
-    const langs : any[] = [];
+    const langs: any[] = [];
     console.log(id);
 
     const hui = [...this.state.languages];
 
     for (const lang of hui) {
-      if(lang.id === id){
+      if (lang.id === id) {
         lang.isChoised = !lang.isChoised
         langs.push(lang);
-      }else{
+      } else {
         langs.push(lang);
       }
     }
@@ -518,12 +538,16 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   // Uploading audio files and creating records in database which contain data about them
   private uploadAndSaveAudioAsync = async (speechIdentifier: number, speechIndex: number, method: HttpMethods) => {
-    for (let j = 0; j < this.state.fileToBeUploadData.length; j++) {
-      if (this.state.fileToBeUploadData[j].speechIndex === this.state.speeches[speechIndex].id) {
+    const langs = [...this.state.languages.filter((i) => i.isChoised === true).map(item => item.id)];
+    const files = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i === item.languageId))];
+    const unlodaFiles = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i !== item.languageId))];
+
+    for (let j = 0; j < files.length; j++) {
+      if (files[j].speechIndex === this.state.speeches[speechIndex].id) {
         if (method === HttpMethods.POST) {
           const item = {
-            fileName: this.state.fileToBeUploadData[j].fileName,
-            languageId: this.state.fileToBeUploadData[j].languageId,
+            fileName: files[j].fileName,
+            languageId: files[j].languageId,
             speechId: speechIdentifier,
           };
 
@@ -536,10 +560,10 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           });
         } else if (method === HttpMethods.PUT) {
           const item = {
-            fileName: this.state.fileToBeUploadData[j].fileName,
-            languageId: this.state.fileToBeUploadData[j].languageId,
+            fileName: files[j].fileName,
+            languageId: files[j].languageId,
             speechId: speechIdentifier,
-            id: this.state.fileToBeUploadData[j].audioId,
+            id: files[j].audioId,
           };
 
           await API.put("audio/" + item.id, item, {
@@ -552,6 +576,8 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         }
       }
     }
+
+    this.unloadFilesAsync(unlodaFiles.map((item) => item.fileName));
   }
 
   private onBatchAddItem = async (file: File) => {
