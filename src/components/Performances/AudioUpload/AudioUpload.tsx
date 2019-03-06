@@ -159,8 +159,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                 console.log(`[uploadAndSaveAudioAsync]: ${error}`);
                 isError = error;
               });
-          })
-            .catch((error) => {
+          }).catch((error) => {
               console.log(`[uploadHandler] ${error}`);
               isError = error;
             });
@@ -607,7 +606,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             for (const requiredSpeech of requiredSpeeches) {
               requiredSpeech.order = requiredSpeech.order - 1;
             }
-            console.log(requiredSpeeches)
 
             const audios = this.state.fileToBeUploadData.filter((obj) => {
               return obj.speechIndex !== index;

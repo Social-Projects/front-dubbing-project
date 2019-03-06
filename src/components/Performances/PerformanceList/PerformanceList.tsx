@@ -40,31 +40,27 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
             const data = await resp.json();
             this.setState({
                 performances: data,
-                isLoading: false,
             });
+        } else if (resp.status === 500) {
+            alert("Виникла помилка на сервері.");
         } else {
-            alert("Sorry, something went wrong...");
-            this.setState({
-                isLoading: false,
-            });
+            alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером.");
         }
     }
 
     public async removePerformance(index: number) {
         const resp = await this.apimanager.removePerformance(index);
-        if (resp.status === 200) {
+        if (resp.status === 204) {
             const arr = this.state.performances.filter((obj) => {
                 return obj.id !== index;
             });
 
-            this.setState(
-                {
-                    performances: arr,
-                });
+            this.setState({
+                performances: arr,
+            });
         } else {
             this.getPerformances();
         }
-
     }
 
     public render() {
@@ -91,8 +87,11 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
         );
     }
 
-    public componentDidMount() {
-        this.getPerformances();
+    public async componentDidMount() {
+        await this.getPerformances();
+        this.setState({
+            isLoading: false,
+        });
     }
 }
 export default PerformanceList;

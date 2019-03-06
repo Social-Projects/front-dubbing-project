@@ -8,7 +8,7 @@ class ApiManager {
     }
 
     public async createPerformance(json: string): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance`, {
+        return await fetch(`${this.backendUrl}api/Performance`, {
             body: json,
             headers: {
                 "Accept": "application/json",
@@ -19,11 +19,10 @@ class ApiManager {
         }).catch((error) => {
             return error;
         });
-        return response;
     }
 
     public async updatePerformance(json: string, id: number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance/${id}`, {
+        return await fetch(`${this.backendUrl}api/Performance/${id}`, {
             body: json,
             headers: {
                 "Accept": "application/json",
@@ -34,7 +33,6 @@ class ApiManager {
         }).catch((error) => {
             return error;
         });
-        return response;
     }
 
     public async getPerformances(): Promise<Response> {
@@ -45,48 +43,51 @@ class ApiManager {
                 "Content-Type": "application/json",
             },
             method: "GET",
-        })
-        .then((data) => {
+        }).then((data) => {
             return data;
+        }).catch((error) => {
+            return error;
         });
     }
 
     public async getPerformanceById(index: number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
+        return await fetch(`${this.backendUrl}api/Performance/${index}`, {
             headers: {
                 "Accept": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json",
             },
             method: "GET",
+        }).catch((error) => {
+            return error;
         });
-        return response;
     }
 
     public async removePerformance(index: number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/Performance/${index}`, {
+        return await fetch(`${this.backendUrl}api/Performance/${index}`, {
             headers: {
                 "Accept": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json",
             },
             method: "DELETE",
+        }).catch((error) => {
+            return error;
         });
-
-        return response;
     }
 
     // Using for display list of speeches on stream page
     public async getSpeechInfo(indexPerfomance: number): Promise<Response> {
-        const response = await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`, {
+        return await fetch(`${this.backendUrl}api/performance/${indexPerfomance}/speeches`, {
             headers: {
                 "Accept": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json",
             },
             method: "GET",
+        }).catch((error) => {
+            return error;
         });
-        return response;
     }
 }
 

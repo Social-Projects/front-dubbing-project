@@ -43,7 +43,7 @@ interface IStreamProps {
         duration: number,
     }>;
     onSavePerformanceId: Function;
-    onLoadSpeeches: Function;
+    onSaveSpeeches: Function;
     onSaveCurrentSpeechId: Function;
     onChangeStreamingStatus: Function;
     onChangeStreamStateToInitial: Function;
@@ -83,22 +83,27 @@ class Stream extends Component<IStreamProps, IStreamState> {
                     .then(async () => {
                         await signalRManager.sendCommand("Start")
                             .then(() => this.props.onChangeConnectingStatus(true))
-                            .catch((error) => console.log(error));
+                            .catch(() => alert("Виникла помилка на сервері!"));
                     })
-                    .catch((error) => console.log(error));
+                    .catch(() => alert("Виникла помилка на сервері!"));
             } else {
                 if (this.props.isPlaying) {
                     await this.pause();
                 }
-                await signalRManager.sendCommand("End")
-                                    .catch((error) => console.log(error));
-                await signalRManager.disconnectFromHub()
-                                    .catch((error) => console.log(error));
 
-                this.props.onChangeConnectingStatus(false);
-                if (this.props.speeches !== undefined && this.props.speeches.length !== 0) {
-                    this.props.onSaveCurrentSpeechId(this.props.speeches[0].id);
-                }
+                await signalRManager.sendCommand("End")
+                    .then(async () => {
+                        await signalRManager.disconnectFromHub()
+                            .then(() => {
+                                this.props.onChangeConnectingStatus(false);
+
+                                if (this.props.speeches !== undefined && this.props.speeches.length !== 0) {
+                                    this.props.onSaveCurrentSpeechId(this.props.speeches[0].id);
+                                }
+                            })
+                            .catch(() => alert("Виникла помилка на сервері. Спробуйте перевірити з'єднання!"));
+                    })
+                    .catch(() => alert("Виникла помилка на сервері. Спробуйте перевірити з'єднання!"));
             }
         } else {
             alert("Здається ця вистава не містить фрагментів для програвання...");
@@ -108,30 +113,36 @@ class Stream extends Component<IStreamProps, IStreamState> {
     public playByIdHandler = async (id: number) => {
         if (this.props.connectingStatus) {
             if (this.state.isFirst || (this.props.isPlaying && id !== this.props.currentSpeechId)) {
-                await signalRManager.sendCommand(this.props.performanceId + "_" + id);
-                this.props.onSaveCurrentSpeechId(id);
-                this.props.onChangeStreamingStatus(true);
+                await signalRManager.sendCommand(this.props.performanceId + "_" + id)
+                .then(() => {
+                    this.props.onSaveCurrentSpeechId(id);
+                    this.props.onChangeStreamingStatus(true);
 
-                playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-                playbackManager.play(
-                    this.props.onChangeCurrentPlaybackTime,
-                    this.pause.bind(this),
-                    this.props.maxDuration);
+                    playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+                    playbackManager.play(
+                        this.props.onChangeCurrentPlaybackTime,
+                        this.pause.bind(this),
+                        this.props.maxDuration);
 
-                if (this.state.isFirst) {
-                    this.setState({
-                        isFirst: false,
-                    });
-                }
+                    if (this.state.isFirst) {
+                        this.setState({
+                            isFirst: false,
+                        });
+                    }
+                })
+                .catch(() => alert("Виникла помилка на сервері. Спробуйте перевірити з'єднання!"));
             } else if (!this.props.isPlaying) {
-                await signalRManager.sendCommand(this.props.performanceId + "_" + id);
-                this.props.onSaveCurrentSpeechId(id);
-                this.props.onChangeStreamingStatus(true);
+                await signalRManager.sendCommand(this.props.performanceId + "_" + id)
+                .then(() => {
+                    this.props.onSaveCurrentSpeechId(id);
+                    this.props.onChangeStreamingStatus(true);
 
-                playbackManager.play(
-                    this.props.onChangeCurrentPlaybackTime,
-                    this.pause.bind(this),
-                    this.props.maxDuration);
+                    playbackManager.play(
+                        this.props.onChangeCurrentPlaybackTime,
+                        this.pause.bind(this),
+                        this.props.maxDuration);
+                })
+                .catch(() => alert("Виникла помилка на сервері. Спробуйте перевірити з'єднання!"));
             } else {
                 await this.pause();
             }
@@ -140,11 +151,11 @@ class Stream extends Component<IStreamProps, IStreamState> {
 
     public pause = async (): Promise<void> => {
         return await signalRManager.sendCommand("Pause")
-                    .then(() => {
-                        this.props.onChangeStreamingStatus(false);
-                        playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
-                    })
-                    .catch((error) => console.log(error));
+                .then(() => {
+                    this.props.onChangeStreamingStatus(false);
+                    playbackManager.reset(this.props.onChangeCurrentPlaybackTime);
+                })
+                .catch(() => alert("Виникла помилка на сервері. Спробуйте перевірити з'єднання!"));
     }
 
     public playPauseHandler = async (event: Event) => {
@@ -207,16 +218,25 @@ class Stream extends Component<IStreamProps, IStreamState> {
     }
 
     public async componentDidMount() {
-        if (this.state.performanceName === "") {
-            const response = await this.apiManager.getPerformanceById(this.state.perfomanceId);
+        const response = await this.apiManager.getPerformanceById(this.state.perfomanceId);
+        if (response.status === 200) {
             const performance = await response.json();
             this.setState({
                 performanceName: performance.title,
             });
+
+            this.props.onSavePerformanceId(this.state.perfomanceId);
+            const speechesResponse = await this.apiManager.getSpeechInfo(this.state.perfomanceId);
+            if (speechesResponse.status === 200) {
+                const speeches = await speechesResponse.json();
+                this.props.onSaveSpeeches(speeches);
+            } else {
+                this.handleError(speechesResponse);
+            }
+        } else {
+            this.handleError(response);
         }
 
-        this.props.onSavePerformanceId(this.state.perfomanceId);
-        await this.props.onLoadSpeeches(this.state.perfomanceId);
         this.setState({
             isLoading: false,
         });
@@ -236,6 +256,14 @@ class Stream extends Component<IStreamProps, IStreamState> {
 
         this.props.onChangeStreamStateToInitial();
     }
+
+    private handleError = (response: Response) => {
+        if (response.status === 500) {
+            alert("Виникла помилка на сервері.");
+        } else {
+            alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером!");
+        }
+    }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -244,7 +272,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onChangeCurrentPlaybackTime: (time: number) => dispatch(actionCreators.changeCurrentPlaybackTime(time)),
         onChangeStreamStateToInitial: () => dispatch(actionCreators.changeStreamStateToInitial()),
         onChangeStreamingStatus: (status: boolean) => dispatch(actionCreators.changeStreamingStatus(status)),
-        onLoadSpeeches: async (id: number) => await dispatch(actionCreators.loadSpeeches(id)),
+        onSaveSpeeches: (speeches: any) => dispatch(actionCreators.saveSpeeches(speeches)),
         onSaveCurrentSpeechId: (id: number) => dispatch(actionCreators.saveCurrentSpeechId(id)),
         onSavePerformanceId: (id: number) => dispatch(actionCreators.savePerformanceId(id)),
     };

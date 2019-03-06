@@ -1,6 +1,6 @@
 export {
     savePerformanceId,
-    loadSpeeches,
+    saveSpeeches,
     saveCurrentSpeechId,
     changeStreamingStatus,
     changeStreamStateToInitial,
