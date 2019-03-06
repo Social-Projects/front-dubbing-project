@@ -246,6 +246,7 @@ class Stream extends Component<IStreamProps, IStreamState> {
     }
 
     public async componentWillUnmount() {
+        console.log("[Performance List]: Component will unmount!");
         if (this.props.connectingStatus) {
             if (this.props.isPlaying) {
                 await this.pause();

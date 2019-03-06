@@ -14,7 +14,7 @@ export default interface IState {
         maxDuration: number,
     };
     performance: {
-        isSavedChanges: boolean,
+        isLoadedNewFiles: boolean,
     };
     sidebar: {
         currentTabId: number,

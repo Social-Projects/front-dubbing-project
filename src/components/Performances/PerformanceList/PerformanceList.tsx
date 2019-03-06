@@ -99,6 +99,10 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
 
         this.props.onChangeCurrentTabId(0);
     }
+
+    public componentWillUnmount() {
+        console.log("[Performance List]: Component will unmount");
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {

@@ -8,6 +8,7 @@ import thunk from "redux-thunk";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import audioUploadReducer from "./store/reducers/audioUploadReducer";
 import sidebarReducer from "./store/reducers/sidebarReducer";
 import streamReducer from "./store/reducers/streamReducer";
 import history from "./util/history";
@@ -23,6 +24,7 @@ import SignalrManager from "./util/signalrManager";
 const reducer: any = combineReducers({
     stream: streamReducer,
     sidebar: sidebarReducer,
+    audioUpload: audioUploadReducer,
 });
 
 const store: any = createStore(reducer, composeWithDevTools(applyMiddleware(

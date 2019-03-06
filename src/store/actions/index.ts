@@ -11,3 +11,7 @@ export {
 export {
     changeCurrentTabId,
 } from "./sidebar";
+
+export {
+    changeIsNewFilesLoaded,
+} from "./audioUpload";

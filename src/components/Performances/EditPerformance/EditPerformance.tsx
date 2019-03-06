@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import apiManager from "../../../util/apiManager";
 import history from "../../../util/history";
@@ -24,6 +24,7 @@ interface IEditPerformanceProps {
 }
 
 class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceState> {
+    // @ts-ignore
     public child = React.createRef<AudioUpload>();
     public apimanager = new apiManager();
 
@@ -128,6 +129,26 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
         });
     }
 
+    public onCancelHandler = async (event: MouseEvent) => {
+        // @ts-ignore
+        const isLoadedNewFiles = this.child.current.checkIfNewAudiosAreLoaded();
+        if (isLoadedNewFiles) {
+            let isConfirm = false;
+            if (this.state.id === -1) {
+                isConfirm = confirm("Були завантажені нові файли. Ви справді хочете залишити сторінку і видалити файли?");
+            } else {
+                isConfirm = confirm("Були змінені деякі файли. Ви справді хочете перейти на нову сторінку і залишити старі зміни?");
+            }
+
+            if (isConfirm) {
+                // @ts-ignore
+                await this.child.current.removeNewLoadedFiles();
+            } else {
+                event.preventDefault();
+            }
+        }
+    }
+
     public async loadData() {
         if (this.props.match.params.number !== "new") {
             const resp = await this.apimanager.getPerformanceById(this.props.match.params.number);
@@ -166,7 +187,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                     <p>{this.props.match.params.number === "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">
                         <button className="saveButton" onClick={this.handleSave} ><i className="fas fa-check-circle saveIcon"></i>Зберегти</button>
-                        <Link to="/performance/">
+                        <Link to="/performance/" onClick={this.onCancelHandler}>
                             <button className="cancelButton">
                                 <i className="fas fa-times-circle saveIcon"></i>Вiдмiна
                             </button>
@@ -188,10 +209,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
     public componentDidMount() {
         this.loadData();
     }
-
-    // public componentWillUnmount() {
-
-    // }
 
     private handleErrors = (response: Response) => {
         if (response.status === 500) {
