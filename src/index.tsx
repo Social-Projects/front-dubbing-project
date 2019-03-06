@@ -13,6 +13,7 @@ import streamReducer from "./store/reducers/streamReducer";
 import history from "./util/history";
 
 import "bootstrap/dist/css/bootstrap.css";
+import "./assets/css/font-awesome.css";
 import "./index.css";
 
 import config from "react-global-configuration";

@@ -24,6 +24,14 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin-alt');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 
+const rootPath = path.join(__dirname, "../");
+console.log(`WebPack DirPath: ${rootPath}`);
+
+module.exports = {
+  require: [
+    path.join(rootPath, 'src/assets/css/font-awesome.global.css'),
+  ]
+}
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
