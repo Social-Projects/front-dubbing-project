@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import classes from "./SidebarItem.module.css";
 
 interface ISidebarItemProps {
+    id: number;
     imgSrc: string;
     name: string;
     clicked: any;

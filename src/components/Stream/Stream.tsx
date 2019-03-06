@@ -49,6 +49,7 @@ interface IStreamProps {
     onChangeStreamStateToInitial: Function;
     onChangeCurrentPlaybackTime: Function;
     onChangeConnectingStatus: Function;
+    onChangeCurrentTabId: Function;
 }
 
 interface IMapKeysBinding {
@@ -240,6 +241,8 @@ class Stream extends Component<IStreamProps, IStreamState> {
         this.setState({
             isLoading: false,
         });
+
+        this.props.onChangeCurrentTabId(1);
     }
 
     public async componentWillUnmount() {
@@ -275,6 +278,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onSaveSpeeches: (speeches: any) => dispatch(actionCreators.saveSpeeches(speeches)),
         onSaveCurrentSpeechId: (id: number) => dispatch(actionCreators.saveCurrentSpeechId(id)),
         onSavePerformanceId: (id: number) => dispatch(actionCreators.savePerformanceId(id)),
+        onChangeCurrentTabId: (nextId: number) => dispatch(actionCreators.changeCurrentTabId(nextId)),
     };
 };
 

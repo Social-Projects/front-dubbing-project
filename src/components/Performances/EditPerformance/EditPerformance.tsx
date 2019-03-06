@@ -27,8 +27,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
     public child = React.createRef<AudioUpload>();
     public apimanager = new apiManager();
 
-    private isErrorHappenedWhileSaving: boolean = false;
-    private performanceIdWhichMustToBeDeleted = 0;
+    private isSaved: boolean = false;
 
     constructor(props: IEditPerformanceProps) {
         super(props);
@@ -79,7 +78,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                         const result = await this.child.current.uploadHandler(this.state.id, true);
                         if (result !== undefined) {
                             alert(result.errorMessage);
-                            this.isErrorHappenedWhileSaving = true;
                             this.setState({
                                 isShow: false,
                             });
@@ -87,10 +85,8 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                         }
                         history.push("/performance/" + this.state.id);
                         await this.loadData();
-                    } else if (response.status === 500) {
-                        alert("Виникла помилка на сервері.");
                     } else {
-                        alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером.");
+                        this.handleErrors(response);
                     }
                 } else {
                     const performance = {
@@ -116,12 +112,8 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                         }
                         history.push("/performance/" + JSONObj.id);
                         await this.loadData();
-                    } else if (response.status === 500) {
-                        console.log(response);
-                        alert("Виникла помилка на сервері.");
                     } else {
-                        console.log(response);
-                        alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером.");
+                        this.handleErrors(response);
                     }
                 }
             } else {
@@ -154,7 +146,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
 
                 this.child.current.audioComponentDidMount(data.id);
             } else {
-                console.log(resp.status);
+                this.handleErrors(resp);
             }
         } else {
             if (!this.child.current) {
@@ -163,10 +155,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
 
             this.child.current.audioComponentDidMount(this.state.id);
         }
-    }
-
-    public componentDidMount() {
-      this.loadData();
     }
 
     public render() {
@@ -195,6 +183,24 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 <AudioUpload ref={this.child}></AudioUpload>
             </div>
         );
+    }
+
+    public componentDidMount() {
+        this.loadData();
+    }
+
+    // public componentWillUnmount() {
+
+    // }
+
+    private handleErrors = (response: Response) => {
+        if (response.status === 500) {
+            console.log(response);
+            alert("Виникла помилка на сервері!");
+        } else {
+            console.log(response);
+            alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером.");
+        }
     }
 }
 

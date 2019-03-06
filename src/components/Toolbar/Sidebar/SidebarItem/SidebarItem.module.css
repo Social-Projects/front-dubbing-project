@@ -11,7 +11,7 @@
     transition: background-color 0.3s;
 }
 
-.NavItem:not(:nth-child(3)):hover {
+.NavItem:not(:nth-child(2)):hover {
     background-color: #242f3d;
 }
 

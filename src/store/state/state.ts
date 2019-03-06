@@ -13,4 +13,10 @@ export default interface IState {
         currentPlaybackTime: number,
         maxDuration: number,
     };
+    performance: {
+        isSavedChanges: boolean,
+    };
+    sidebar: {
+        currentTabId: number,
+    };
 }

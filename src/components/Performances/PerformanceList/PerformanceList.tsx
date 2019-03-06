@@ -1,7 +1,10 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { Dispatch } from "redux";
 
 import Aux from "../../../hoc/Auxiliary";
+import * as actionCreators from "../../../store/actions/index";
 import apiManager from "../../../util/apiManager";
 import LanguageSelectionPopup from "../../LanguageSelectionPopup/LanguageSelectionPopup";
 import Spinner from "../../UI/Spinner/Spinner";
@@ -20,6 +23,7 @@ interface IPerformanceState {
 
 interface IPerformanceProps {
     performances: [];
+    onChangeCurrentTabId: Function;
 }
 
 class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
@@ -92,6 +96,15 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
         this.setState({
             isLoading: false,
         });
+
+        this.props.onChangeCurrentTabId(0);
     }
 }
-export default PerformanceList;
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        onChangeCurrentTabId: (nextId: number) => dispatch(actionCreators.changeCurrentTabId(nextId)),
+    };
+};
+
+export default connect(null, mapDispatchToProps)(PerformanceList);

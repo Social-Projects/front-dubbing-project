@@ -7,3 +7,7 @@ export {
     changeCurrentPlaybackTime,
     changeConnectingStatus,
 } from "./stream";
+
+export {
+    changeCurrentTabId,
+} from "./sidebar";
