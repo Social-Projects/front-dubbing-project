@@ -6,7 +6,6 @@ import API from "../../../util/api";
 import Spinner from "../../UI/Spinner/Spinner";
 import AudioItem from "../AudioItem/AudioItem";
 import "./AudioUpload.css";
-import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from "constants";
 
 enum HttpMethods {
   GET = "GET",
@@ -22,7 +21,7 @@ export interface IAudioUploadState {
   languages: Array<{
     id: number,
     name: string,
-    isChoised: boolean,
+    isChoosed: boolean,
   }>;
   speeches: Array<{
     id: number,
@@ -109,12 +108,9 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   // checking if text any speech is empty
   public isSpeechesCorrect = () => {
     // checking if number of real loaded audios equals expected loaded audios
-    const reqCount = this.state.speeches.length * this.state.languages.filter((item) => item.isChoised).length;
-    const langs = [...this.state.languages.filter((i) => i.isChoised === true).map(item => item.id)];
+    const reqCount = this.state.speeches.length * this.state.languages.filter((item) => item.isChoosed).length;
+    const langs = [...this.state.languages.filter((i) => i.isChoosed === true).map(item => item.id)];
     const actualCount = this.state.fileToBeUploadData.filter((item) => langs.find((i) => i === item.languageId)).length;
-    console.log(langs);
-    console.log(this.state.fileToBeUploadData);
-    console.log(reqCount, actualCount);
     if (reqCount !== actualCount) {
       return {
         errorCode: -1,
@@ -283,24 +279,17 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         }
       }
       const languagesResponse = await API.get("language");
-      // console.log(languagesResponse);
-      // //const lang = [...languagesResponse.data].map((item) => item.isChoised = true);
-      // if (this.state.speeches.length === 0) {
-      //   for (const lang of languagesResponse.data) {
-      //     lang.isChoised = true;
-      //   }
-      // }
-      // else {
-      //   for (const lang of languagesResponse.data) {
-      //     for (const iterator of files) {
-      //       if (iterator.languageId === lang.id) {
-      //         lang.isChoised = true;
-      //         break;
-      //       }
-      //     }
+      console.log(languagesResponse.data);
+      console.log(files);
 
-      //   }
-      // }
+      for (const lang of languagesResponse.data) {
+        for (const file of files) {
+          if (file.languageId === lang.id) {
+            lang.isChoosed = true;
+            break;
+          }
+        }
+      }
       if (languagesResponse.status === 200) {
         this.setState({
           languages: languagesResponse.data,
@@ -312,6 +301,18 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       });
 
     }
+    else {
+      const languagesResponse = await API.get("language");
+      for (const lang of languagesResponse.data) {
+        lang.isChoosed = true;
+      }
+      if (languagesResponse.status === 200) {
+        this.setState({
+          languages: languagesResponse.data,
+        });
+      }
+    }
+
     this.setState({
       isLoading: false,
     });
@@ -432,7 +433,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           className="langCheckbox"
           name="isGoi"
           type="checkbox"
-          checked={item.isChoised}
+          checked={item.isChoosed}
           onChange={this.handleLangCheckboxChange(item.id)}
         />
       </label>
@@ -444,7 +445,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         id={item.id}
         order={item.order}
         text={item.text}
-        languages={this.state.languages.filter((item) => item.isChoised)}
+        languages={this.state.languages.filter((item) => item.isChoosed)}
         onDelete={item.onDelete}
         fileToBeUploadData={this.state.fileToBeUploadData}
         onTextChange={item.onTextChange}
@@ -454,7 +455,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       />
     ));
 
-    const languages = this.state.languages.map((lang) => {
+    const languages = this.state.languages.filter((item) => item.isChoosed === true).map((lang) => {
       return (
         <DropdownItem
           key={lang.id}
@@ -515,21 +516,24 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   }
 
   handleLangCheckboxChange = (id: number) => (e: any) => {
-    // const target = event.target;
     const langs: any[] = [];
-    console.log(id);
+    const langState = [...this.state.languages];
 
-    const hui = [...this.state.languages];
-
-    for (const lang of hui) {
+    for (const lang of langState) {
       if (lang.id === id) {
-        lang.isChoised = !lang.isChoised
-        langs.push(lang);
+        lang.isChoosed = !lang.isChoosed
+        //@ts-ignore
+        if (this.state.selectedLanguage !== undefined && lang.isChoosed==false && lang.id == this.state.selectedLanguage.id){
+          this.setState({
+            selectedLanguage: undefined,
+          });
+        }
+
+          langs.push(lang);
       } else {
         langs.push(lang);
       }
     }
-    console.log(langs);
 
     this.setState({
       languages: langs,
@@ -538,7 +542,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
 
   // Uploading audio files and creating records in database which contain data about them
   private uploadAndSaveAudioAsync = async (speechIdentifier: number, speechIndex: number, method: HttpMethods) => {
-    const langs = [...this.state.languages.filter((i) => i.isChoised === true).map(item => item.id)];
+    const langs = [...this.state.languages.filter((i) => i.isChoosed === true).map(item => item.id)];
     const files = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i === item.languageId))];
     const unlodaFiles = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i !== item.languageId))];
 

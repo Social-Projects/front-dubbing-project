@@ -11,7 +11,7 @@ export interface IAudioItemProps {
   languages: Array<{
     id: number,
     name: string,
-    isChoised: boolean,
+    isChoosed: boolean,
   }>;
 
   fileToBeUploadData: Array<{
@@ -109,7 +109,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
             </div>
             <div className="col-sm-7" id={this.props.id.toString()}>
 
-              {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
+              {langList.length > 0 ? langList : <p style={{ color: "red" }}>Виберіть мову</p>}
               <Button outline color="primary" size="sm" onClick={() => {
                 this.props.handleChangeOrder(this.state.order, this.props.order);
               }}>Змістити в</Button>
