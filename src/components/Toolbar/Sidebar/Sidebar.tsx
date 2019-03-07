@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 import * as actionCreators from "../../../store/actions/index";
 
 import GlobalStoreType from "../../../store/state/state";
+import API from "../../../util/api";
 import ActionSection from "./ActionSection/ActionSection";
 import SidebarItem from "./SidebarItem/SidebarItem";
 
@@ -22,7 +23,10 @@ interface ISidebarState {
 interface ISidebarProps {
     isStreamConnectedToServer: boolean;
     currentTabId: number;
+    isNewFilesLoaded: boolean;
+    newFilesName: string[];
     onChangeCurrentTabId: Function;
+    onChangeAudioUploadToInitial: Function;
 }
 
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
@@ -53,11 +57,28 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         };
     }
 
-    public OnPerformanceClickHandler = (event: Event, targetTabId: number) => {
+    public OnPerformanceClickHandler = async (event: Event, targetTabId: number) => {
         if (targetTabId === 1 && this.props.isStreamConnectedToServer) {
             const isConfirmed = confirm("Сторінка все ще підключена до серверу. Ви справді хочете перейти на іншу сторінку");
             if (!isConfirmed) {
                 event.preventDefault();
+            }
+        } else if (targetTabId === 0 && this.props.isNewFilesLoaded) {
+            const isConfirmed = confirm("Файли завантажені на сервер, але все ще не збережені." +
+                                        "Ви справді перейти на іншу сторінку та видалити файли?");
+            if (!isConfirmed) {
+                event.preventDefault();
+            } else {
+                if (this.props.newFilesName.length > 0) {
+                    let query = "?";
+                    for (const audio of this.props.newFilesName) {
+                      query += `files=${audio}&`;
+                    }
+                    query.slice(query.length - 1, 1);
+
+                    await API.delete("/audio/unload/" + query);
+                  }
+                this.props.onChangeAudioUploadToInitial();
             }
         }
     }
@@ -99,12 +120,15 @@ const mapStateToProps = (store: GlobalStoreType) => {
     return {
         isStreamConnectedToServer: store.stream.connectingStatus,
         currentTabId: store.sidebar.currentTabId,
+        isNewFilesLoaded: store.audioUpload.isNewFilesLoaded,
+        newFilesName: store.audioUpload.newFilesName,
     };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         onChangeCurrentTabId: (nextId: number) => dispatch(actionCreators.changeCurrentTabId(nextId)),
+        onChangeAudioUploadToInitial: () => dispatch(actionCreators.changeAudioUploadToInitialState()),
     };
 };
 

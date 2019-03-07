@@ -5,6 +5,7 @@ import { Tooltip } from "reactstrap";
 import { Dispatch } from "redux";
 
 import * as actionCreators from "../../../store/actions/index";
+import IGlobalStoreType from "../../../store/state/state";
 import API from "../../../util/api";
 import Spinner from "../../UI/Spinner/Spinner";
 import AudioItem from "../AudioItem/AudioItem";
@@ -19,6 +20,10 @@ enum HttpMethods {
 
 export interface IAudioUploadProps {
   onChangeIsNewFilesLoaded: Function;
+  onAddNewFilesName: Function;
+  onDeleteNewFilesName: Function;
+  onChangeAudioUploadToInitialState: Function;
+  isNewFilesLoaded: boolean;
 }
 
 export interface IAudioUploadState {
@@ -89,6 +94,11 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           filesToBeUploadData[i].fileName = fileName;
           filesToBeUploadData[i].isNew = true;
 
+          this.props.onAddNewFilesName(fileName);
+          if (!this.props.isNewFilesLoaded) {
+            this.props.onChangeIsNewFilesLoaded(true);
+          }
+
           this.setState({
             fileToBeUploadData: filesToBeUploadData,
           });
@@ -109,7 +119,11 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     this.setState({
       fileToBeUploadData: filesToBeUploadData,
     });
-    // this.props.onChangeIsNewFilesLoaded(true);
+
+    this.props.onAddNewFilesName(item.fileName);
+    if (!this.props.isNewFilesLoaded) {
+      this.props.onChangeIsNewFilesLoaded(true);
+    }
   }
 
   // checking if text any speech is empty
@@ -144,6 +158,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     // @ts-ignore
     let isError: Error = null;
     // if evertything is OK then upload
+    this.props.onChangeAudioUploadToInitialState();
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
         const speech = {
@@ -629,6 +644,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
             const localNewFiles = this.state.fileToBeUploadData.filter((f) => f.isNew && f.speechIndex === index);
 
             if (localNewFiles.length > 0) {
+              this.props.onDeleteNewFilesName(localNewFiles);
               await this.unloadFilesAsync(localNewFiles.map((f) => f.fileName));
             }
 
@@ -678,6 +694,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
       }
     });
 
+    this.props.onDeleteNewFilesName(mustToBeDeletedAudios);
     await this.unloadFilesAsync(mustToBeDeletedAudios);
     const neededSpeech = this.state.speeches.find((s) => s.id === index);
 
@@ -722,7 +739,16 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onChangeIsNewFilesLoaded: (nextValue: boolean) => dispatch(actionCreators.changeIsNewFilesLoaded(nextValue)),
+    onAddNewFilesName: (filename: string) => dispatch(actionCreators.addNewFilesName(filename)),
+    onDeleteNewFilesName: (filenames: string[]) => dispatch(actionCreators.deleteNewFilename(filenames)),
+    onChangeAudioUploadToInitialState: () => dispatch(actionCreators.changeAudioUploadToInitialState()),
   };
 };
 
-export default connect(mapDispatchToProps, null, null, {forwardRef: true})(AudioUpload);
+const mapStateToProps = (store: IGlobalStoreType) => {
+  return {
+    isNewFilesLoaded: store.audioUpload.isNewFilesLoaded,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(AudioUpload);

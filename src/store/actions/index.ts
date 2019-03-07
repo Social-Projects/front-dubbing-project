@@ -14,4 +14,7 @@ export {
 
 export {
     changeIsNewFilesLoaded,
+    addNewFilesName,
+    deleteNewFilename,
+    changeAudioUploadToInitialState,
 } from "./audioUpload";

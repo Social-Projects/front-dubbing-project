@@ -13,8 +13,9 @@ export default interface IState {
         currentPlaybackTime: number,
         maxDuration: number,
     };
-    performance: {
-        isLoadedNewFiles: boolean,
+    audioUpload: {
+        isNewFilesLoaded: boolean,
+        newFilesName: string[],
     };
     sidebar: {
         currentTabId: number,
