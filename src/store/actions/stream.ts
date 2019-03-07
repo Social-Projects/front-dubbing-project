@@ -12,23 +12,12 @@ export const savePerformanceId = (id: number) => {
 };
 
 // Load Speeches and store them in central store
-const storeSpeeches = (data: any) => {
+export const saveSpeeches = (data: any) => {
     return {
         payload: {
             speeches: data,
         },
         type: actionTypes.LOAD_SPEECHES,
-    };
-};
-
-export const loadSpeeches = (id: number) => {
-    return async (dispatch: any) => {
-        const apiManage = new ApiManager();
-
-        const resp = await apiManage.getSpeechInfo(id);
-        const data = await resp.json();
-
-        dispatch(storeSpeeches(data));
     };
 };
 

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import apiManager from "../../../util/apiManager";
 import history from "../../../util/history";
@@ -24,9 +24,12 @@ interface IEditPerformanceProps {
 }
 
 class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceState> {
+    // @ts-ignore
     public child = React.createRef<AudioUpload>();
-
     public apimanager = new apiManager();
+
+    private isSaved: boolean = false;
+
     constructor(props: IEditPerformanceProps) {
         super(props);
         this.state = {
@@ -63,56 +66,43 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
         const description = this.state.description;
 
         if (title !== "" && description !== "") {
-            if (this.state.id !== -1) {
-                // @ts-ignore
-                const isError = this.child.current.isSpeechesCorrect();
-                if (!isError) {
-                    const response = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
+            // @ts-ignore
+            const isError = this.child.current.isSpeechesCorrect();
 
+            if (!isError) {
+                if (this.state.id !== -1) {
+                    const response = await this.apimanager.updatePerformance(JSON.stringify(this.state), this.state.id);
                     if (response.status === 204) {
                         if (!this.child.current) {
                             return;
                         }
-
                         const result = await this.child.current.uploadHandler(this.state.id, true);
                         if (result !== undefined) {
                             alert(result.errorMessage);
-
                             this.setState({
                                 isShow: false,
                             });
                             return;
                         }
-
                         history.push("/performance/" + this.state.id);
                         await this.loadData();
-                    } else if (response.status === 500) {
-                        console.log(response);
-                        alert("Sorry, some error occured...");
                     } else {
-                        console.log(response);
-                        alert("Network error. Check your connection...");
+                        this.handleErrors(response);
                     }
                 } else {
-                    alert(isError.errorMessage);
-                }
-            } else {
-                // @ts-ignore
-                const isError = this.child.current.isSpeechesCorrect();
-                if (!isError) {
                     const performance = {
                         title: this.state.title,
                         description: this.state.description,
                     };
                     const response = await this.apimanager.createPerformance(JSON.stringify(performance));
-
                     if (response.status === 201) {
                         if (!this.child.current) {
                             return;
                         }
-
                         const JSONObj = await response.json();
                         const result = await this.child.current.uploadHandler(JSONObj.id, false);
+
+                        // handling if error occured on server
                         if (result !== undefined) {
                             alert(result.errorMessage);
 
@@ -123,16 +113,12 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                         }
                         history.push("/performance/" + JSONObj.id);
                         await this.loadData();
-                    } else if (response.status === 500) {
-                        console.log(response);
-                        alert("Sorry, some error occured...");
                     } else {
-                        console.log(response);
-                        alert("Network error. Check your connection...");
+                        this.handleErrors(response);
                     }
-                } else {
-                    alert(isError.errorMessage);
                 }
+            } else {
+                alert(isError.errorMessage);
             }
         } else {
             alert("Введіть назву та опис вистави...");
@@ -141,6 +127,26 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
         this.setState({
             isShow: false,
         });
+    }
+
+    public onCancelHandler = async (event: MouseEvent) => {
+        // @ts-ignore
+        const isLoadedNewFiles = this.child.current.checkIfNewAudiosAreLoaded();
+        if (isLoadedNewFiles) {
+            let isConfirm = false;
+            if (this.state.id === -1) {
+                isConfirm = confirm("Були завантажені нові файли. Ви справді хочете залишити сторінку і видалити файли?");
+            } else {
+                isConfirm = confirm("Були змінені деякі файли. Ви справді хочете перейти на нову сторінку і залишити старі зміни?");
+            }
+
+            if (isConfirm) {
+                // @ts-ignore
+                await this.child.current.removeNewLoadedFiles();
+            } else {
+                event.preventDefault();
+            }
+        }
     }
 
     public async loadData() {
@@ -161,7 +167,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
 
                 this.child.current.audioComponentDidMount(data.id);
             } else {
-                console.log(resp.status);
+                this.handleErrors(resp);
             }
         } else {
             if (!this.child.current) {
@@ -170,10 +176,6 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
 
             this.child.current.audioComponentDidMount(this.state.id);
         }
-    }
-
-    public componentDidMount() {
-      this.loadData();
     }
 
     public render() {
@@ -185,7 +187,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                     <p>{this.props.match.params.number === "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">
                         <button className="saveButton" onClick={this.handleSave} ><i className="fas fa-check-circle saveIcon"></i>Зберегти</button>
-                        <Link to="/performance/">
+                        <Link to="/performance/" onClick={this.onCancelHandler}>
                             <button className="cancelButton">
                                 <i className="fas fa-times-circle saveIcon"></i>Вiдмiна
                             </button>
@@ -202,6 +204,20 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                 <AudioUpload ref={this.child}></AudioUpload>
             </div>
         );
+    }
+
+    public componentDidMount() {
+        this.loadData();
+    }
+
+    private handleErrors = (response: Response) => {
+        if (response.status === 500) {
+            console.log(response);
+            alert("Виникла помилка на сервері!");
+        } else {
+            console.log(response);
+            alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером.");
+        }
     }
 }
 

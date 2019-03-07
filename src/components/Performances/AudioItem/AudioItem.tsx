@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tooltip, Button } from "reactstrap";
+import { Button, Tooltip } from "reactstrap";
 import API from "../../../util/api";
 import "./AudioItem.css";
 
@@ -84,7 +84,6 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       </div>
     ));
 
-
     return (
       <div className="container">
         <div className="row">
@@ -124,8 +123,8 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
 
   private onChangeOrderState = (event: any) => {
     this.setState({
-      order: parseInt(event.target.value, 10)
-    }
+      order: parseInt(event.target.value, 10),
+    },
     );
   }
 

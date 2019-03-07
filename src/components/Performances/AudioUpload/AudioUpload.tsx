@@ -1,7 +1,11 @@
 import * as React from "react";
+import { connect } from "react-redux";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 import { Tooltip } from "reactstrap";
+import { Dispatch } from "redux";
 
+import * as actionCreators from "../../../store/actions/index";
+import IGlobalStoreType from "../../../store/state/state";
 import API from "../../../util/api";
 import Spinner from "../../UI/Spinner/Spinner";
 import AudioItem from "../AudioItem/AudioItem";
@@ -14,7 +18,13 @@ enum HttpMethods {
   DELETE = "DELETE",
 }
 
-export interface IAudioUploadProps { }
+export interface IAudioUploadProps {
+  onChangeIsNewFilesLoaded: Function;
+  onAddNewFilesName: Function;
+  onDeleteNewFilesName: Function;
+  onChangeAudioUploadToInitialState: Function;
+  isNewFilesLoaded: boolean;
+}
 
 export interface IAudioUploadState {
   performanceId: number;
@@ -36,6 +46,7 @@ export interface IAudioUploadState {
     fileName: any,
     languageId: number,
     speechIndex: number,
+    isNew: boolean,
   }>;
   tooltipAddOpen: boolean;
   dropdownOpen: boolean;
@@ -47,7 +58,7 @@ export interface IAudioUploadState {
   isLoading: boolean;
 }
 
-export default class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
+class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> {
   public child = React.createRef<AudioItem>();
   private usedLanguages: Array<{ id: number, name: string }> = [];
   private isFirstLanguage: boolean = true;
@@ -81,6 +92,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       for (let i = 0; i < filesToBeUploadData.length; i++) {
         if (filesToBeUploadData[i].speechIndex === speechIndex && filesToBeUploadData[i].languageId === languageId) {
           filesToBeUploadData[i].fileName = fileName;
+          filesToBeUploadData[i].isNew = true;
+
+          this.props.onAddNewFilesName(fileName);
+          if (!this.props.isNewFilesLoaded) {
+            this.props.onChangeIsNewFilesLoaded(true);
+          }
 
           this.setState({
             fileToBeUploadData: filesToBeUploadData,
@@ -94,6 +111,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       fileName,
       languageId,
       speechIndex,
+      isNew: true,
     };
 
     filesToBeUploadData.push(item);
@@ -101,6 +119,11 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     this.setState({
       fileToBeUploadData: filesToBeUploadData,
     });
+
+    this.props.onAddNewFilesName(item.fileName);
+    if (!this.props.isNewFilesLoaded) {
+      this.props.onChangeIsNewFilesLoaded(true);
+    }
   }
 
   // checking if text any speech is empty
@@ -135,6 +158,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     // @ts-ignore
     let isError: Error = null;
     // if evertything is OK then upload
+    this.props.onChangeAudioUploadToInitialState();
     if (update) {
       for (let i = 0; i < this.state.speeches.length; i++) {
         const speech = {
@@ -159,8 +183,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
                 console.log(`[uploadAndSaveAudioAsync]: ${error}`);
                 isError = error;
               });
-          })
-            .catch((error) => {
+          }).catch((error) => {
               console.log(`[uploadHandler] ${error}`);
               isError = error;
             });
@@ -277,6 +300,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             fileName: audiosToSpeech.data[j].fileName,
             languageId: audiosToSpeech.data[j].languageId,
             speechIndex: audiosToSpeech.data[j].speechId,
+            isNew: false,
           };
 
           files.push(item);
@@ -397,6 +421,14 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     return 0;
   }
 
+  public removeNewLoadedFiles = async () => {
+    const filesNeededToBeDeleted = this.state.fileToBeUploadData
+                                        .filter((s) => s.isNew)
+                                        .map((f) => f.fileName);
+
+    await this.unloadFilesAsync(filesNeededToBeDeleted);
+  }
+
   public render() {
     const items = [...this.state.speeches].sort(this.compare);
 
@@ -471,6 +503,15 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         </div>
       </div>
     );
+  }
+
+  private checkIfNewAudiosAreLoaded = (): boolean => {
+    if (this.state.performanceId === -1) {
+      return this.state.fileToBeUploadData.length > 0 ? true : false;
+    } else {
+      const newFiles = this.state.fileToBeUploadData.filter((f) => f.isNew === true);
+      return newFiles.length > 0 ? true : false;
+    }
   }
 
   // Uploading audio files and creating records in database which contain data about them
@@ -593,12 +634,20 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     const neededSpeech = this.state.speeches.find((s) => s.id === index);
     if (neededSpeech !== undefined) {
       if (this.state.performanceId === -1) {
-        await this.removeLocalSpeechesAsync(index);
+        await this.removeLocalSpeechesAsync(index)
+        .catch((error) => alert(error));
       } else {
         if (!neededSpeech.isNew) {
           const removeResponse = await API.delete("speech/" + index);
 
           if (removeResponse.status === 204) {
+            const localNewFiles = this.state.fileToBeUploadData.filter((f) => f.isNew && f.speechIndex === index);
+
+            if (localNewFiles.length > 0) {
+              this.props.onDeleteNewFilesName(localNewFiles);
+              await this.unloadFilesAsync(localNewFiles.map((f) => f.fileName));
+            }
+
             const speeches = this.state.speeches.filter((obj) => {
               return obj.id !== index;
             });
@@ -607,7 +656,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             for (const requiredSpeech of requiredSpeeches) {
               requiredSpeech.order = requiredSpeech.order - 1;
             }
-            console.log(requiredSpeeches)
 
             const audios = this.state.fileToBeUploadData.filter((obj) => {
               return obj.speechIndex !== index;
@@ -617,9 +665,12 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
               speeches,
               fileToBeUploadData: audios,
             });
+          } else {
+            alert(removeResponse.data);
           }
         } else {
-          await this.removeLocalSpeechesAsync(index);
+          await this.removeLocalSpeechesAsync(index)
+          .catch((error) => alert(error));
         }
       }
     }
@@ -643,6 +694,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       }
     });
 
+    this.props.onDeleteNewFilesName(mustToBeDeletedAudios);
     await this.unloadFilesAsync(mustToBeDeletedAudios);
     const neededSpeech = this.state.speeches.find((s) => s.id === index);
 
@@ -683,3 +735,20 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
     });
   }
 }
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    onChangeIsNewFilesLoaded: (nextValue: boolean) => dispatch(actionCreators.changeIsNewFilesLoaded(nextValue)),
+    onAddNewFilesName: (filename: string) => dispatch(actionCreators.addNewFilesName(filename)),
+    onDeleteNewFilesName: (filenames: string[]) => dispatch(actionCreators.deleteNewFilename(filenames)),
+    onChangeAudioUploadToInitialState: () => dispatch(actionCreators.changeAudioUploadToInitialState()),
+  };
+};
+
+const mapStateToProps = (store: IGlobalStoreType) => {
+  return {
+    isNewFilesLoaded: store.audioUpload.isNewFilesLoaded,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(AudioUpload);
