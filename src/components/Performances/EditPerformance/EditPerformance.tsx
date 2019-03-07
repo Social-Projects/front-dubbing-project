@@ -75,6 +75,9 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                         }
 
                         const result = await this.child.current.uploadHandler(this.state.id, true);
+                        //@ts-ignore
+                        this.child.current.audioComponentDidMount(this.state.id);
+
                         if (result !== undefined) {
                             alert(result.errorMessage);
 
@@ -93,6 +96,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                         console.log(response);
                         alert("Network error. Check your connection...");
                     }
+
                 } else {
                     alert(isError.errorMessage);
                 }
@@ -173,7 +177,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
     }
 
     public componentDidMount() {
-      this.loadData();
+        this.loadData();
     }
 
     public render() {

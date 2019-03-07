@@ -542,7 +542,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   private uploadAndSaveAudioAsync = async (speechIdentifier: number, speechIndex: number, method: HttpMethods) => {
     const langs = [...this.state.languages.filter((i) => i.isChoosed === true).map(item => item.id)];
     const files = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i === item.languageId))];
-    console.log(files);
     const unloadFiles = [...this.state.fileToBeUploadData.filter((item) => !langs.find((i) => i === item.languageId))];
 
     for (let j = 0; j < files.length; j++) {
@@ -554,7 +553,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             languageId: files[j].languageId,
             speechId: speechIdentifier,
           };
-          console.log("POST", item);
 
           await API.post("audio", item, {
             headers: {
@@ -571,7 +569,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             id: files[j].audioId,
           };
           if (item.id === undefined) {
-            console.log("POST", item);
             await API.post("audio", item, {
               headers: {
                 "Accept": "application/json",
@@ -581,8 +578,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
             });
           }
           else {
-            console.log("Put", item);
-
             await API.put("audio/" + item.id, item, {
               headers: {
                 "Accept": "application/json",
@@ -598,7 +593,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
           const noChoosedLangId = this.state.languages.filter((item) => item.isChoosed === false).map((x) => x.id);
           for (const file of audiosToSpeech.data) {
             if (noChoosedLangId.find((i) => i === file.languageId)) {
-              console.log("DELETE", file.id);
               await API.delete(`audio/${file.id}`, {
                 headers: {
                   "Accept": "application/json",
@@ -608,31 +602,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
               });
             }
           }
-
-
-
-          // const files2 = [...this.state.fileToBeUploadData];
-          // const item2 = {
-          //   fileName: files[j].fileName,
-          //   languageId: files[j].languageId,
-          //   speechId: speechIdentifier,
-          //   id: files[j].audioId,
-          // };
-
-          // const noChoosedLangId = this.state.languages.filter((item) => item.isChoosed === false).map((x) => x.id);
-          // console.log(noChoosedLangId);
-          // console.log(noChoosedLangId.find((i) => i === item2.languageId));
-          // console.log(item2);
-          // if (noChoosedLangId.find((i) => i === item2.languageId)) {
-          //   await API.put(`audio/${item2.id}`, {
-          //     headers: {
-          //       "Accept": "application/json",
-          //       "Content-Type": "application/json",
-          //       "Access-Control-Allow-Origin": "*",
-          //     },
-          //   });
-          // }
-
         }
       }
     }
