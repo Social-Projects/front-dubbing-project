@@ -11,6 +11,7 @@ export interface IAudioItemProps {
   languages: Array<{
     id: number,
     name: string,
+    isChoosed: boolean,
   }>;
 
   fileToBeUploadData: Array<{
@@ -60,10 +61,11 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
   public render() {
     const languages = [...this.props.languages];
     const filesToUpload = [...this.props.fileToBeUploadData];
-
     const langList = languages.map((item, index) => (
-      <div key={item.id} id={index.toString()}>
-        <span>{item.name}: </span>
+      <div className="row" key={item.id} id={index.toString()}>
+        <div className="col-sm-2 vertical-middle">
+          {item.name}:
+        </div>
 
         <input
           key={index}
@@ -73,28 +75,29 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
           accept="audio/*"
           onChange={this.onChange}
         />
-
         <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>Завантажити</button>
 
-        {filesToUpload.map((file) => {
-          if (file.speechIndex === this.props.id && file.languageId === item.id) {
-            return <span key={file.speechIndex}>{file.fileName}</span>;
-          }
-        })}
+        <div className="col-sm-6 vertical-middle">
+          {filesToUpload.map((file) => {
+            if (file.speechIndex === this.props.id && file.languageId === item.id) {
+              return <span key={file.speechIndex}>{file.fileName}</span>;
+            }
+          })}
+        </div>
       </div>
     ));
 
     return (
       <div className="container">
         <div className="row">
-          <div className="col-sm-11">
+          <div className="delete-item">
             <button onClick={this.deleteHandler} className="btn-audio-item-delete" id={"removeButton" + this.props.id}>
               <i id={this.props.id.toString()} className="fas fa-times" ></i>
             </button>
             <Tooltip placement="left" isOpen={this.state.tooltipRemoveOpen} autohide={true} target={"removeButton" + this.props.id} toggle={this.tooltipRemoveToggle}>
               Видалити фразу </Tooltip>
           </div>
-          <div className="col-sm-11 audio-item">
+          <div className="audio-item">
             <div className="col-sm-12">
               <div className="spanOrder">№ - {this.props.order}</div>
               <textarea
@@ -105,13 +108,13 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
                 value={this.props.text}
               />
             </div>
-            <div className="col-sm-7" id={this.props.id.toString()}>
+            <div className="col-sm-8" id={this.props.id.toString()}>
 
-              {langList.length > 0 ? langList : <p style={{ color: "red" }}>Can't connect to server</p>}
+              {langList.length > 0 ? langList : <p style={{ color: "red" }}>Виберіть мову</p>}
               <Button outline color="primary" size="sm" onClick={() => {
                 this.props.handleChangeOrder(this.state.order, this.props.order);
               }}>Змістити в</Button>
-              <input className="inputOrder" type="number" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)}  />
+              <input className="inputOrder" type="number" pattern="[0-9]*" onInput={this.onChangeOrderState.bind(this)} />
 
             </div>
 
