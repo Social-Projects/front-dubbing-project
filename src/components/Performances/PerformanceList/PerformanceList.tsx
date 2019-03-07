@@ -1,7 +1,10 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { Dispatch } from "redux";
 
 import Aux from "../../../hoc/Auxiliary";
+import * as actionCreators from "../../../store/actions/index";
 import apiManager from "../../../util/apiManager";
 import LanguageSelectionPopup from "../../LanguageSelectionPopup/LanguageSelectionPopup";
 import Spinner from "../../UI/Spinner/Spinner";
@@ -20,6 +23,7 @@ interface IPerformanceState {
 
 interface IPerformanceProps {
     performances: [];
+    onChangeCurrentTabId: Function;
 }
 
 class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
@@ -40,31 +44,27 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
             const data = await resp.json();
             this.setState({
                 performances: data,
-                isLoading: false,
             });
+        } else if (resp.status === 500) {
+            alert("Виникла помилка на сервері.");
         } else {
-            alert("Sorry, something went wrong...");
-            this.setState({
-                isLoading: false,
-            });
+            alert("Не вдалось підключитись до серверу. Перевірте з'єднання з сервером.");
         }
     }
 
     public async removePerformance(index: number) {
         const resp = await this.apimanager.removePerformance(index);
-        if (resp.status === 200) {
+        if (resp.status === 204) {
             const arr = this.state.performances.filter((obj) => {
                 return obj.id !== index;
             });
 
-            this.setState(
-                {
-                    performances: arr,
-                });
+            this.setState({
+                performances: arr,
+            });
         } else {
             this.getPerformances();
         }
-
     }
 
     public render() {
@@ -91,8 +91,24 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
         );
     }
 
-    public componentDidMount() {
-        this.getPerformances();
+    public async componentDidMount() {
+        await this.getPerformances();
+        this.setState({
+            isLoading: false,
+        });
+
+        this.props.onChangeCurrentTabId(0);
+    }
+
+    public componentWillUnmount() {
+        console.log("[Performance List]: Component will unmount");
     }
 }
-export default PerformanceList;
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        onChangeCurrentTabId: (nextId: number) => dispatch(actionCreators.changeCurrentTabId(nextId)),
+    };
+};
+
+export default connect(null, mapDispatchToProps)(PerformanceList);
