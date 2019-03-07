@@ -279,8 +279,6 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
         }
       }
       const languagesResponse = await API.get("language");
-      console.log(languagesResponse.data);
-      console.log(files);
 
       for (const lang of languagesResponse.data) {
         for (const file of files) {
@@ -544,7 +542,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
   private uploadAndSaveAudioAsync = async (speechIdentifier: number, speechIndex: number, method: HttpMethods) => {
     const langs = [...this.state.languages.filter((i) => i.isChoosed === true).map(item => item.id)];
     const files = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i === item.languageId))];
-    const unlodaFiles = [...this.state.fileToBeUploadData.filter((item) => langs.find((i) => i !== item.languageId))];
+    const unloadFiles = [...this.state.fileToBeUploadData.filter((item) => !langs.find((i) => i === item.languageId))];
 
     for (let j = 0; j < files.length; j++) {
       if (files[j].speechIndex === this.state.speeches[speechIndex].id) {
@@ -581,7 +579,7 @@ export default class AudioUpload extends React.Component<IAudioUploadProps, IAud
       }
     }
 
-    this.unloadFilesAsync(unlodaFiles.map((item) => item.fileName));
+    this.unloadFilesAsync(unloadFiles.map((item) => item.fileName));
   }
 
   private onBatchAddItem = async (file: File) => {

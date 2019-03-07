@@ -66,17 +66,17 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
         <div className="col-sm-2 vertical-middle">
           {item.name}:
         </div>
-        <div className="col-sm-4">
-          <input
-            key={index}
-            className="choose-audio-btn"
-            id={item.id.toString()}
-            type="file"
-            accept="audio/*"
-            onChange={this.onChange}
-          />
-          <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>Завантажити</button>
-        </div>
+
+        <input
+          key={index}
+          className="choose-audio-btn"
+          id={item.id.toString()}
+          type="file"
+          accept="audio/*"
+          onChange={this.onChange}
+        />
+        <button id={item.id.toString()} className="btn-audio-upload" onClick={this.handleUploadClick}>Завантажити</button>
+
         <div className="col-sm-6 vertical-middle">
           {filesToUpload.map((file) => {
             if (file.speechIndex === this.props.id && file.languageId === item.id) {
