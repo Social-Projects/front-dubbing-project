@@ -23,9 +23,9 @@ export interface IAudioItemProps {
 
   onDelete: (index: number) => void;
   onTextChange: (str: string, index: number) => void;
-  onFileChange: (fileName: string, languageId: number, speechIndex: number) => void;
+  onFileChange: (fileName: string, originalText: string, languageId: number, speechIndex: number) => void;
   handleChangeOrder: (newOrder: number, oldOrder: number) => void;
-
+  checkIsOriginalTextEqual: (file: File, speechId: number) => {isEqual: boolean, errorMessage: string};
 }
 
 interface IAudioItemState {
@@ -136,13 +136,21 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
     const languageId = parseInt(event.target.id, undefined);
     const speechIndex = parseInt(event.target.parentNode.parentNode.id, undefined);
 
-    const formData = new FormData();
-    formData.append("File", audio);
+    const result = this.props.checkIsOriginalTextEqual(audio, speechIndex);
 
-    await API.post("audio/upload", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    this.props.onFileChange(audio.name, languageId, speechIndex);
+    if (result.isEqual) {
+      const newName = `${speechIndex}_${languageId}.mp3`;
+      const copyAudio = new File([audio], newName, {type: audio.type});
+      const formData = new FormData();
+      formData.append("File", copyAudio);
+
+      await API.post("audio/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      this.props.onFileChange(copyAudio.name, audio.name, languageId, speechIndex);
+    } else {
+      alert(result.errorMessage);
+    }
   }
 
   private handleChange = (event: any) => {
