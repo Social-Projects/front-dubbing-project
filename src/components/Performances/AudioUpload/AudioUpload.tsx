@@ -400,6 +400,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     } else {
       this.onBatchUpdateItems(files);
     }
+
     this.setState({
       isLoading: false,
     });
@@ -513,7 +514,14 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
             {languages}
           </DropdownMenu>
         </Dropdown>
-        <input multiple id="batchUpload" className="inputFile" type="file" onChange={this.batchUpload} />
+        <input
+          type="file"
+          id="batchUpload"
+          className="inputFile"
+          onChange={this.batchUpload}
+          // @ts-ignore
+          onClick={(event) => event.target.value = null }
+          multiple />
         <button
           id={"batchUploadBtn"}
           className={"fas fa-plus-circle btn-audio-add " + (isDisabledBatchUpload ? "disabled-btn-audio-add" : "")}
