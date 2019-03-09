@@ -77,9 +77,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                             return;
                         }
                         const result = await this.child.current.uploadHandler(this.state.id, true);
-                        //@ts-ignore
-                        this.child.current.audioComponentDidMount(this.state.id);
-
+                        
                         if (result !== undefined) {
                             alert(result.errorMessage);
                             this.setState({

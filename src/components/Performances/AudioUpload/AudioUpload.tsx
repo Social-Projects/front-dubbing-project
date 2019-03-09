@@ -312,6 +312,9 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
             lang.isChoosed = true;
             break;
           }
+          else{
+            lang.isChoosed = false;
+          }
         }
       }
       if (languagesResponse.status === 200) {
