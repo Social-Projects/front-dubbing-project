@@ -246,7 +246,7 @@ class Stream extends Component<IStreamProps, IStreamState> {
 
         window.onbeforeunload = (event) => {
             return this.props.connectingStatus
-                    ? "Ви впевнені, що хочете покинути сторінку в той час як вона підключена до серверу?"
+                    ? false
                     : null;
         };
     }
