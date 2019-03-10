@@ -25,7 +25,7 @@ const streamHead = (props: IStreamHeadProps) => {
         },
         text: "Приєднатись до сервера",
         transitionDuration: "0.3s",
-        width: "305px",
+        width: "auto"
     };
     let icon = <i className="fas fa-play-circle"></i>;
 
