@@ -41,6 +41,10 @@ span.close:hover {
     background-repeat: no-repeat;
 }
 
+.gotoPerfLink {
+    align-self: flex-end;
+}
+
 .gotoPerfBtn{
     background-color: #8cc152;
     border: none;
@@ -49,14 +53,13 @@ span.close:hover {
     height: 40px;
     padding-left: 20px;
     padding-right: 10px;
-    float: right;
     margin-right: 10px;
     transition: background-color 0.25s;
     -webkit-appearance: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    align-self:flex-end;
+    align-self: flex-end;
 }
 
 .gotoPerfBtn:hover{

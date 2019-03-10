@@ -64,7 +64,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
                 event.preventDefault();
             }
         } else if (targetTabId === 0 && this.props.isNewFilesLoaded) {
-            const isConfirmed = confirm("Файли завантажені на сервер, але все ще не збережені." +
+            const isConfirmed = confirm("Файли завантажені на сервер, але все ще не збережені. " +
                                         "Ви справді перейти на іншу сторінку та видалити файли?");
             if (!isConfirmed) {
                 event.preventDefault();
