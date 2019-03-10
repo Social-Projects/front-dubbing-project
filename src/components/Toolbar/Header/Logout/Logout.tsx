@@ -7,8 +7,8 @@ class Logout extends React.PureComponent {
         return (
             <div className="logout">
                 {/* <span class="user-name"> Ввійшов як {this.props.user.name} {this.props.user.surname}</span> */}
-                <span className="user-name">Ввійшов як Март Отто</span>
-                <Button
+                {/* <span className="user-name">Ввійшов як Март Отто</span> */}
+                {/* <Button
                     text="Вихід"
                     width="95px"
                     height="45px"
@@ -16,7 +16,7 @@ class Logout extends React.PureComponent {
                     fontSize="18px"
                     transitionDuration="0.3s"
                     backgroundColor="#da4453"
-                    className="user-action"></Button>
+                    className="user-action"></Button> */}
             </div>
         );
     }
