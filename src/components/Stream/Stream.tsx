@@ -243,10 +243,15 @@ class Stream extends Component<IStreamProps, IStreamState> {
         });
 
         this.props.onChangeCurrentTabId(1);
+
+        window.onbeforeunload = (event) => {
+            return this.props.connectingStatus
+                    ? "Ви впевнені, що хочете покинути сторінку в той час як вона підключена до серверу?"
+                    : null;
+        };
     }
 
     public async componentWillUnmount() {
-        console.log("[Performance List]: Component will unmount!");
         if (this.props.connectingStatus) {
             if (this.props.isPlaying) {
                 await this.pause();
@@ -259,6 +264,7 @@ class Stream extends Component<IStreamProps, IStreamState> {
         }
 
         this.props.onChangeStreamStateToInitial();
+        window.onbeforeunload = null;
     }
 
     private handleError = (response: Response) => {
