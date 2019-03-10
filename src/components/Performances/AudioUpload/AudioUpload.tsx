@@ -189,9 +189,9 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
                 isError = error;
               });
           }).catch((error) => {
-              console.log(`[uploadHandler] ${error}`);
-              isError = error;
-            });
+            console.log(`[uploadHandler] ${error}`);
+            isError = error;
+          });
 
         } else { // if speeches is new just uploading them
           // creating speech and relative to him audios
@@ -311,6 +311,9 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           if (file.languageId === lang.id) {
             lang.isChoosed = true;
             break;
+          }
+          else {
+            lang.isChoosed = false;
           }
         }
       }
@@ -449,8 +452,8 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
   public removeNewLoadedFiles = async () => {
     const filesNeededToBeDeleted = this.state.fileToBeUploadData
-                                        .filter((s) => s.isNew)
-                                        .map((f) => f.fileName);
+      .filter((s) => s.isNew)
+      .map((f) => f.fileName);
 
     await this.unloadFilesAsync(filesNeededToBeDeleted);
   }
@@ -459,35 +462,39 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     const items = [...this.state.speeches].sort(this.compare);
     const langItems = [...this.state.languages].sort((a: any, b: any) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
 
-    const langList = langItems.map((item, index) => (
-      <label key={item.id}>
-        <a>{item.name}: </a>
-        <input
-          className="langCheckbox"
-          name="isGoi"
-          type="checkbox"
-          checked={item.isChoosed}
-          onChange={this.handleLangCheckboxChange(item.id)}
-        />
-      </label>
-    ));
+    const langList = langItems.length !== 0 ?
+      langItems.map((item, index) => (
+        <label key={item.id}>
+          <a>{item.name}: </a>
+          <input
+            className="langCheckbox"
+            name="isGoi"
+            type="checkbox"
+            checked={item.isChoosed}
+            onChange={this.handleLangCheckboxChange(item.id)}
+          />
+        </label>
+      )) :
+      <p style={{ color: "grey"}}> Мови відсутні. Добавте мову на початковій сторінці в менеджері мов. </p>;
 
-    const itemsList = items.map((item, index) => (
-      <AudioItem
-        key={index}
-        id={item.id}
-        order={item.order}
-        text={item.text}
-        languages={this.state.languages.filter((item) => item.isChoosed)}
-        onDelete={item.onDelete}
-        fileToBeUploadData={this.state.fileToBeUploadData}
-        onTextChange={item.onTextChange}
-        onFileChange={item.onFileChange}
-        handleChangeOrder={this.handleChangeOrder}
-        checkIsOriginalTextEqual={this.checkIsOriginalTextInFileEqual}
-        ref={this.child}
-      />
-    ));
+    const itemsList = items.length !== 0 ?
+      items.map((item, index) => (
+        <AudioItem
+          key={index}
+          id={item.id}
+          order={item.order}
+          text={item.text}
+          languages={this.state.languages.filter((item) => item.isChoosed)}
+          onDelete={item.onDelete}
+          fileToBeUploadData={this.state.fileToBeUploadData}
+          onTextChange={item.onTextChange}
+          onFileChange={item.onFileChange}
+          handleChangeOrder={this.handleChangeOrder}
+          checkIsOriginalTextEqual={this.checkIsOriginalTextInFileEqual}
+          ref={this.child}
+        />
+      )) :
+      <p style={{ color: "grey", marginTop: 10 }}> Добавте фразу або завантажте пакетом. </p>;
 
     const languages = this.state.languages.filter((item) => item.isChoosed === true).map((lang) => {
       return (
@@ -521,7 +528,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           className="inputFile"
           onChange={this.batchUpload}
           // @ts-ignore
-          onClick={(event) => event.target.value = null }
+          onClick={(event) => event.target.value = null}
           multiple />
         <button
           id={"batchUploadBtn"}
@@ -670,7 +677,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
     // @ts-ignore
     const newName = `${speechItem.id}_${this.state.selectedLanguage.id}.mp3`;
-    const copyAudio = new File([file], newName, {type: file.type});
+    const copyAudio = new File([file], newName, { type: file.type });
 
     const formData = new FormData();
     formData.append("File", copyAudio);
@@ -696,7 +703,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
     // create cope needed speech and assign the file name
     const neededSpeechIndex = this.state.speeches.findIndex((sp) => sp.id === speechItem.id);
-    const neededSpeech = {...this.state.speeches[neededSpeechIndex]};
+    const neededSpeech = { ...this.state.speeches[neededSpeechIndex] };
     neededSpeech.text = originalText;
 
     // update the speech
@@ -719,7 +726,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
     if (files.length <= neededSpeeches.length) {
       // checking if audio filename if one language is equal to audio filename another language (must be equal!)
-      let result: {isEqual: boolean, errorMessage: string} = { isEqual: true, errorMessage: "" };
+      let result: { isEqual: boolean, errorMessage: string } = { isEqual: true, errorMessage: "" };
 
       for (let i = 0; i < files.length; i++) {
         result = this.checkIsOriginalTextInFileEqual(files[i], neededSpeeches[i].id);
@@ -734,7 +741,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
           // @ts-ignore
           const newName = `${neededSpeeches[i].id}_${this.state.selectedLanguage.id}.mp3`;
-          const copyAudio = new File([audio], newName, {type: audio.type});
+          const copyAudio = new File([audio], newName, { type: audio.type });
 
           const formData = new FormData();
           formData.append("File", copyAudio);
@@ -756,7 +763,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     }
   }
 
-  private checkIsOriginalTextInFileEqual = (file: File, speechId: number): {isEqual: boolean, errorMessage: string} => {
+  private checkIsOriginalTextInFileEqual = (file: File, speechId: number): { isEqual: boolean, errorMessage: string } => {
     const relatedAudioFiles = [
       ...this.state.fileToBeUploadData.filter((f) => f.speechIndex === speechId),
     ];
@@ -767,8 +774,8 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
         if (neededSpeech !== undefined) {
           return {
             isEqual: false,
-            errorMessage:  `Ім'я аудіо файлу не співпадає з іменем файлу, ` +
-                           `що був вже завантажений до даної репліки під номером ${neededSpeech.order}.`,
+            errorMessage: `Ім'я аудіо файлу не співпадає з іменем файлу, ` +
+              `що був вже завантажений до даної репліки під номером ${neededSpeech.order}.`,
           };
         } else {
           return {
@@ -821,7 +828,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     if (neededSpeech !== undefined) {
       if (this.state.performanceId === -1) {
         await this.removeLocalSpeechesAsync(index)
-        .catch((error) => alert(error));
+          .catch((error) => alert(error));
       } else {
         if (!neededSpeech.isNew) {
           const removeResponse = await API.delete("speech/" + index);
@@ -856,7 +863,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           }
         } else {
           await this.removeLocalSpeechesAsync(index)
-          .catch((error) => alert(error));
+            .catch((error) => alert(error));
         }
       }
     }
@@ -937,4 +944,4 @@ const mapStateToProps = (store: IGlobalStoreType) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(AudioUpload);
+export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(AudioUpload);

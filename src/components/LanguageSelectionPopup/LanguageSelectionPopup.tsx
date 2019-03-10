@@ -56,7 +56,7 @@ export default class LanguageSelectionPopup extends React.Component<ILanguagePro
     }
 
     public onUpdateLang = async (lang: any) => {
-        const resp = await this.apiManager.updateLang(lang.id ,JSON.stringify(lang));
+        const resp = await this.apiManager.updateLang(lang.id, JSON.stringify(lang));
         this.getLang();
     }
 
@@ -78,11 +78,19 @@ export default class LanguageSelectionPopup extends React.Component<ILanguagePro
     }
 
     public nameUpdateHandler = () => {
-        this.onUpdateLang(this.state.currentLang);
-        this.setState({
-            currentLang: { id: -1, name: "" },
-        });
-        this.toggle();
+        if (this.state.currentLang.id !== -1) {
+            if (!this.state.languages.find((item) => item.name === this.state.currentLang.name)) {
+                this.onUpdateLang(this.state.currentLang);
+                this.setState({
+                    currentLang: { id: -1, name: "" },
+                });
+                this.toggle();
+            } else{
+                alert(`Мова з назвою "${this.state.currentLang.name}" вже існує`);
+            }
+        } else {
+            alert("Виберіть мову");
+        }
     }
 
     public nameChangedHandler = (event: any) => {
@@ -90,27 +98,43 @@ export default class LanguageSelectionPopup extends React.Component<ILanguagePro
     }
 
     public languageDeleteHandler = () => {
-        this.onDelLang(this.state.currentLang);
-        this.setState({
-            currentLang: { id: -1, name: "" },
-        });
-        this.toggle();
+        if (this.state.currentLang.id !== -1) {
+            this.onDelLang(this.state.currentLang);
+            this.setState({
+                currentLang: { id: -1, name: "" },
+            });
+            this.toggle();
+        } else {
+            alert("Виберіть мову");
+        }
+
     }
 
     public languageAddHandler = () => {
-        const newLanguage = {
-            id: 0,
-            name: this.state.currentLang.name,
-        };
-        this.onAddLang(newLanguage);
-        this.toggle();
+        if (this.state.currentLang.name === "") {
+            alert("Введіть назву мови");
+        } else if (this.state.languages.find((item) => item.name === this.state.currentLang.name)) {
+            alert(`Мова з назвою "${this.state.currentLang.name}" вже існує`);
+        } else {
+
+            const newLanguage = {
+                id: 0,
+                name: this.state.currentLang.name,
+            };
+            this.onAddLang(newLanguage);
+            this.toggle();
+        }
     }
 
     public toggleChildComponent = async (e: any) => {
-        if (!this.child.current) {
-            return;
+        if (this.state.currentLang.id !== -1) {
+            if (!this.child.current) {
+                return;
+            }
+            this.child.current.toggle();
+        } else {
+            alert("Виберіть мову");
         }
-        this.child.current.toggle();
     }
 
     public componentDidMount() {
@@ -146,8 +170,8 @@ export default class LanguageSelectionPopup extends React.Component<ILanguagePro
                         <Label >Оберіть мову для редагування</Label>
                         <Input
                             className="inputLang"
-                            defaultValue={currentLangName}
                             onChange={this.nameChangedHandler}
+                            value={this.state.currentLang.name}
                         /><br />
                         <Button
                             color="primary"
