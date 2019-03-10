@@ -9,8 +9,11 @@
     border: none;
     color:white;
 }
- .languageButton{
-    margin-top: 20px;
+
+ .languageButton {
+    padding-top: 20px;
+    margin-right: 20px;
+    display: inline-block;
  }
 
  .inputLang input{

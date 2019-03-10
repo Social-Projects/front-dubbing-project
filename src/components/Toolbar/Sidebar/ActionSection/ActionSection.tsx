@@ -176,9 +176,18 @@ class ActionSection extends Component<IActionSectionProps, IActionSectionState> 
                     currentTime={this.props.currentPlaybackTime} />
                 <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event) } type="keydown"/>
                 <KeyBinding onKey={(event: KeyboardEvent) => this.onKeyDownUpHandler(event) } type="keyup"/>
+                <CountBlock />
             </Aux>
         );
     }
+}
+
+function CountBlock() {
+    return (
+        <div className="countBlock">
+            <p>Підключено користувачів: <span id='userCounter'>0</span></p>
+        </div>
+    );
 }
 
 const mapStateToProps = (state: StateType) => {

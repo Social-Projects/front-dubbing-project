@@ -89,8 +89,9 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
     public render() {
         let actionSection = null;
+        let counter = null;
         if (this.state.performanceId !== -1) {
-            actionSection = <ActionSection performanceId={this.state.performanceId} />;
+            actionSection = <ActionSection performanceId={this.state.performanceId} />;   
         }
 
         return (
@@ -110,7 +111,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
                             path="/stream"
                             clicked={(event: Event) => this.onStreamClickHandler(event)} />
                     </nav>
-                    {actionSection}
+                    { actionSection }
                 </div> : null
         );
     }

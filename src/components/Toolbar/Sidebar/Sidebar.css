@@ -11,6 +11,13 @@
     margin-top: 12px;
 }
 
+.countBlock {
+    margin-top: 15px;
+
+    text-align: center;
+    font-size: 1.1rem;
+}
+
 @media screen and (max-width: 1200px) {
     .sidebar {
         width: 21.2222%;
