@@ -370,7 +370,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     });
   }
 
-  // triggered when click on fake upload button
+  // triggered when click on fake batch files upload button
   public onBatchUpload = (event: any) => {
     event.preventDefault();
     if (this.state.selectedLanguage !== undefined) {
@@ -383,6 +383,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     }
   }
 
+  // handling batch uploading
   public batchUpload = async (event: any) => {
     this.setState({
       isLoading: true,
@@ -714,7 +715,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
     const neededSpeeches = this.state.speeches.filter((s) => {
       return !neededFiles.includes(s.id);
-    });
+    }).sort((s1, s2) => s1.order > s2.order ? 1 : -1);
 
     if (files.length <= neededSpeeches.length) {
       // checking if audio filename if one language is equal to audio filename another language (must be equal!)
@@ -722,6 +723,9 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
       for (let i = 0; i < files.length; i++) {
         result = this.checkIsOriginalTextInFileEqual(files[i], neededSpeeches[i].id);
+        if (!result.isEqual) {
+          break;
+        }
       }
 
       if (result.isEqual) {
