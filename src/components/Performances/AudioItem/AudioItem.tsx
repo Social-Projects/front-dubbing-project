@@ -146,7 +146,7 @@ export default class AudioItem extends React.Component<IAudioItemProps, IAudioIt
       const formData = new FormData();
       formData.append("File", copyAudio);
 
-      await API.post("audio/upload", formData, {
+      await API.post("http://104.248.28.238/api/audio/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       }).then((response) => {
         this.props.onFileChange(copyAudio.name, audio.name, languageId, speechIndex);

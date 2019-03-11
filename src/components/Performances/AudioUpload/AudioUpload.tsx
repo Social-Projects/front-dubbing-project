@@ -176,7 +176,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
         // Cheking for new speeches
         if (!speech.isNew) {
-          await API.put(`speech/${speech.id}`, speech, {
+          await API.put(`http://104.248.28.238/api/speech/${speech.id}`, speech, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
@@ -196,7 +196,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
         } else { // if speeches is new just uploading them
           // creating speech and relative to him audios
 
-          await API.post("speech", speech, {
+          await API.post("http://104.248.28.238/api/speech", speech, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
@@ -233,7 +233,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
         };
 
         // creating speech and relative to him audios
-        await API.post("speech", speech, {
+        await API.post("http://104.248.28.238/api/speech", speech, {
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -264,7 +264,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
   public async audioComponentDidMount(performanceId: number) {
 
     if (performanceId !== -1) {
-      const performanceSpeechesResponse = await API.get("performance/" + performanceId + "/speeches");
+      const performanceSpeechesResponse = await API.get("http://104.248.28.238/api/performance/" + performanceId + "/speeches");
       if (performanceSpeechesResponse.status === 200) {
         const speeches = [];
         for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
@@ -289,7 +289,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
 
       const files = [];
       for (let i = 0; i < performanceSpeechesResponse.data.length; i++) {
-        const audiosToSpeech = await API.get("speech/" + performanceSpeechesResponse.data[i].id + "/audios");
+        const audiosToSpeech = await API.get("http://104.248.28.238/api/speech/" + performanceSpeechesResponse.data[i].id + "/audios");
 
         for (let j = 0; j < audiosToSpeech.data.length; j++) {
           const item = {
@@ -304,7 +304,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           files.push(item);
         }
       }
-      const languagesResponse = await API.get("language");
+      const languagesResponse = await API.get("http://104.248.28.238/api/language");
 
       for (const lang of languagesResponse.data) {
         for (const file of files) {
@@ -328,7 +328,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
       });
 
     } else {
-      const languagesResponse = await API.get("language");
+      const languagesResponse = await API.get("http://104.248.28.238/api/language");
       for (const lang of languagesResponse.data) {
         lang.isChoosed = true;
       }
@@ -614,7 +614,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
             speechId: speechIdentifier,
           };
 
-          await API.post("audio", item, {
+          await API.post("http://104.248.28.238/api/audio", item, {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
@@ -630,7 +630,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
             id: files[j].audioId,
           };
           if (item.id === undefined) {
-            await API.post("audio", item, {
+            await API.post("http://104.248.28.238/api/audio", item, {
               headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
@@ -638,7 +638,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
               },
             });
           } else {
-            await API.put("audio/" + item.id, item, {
+            await API.put("http://104.248.28.238/api/audio/" + item.id, item, {
               headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
@@ -647,7 +647,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
             });
           }
 
-          const audiosToSpeech = await API.get("speech/" + item.speechId + "/audios");
+          const audiosToSpeech = await API.get("http://104.248.28.238/api/speech/" + item.speechId + "/audios");
 
           const noChoosedLangId = this.state.languages.filter((item) => item.isChoosed === false).map((x) => x.id);
           for (const file of audiosToSpeech.data) {
@@ -682,7 +682,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
     const formData = new FormData();
     formData.append("File", copyAudio);
 
-    await API.post("audio/upload", formData, {
+    await API.post("http://104.248.28.238/api/audio/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -746,7 +746,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           const formData = new FormData();
           formData.append("File", copyAudio);
 
-          await API.post("audio/upload", formData, {
+          await API.post("http://104.248.28.238/api/audio/upload", formData, {
             headers: {
               "content-type": "multipart/form-data",
             },
@@ -831,7 +831,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
           .catch((error) => alert(error));
       } else {
         if (!neededSpeech.isNew) {
-          const removeResponse = await API.delete("speech/" + index);
+          const removeResponse = await API.delete("http://104.248.28.238/api/speech/" + index);
 
           if (removeResponse.status === 204) {
             const localNewFiles = this.state.fileToBeUploadData.filter((f) => f.isNew && f.speechIndex === index);
@@ -910,7 +910,7 @@ class AudioUpload extends React.Component<IAudioUploadProps, IAudioUploadState> 
       }
       query.slice(query.length - 1, 1);
 
-      await API.delete("/audio/unload/" + query);
+      await API.delete("http://104.248.28.238/api/audio/unload/" + query);
     }
   }
 
