@@ -10,6 +10,12 @@ class SignalrManager {
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(`${backendURL}StreamHub`)
             .build();
+
+        this.connection.on("updateCount", (number: string) => {
+            const counterBlock: any = document.getElementById("userCounter");
+
+            counterBlock.innerHTML = number;
+        });
     }
 
     public async connectToHub(): Promise<void> {

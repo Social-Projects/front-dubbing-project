@@ -29,6 +29,14 @@ interface ISidebarProps {
     onChangeAudioUploadToInitial: Function;
 }
 
+function CountBlock() {
+    return (
+        <div className="countBlock">
+            <p>Підключено користувачів: <span id='userCounter'>0</span></p>
+        </div>
+    );
+}
+
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     public static getDerivedStateFromProps(props: {}, state: ISidebarState) {
         const updatedState = {
@@ -89,8 +97,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
     public render() {
         let actionSection = null;
+        let counter = null;
         if (this.state.performanceId !== -1) {
-            actionSection = <ActionSection performanceId={this.state.performanceId} />;
+            actionSection = <ActionSection performanceId={this.state.performanceId} />;  
+            counter = <CountBlock/>
         }
 
         return (
@@ -110,7 +120,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
                             path="/stream"
                             clicked={(event: Event) => this.onStreamClickHandler(event)} />
                     </nav>
-                    {actionSection}
+                    { actionSection }
+                    { counter }
                 </div> : null
         );
     }

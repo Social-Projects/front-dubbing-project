@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
+import { Button } from "reactstrap";
 
 import Aux from "../../../hoc/Auxiliary";
 import * as actionCreators from "../../../store/actions/index";
 import apiManager from "../../../util/apiManager";
+import API from "../../../util/api";
 import LanguageSelectionPopup from "../../LanguageSelectionPopup/LanguageSelectionPopup";
 import Spinner from "../../UI/Spinner/Spinner";
 import Performance from "../Performance/Performance";
@@ -67,6 +69,29 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
         }
     }
 
+    public handleUploadClick(event: any) {
+        const ch: any = document.getElementById("waitingUploadInput");
+        ch.click();
+    }
+
+    private onChange = async (event: any) => {
+        const audio = event.target.files[0];
+
+        const formData = new FormData();
+        formData.append("File", audio);
+        
+        if(audio.name.slice(-4) !== ".mp3"){
+            return alert("Ви намагаєтесь завантажити не аудіо файл");            
+        }        
+
+        await API.post("audio/upload/waiting", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        alert("Аудіо файл, що грає під час очікування трансляції, завантажено");
+    }
+    
+
     public render() {
         return (
             <Aux>
@@ -80,8 +105,18 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
                     </div>
                     {/* popup for language management. Created by reactstrap. Props here https://reactstrap.github.io/components/modals/ */}
                     <LanguageSelectionPopup
-                        buttonLabel="Керувати мовами дубляжу"></LanguageSelectionPopup>
-                    {
+                        buttonLabel="Керувати мовами дубляжу" />
+                         
+                         <input
+                            className="choose-audio-btn"
+                            id = "waitingUploadInput"
+                            type="file"
+                            accept="audio/*"
+                            onChange={this.onChange}
+                        />
+                        <Button onClick={this.handleUploadClick} id="waitingUpload" color="primary" className='languageButton'/*  onClick={this.toggle} */>Завантажити аудіо для очікування трансляції</Button>
+                        
+                        {
                         this.state.performances.map((item) => {
                             return <Performance deleteMethod={this.removePerformance} index={item.id} key={item.id} title={item.title} description={item.description} />;
                         },
