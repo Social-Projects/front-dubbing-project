@@ -3,7 +3,7 @@ interface IConfigType {
 }
 
 const config: IConfigType = {
-    urlApi: "http://localhost:5000/",
+    urlApi: "104.248.28.238",
 };
 
 export default config;
