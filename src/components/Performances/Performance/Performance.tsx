@@ -54,7 +54,7 @@ export default class Performance extends Component<IPerformanceProps, IPerforman
                 <div className="row">
                     <p className="col-md-11 pull-left perfTitle" >{this.props.title}</p>
                     <div className="col-md-1 text-right PerformanceButtons ">
-                        <Link to={"/performance/" + this.props.index} >
+                        <Link to={"/streamer/performance/" + this.props.index} >
                             <button className="editBtn" id={"editBtn" + this.props.index}/>
                             <Tooltip placement="left" isOpen={this.state.tooltipEditOpen} autohide={false} target={"editBtn" + this.props.index} toggle={this.tooltipEditToggle}>
                                 Редагувати виставу </Tooltip>
@@ -78,7 +78,7 @@ export default class Performance extends Component<IPerformanceProps, IPerforman
             <p className="perfDescr">
                 {this.props.description}
             </p>
-            <Link to={"/stream/" + this.props.index} className="gotoPerfLink">
+            <Link to={"/streamer/stream/" + this.props.index} className="gotoPerfLink">
                 <button className="gotoPerfBtn ">Перейти до вистави <div className="gotoImage" /></button>
             </Link>
         </div>

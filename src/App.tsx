@@ -16,10 +16,10 @@ class App extends Component {
           <main>
             <Sidebar />
             <Switch>
-              <Route path="/login" component={Login} />
-              <Route exact path="/" component={PerformancesPage} />
-              <Route path="/performance" component={PerformancesPage} />
-              <Route exact path="/stream/:number" component={Stream} />
+              <Route path="/streamer/login" component={Login} />
+              <Route exact path="/streamer/" component={PerformancesPage} />
+              <Route path="/streamer/performance" component={PerformancesPage} />
+              <Route exact path="/streamer/stream/:number" component={Stream} />
             </Switch>
           </main>
         </Aux>

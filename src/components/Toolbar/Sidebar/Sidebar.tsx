@@ -44,13 +44,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         };
         const segments = location.pathname.split("/");
 
-        if (segments[1] === "login") {
+        if (segments[2] === "login") {
             updatedState.isVisible = false;
-        } else if (segments[1] === "stream") {
-            updatedState.performanceId = parseInt(segments[2], undefined);
+        } else if (segments[2] === "stream") {
+            updatedState.performanceId = parseInt(segments[3], undefined);
         }
 
-        if (segments[1] !== "stream" && updatedState.performanceId !== -1) {
+        if (segments[2] !== "stream" && updatedState.performanceId !== -1) {
             updatedState.performanceId = -1;
         }
 
@@ -111,13 +111,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
                             id={0}
                             name="Вистави"
                             imgSrc={perfomanceLogo}
-                            path="/performance"
+                            path="/streamer/performance"
                             clicked={(event: Event) => this.OnPerformanceClickHandler(event, this.props.currentTabId)} />
                         <SidebarItem
                             id={1}
                             name="Трансляції"
                             imgSrc={streamLogo}
-                            path="/stream"
+                            path="/streamer/stream"
                             clicked={(event: Event) => this.onStreamClickHandler(event)} />
                     </nav>
                     { actionSection }

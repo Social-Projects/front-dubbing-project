@@ -85,7 +85,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                             });
                             return;
                         }
-                        history.push("/performance/" + this.state.id);
+                        history.push("/streamer/performance/" + this.state.id);
                         await this.loadData();
                     } else {
                         this.handleErrors(response);
@@ -113,7 +113,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                             });
                             return;
                         }
-                        history.push("/performance/" + JSONObj.id);
+                        history.push("/streamer/performance/" + JSONObj.id);
                         await this.loadData();
                     } else {
                         this.handleErrors(response);
@@ -189,7 +189,7 @@ class EditPerformance extends Component<IEditPerformanceProps, IEditPerformanceS
                     <p>{this.props.match.params.number === "new" ? "Створення вистави" : "Редагування вистави"}</p>
                     <div className="text-right">
                         <button className="saveButton" onClick={this.handleSave} ><i className="fas fa-check-circle saveIcon"></i>Зберегти</button>
-                        <Link to="/performance/" onClick={this.onCancelHandler}>
+                        <Link to="/streamer/performance/" onClick={this.onCancelHandler}>
                             <button className="cancelButton">
                                 <i className="fas fa-times-circle saveIcon"></i>Вiдмiна
                             </button>

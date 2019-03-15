@@ -9,10 +9,10 @@ class PerformancesPage extends Component {
     return (
       <Switch>
         <Route exact path="/" render={() => (
-          <Redirect to="/performance" />
+          <Redirect to="/streamer/performance" />
         )} />
-        <Route exact path="/performance" component={PerformanceList} />
-        <Route path="/performance/:number" component={EditPerformance} />
+        <Route exact path="/streamer/performance" component={PerformanceList} />
+        <Route path="/streamer/performance/:number" component={EditPerformance} />
       </Switch>
     );
   }

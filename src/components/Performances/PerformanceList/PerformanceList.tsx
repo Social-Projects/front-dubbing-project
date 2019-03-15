@@ -99,7 +99,7 @@ class PerformanceList extends Component<IPerformanceProps, IPerformanceState> {
                 <div className="perfomanceList">
                     <div className="header">
                         <p>Вистави</p>
-                        <Link to="/performance/new" >
+                        <Link to="/streamer/performance/new" >
                             <button className="addButton"><div className="addImage" />Додати виставу</button>
                         </Link>
                     </div>
